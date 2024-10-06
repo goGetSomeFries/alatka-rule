@@ -1,11 +1,12 @@
 package com.alatka.rule;
 
-import com.alatka.rule.context.RuleContext;
+import com.alatka.rule.context.RuleDefinitionContext;
 import com.alatka.rule.context.RuleDefinition;
 import com.alatka.rule.parser.DefaultRuleParser;
 import com.alatka.rule.parser.RuleParser;
 import com.alatka.rule.util.JsonUtil;
 import com.googlecode.aviator.AviatorEvaluator;
+import com.googlecode.aviator.AviatorEvaluatorInstance;
 import com.googlecode.aviator.Expression;
 
 import java.util.ArrayList;
@@ -14,43 +15,39 @@ import java.util.Map;
 
 public class Main {
 
-    public <T> void execute(T object) {
+    private AviatorEvaluatorInstance aviatorEvaluatorInstance;
 
-        List<RuleDefinition> ruleGroup = RuleContext.getInstance().getRuleGroup("");
+    public Main() {
+        this.aviatorEvaluatorInstance = AviatorEvaluator.getInstance();
+    }
+
+
+    public <T> List<String> execute(String groupName, T object) {
+        List<RuleDefinition> ruleGroup = RuleDefinitionContext.getInstance().getRuleGroup(groupName);
         Map<String, Object> params = JsonUtil.objectToMap(object);
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<>(0);
 
         for (RuleDefinition ruleDefinition : ruleGroup) {
-            RuleParser ruleParser = new DefaultRuleParser();
-            Map<String, Object> env = ruleParser.getEnv(params, true);
-            boolean flag = doExecute("", "", env);
-            if (!flag) {
-                continue;
-            } else if (ruleDefinition.getNext() != null) {
-                result.add(ruleDefinition.getId());
-            } else {
-
-            }
+            this.doExecute(ruleDefinition, params, result);
         }
-
+        return result;
     }
 
-    private void test(List<String> result, RuleDefinition ruleDefinition, Map<String, Object> params) {
+    private void doExecute(RuleDefinition ruleDefinition, Map<String, Object> params, List<String> result) {
         RuleParser ruleParser = new DefaultRuleParser();
         Map<String, Object> env = ruleParser.getEnv(params, true);
-        boolean flag = doExecute("", "", env);
-        if (!flag) {
+
+        Expression exp = aviatorEvaluatorInstance.compile(ruleDefinition.getId(), ruleDefinition.getExpression(), true);
+        boolean hit = (boolean) exp.execute(env);
+
+        if (!hit) {
             return;
         }
-        if (ruleDefinition.getNext() != null) {
+        if (ruleDefinition.getNext() == null) {
             result.add(ruleDefinition.getId());
         } else {
-
+            this.doExecute(ruleDefinition.getNext(), env, result);
         }
     }
 
-    private boolean doExecute(String key, String expression, Map<String, Object> env) {
-        Expression exp = AviatorEvaluator.getInstance().compile(key, expression, true);
-        return (boolean) exp.execute(env);
-    }
 }

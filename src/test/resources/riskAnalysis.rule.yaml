@@ -1,0 +1,14 @@
+alatka.rule:
+  enabled: true
+  desc: 欺诈规则组
+  rules:
+  - desc: "风险账户10星"
+    - type: default
+      path: riskAnalysis/test.av
+    - type: database
+      kind: tradeDetail
+      scope: data
+      path: riskAnalysis/test.av
+  - desc: "风险账户9星"
+    - type: default
+      path:

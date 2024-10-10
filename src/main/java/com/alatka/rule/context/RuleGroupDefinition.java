@@ -15,7 +15,13 @@ public class RuleGroupDefinition {
 
     private String desc;
 
+    private Type type;
+
     private boolean enabled = true;
+
+    public enum Type {
+
+    }
 
     public String getId() {
         return id;
@@ -31,6 +37,14 @@ public class RuleGroupDefinition {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public boolean isEnabled() {

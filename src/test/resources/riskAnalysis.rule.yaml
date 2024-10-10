@@ -12,5 +12,6 @@ alatka.rule:
           scope: data
           path: riskAnalysis/test.av
     - desc: "风险账户9星"
-      - type: default
-        path:
+      elements:
+        - type: default
+          path:

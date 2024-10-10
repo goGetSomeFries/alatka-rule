@@ -4,8 +4,10 @@ import com.alatka.messages.util.YamlUtil;
 import com.alatka.rule.context.RuleDefinition;
 
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
 
@@ -25,6 +27,15 @@ public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
         String desc = this.getValueWithMap(map, "desc");
         boolean enabled = this.getValueWithMap(map, "enabled", true);
         List<Map<String, Object>> elements = this.getValueWithMap(map, "elements");
+
+        AtomicReference<RuleDefinition> reference = new AtomicReference<>();
+        elements.stream()
+                .sorted(Comparator::reversed)
+                .map(e -> {
+                    RuleDefinition ruleDefinition = new RuleDefinition();
+                    ruleDefinition.set
+                    return ruleDefinition;
+                }).peek(reference::set)
         return null;
     }
 

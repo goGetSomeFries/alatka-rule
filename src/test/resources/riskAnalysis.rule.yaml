@@ -1,7 +1,8 @@
 alatka.rule:
   enabled: true
+  type: greedy
   desc: 欺诈规则组
-  rules:
+  ruleSet:
     - desc: "风险账户10星"
       enabled: false
       elements:

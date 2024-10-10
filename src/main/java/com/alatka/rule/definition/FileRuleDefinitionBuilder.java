@@ -41,7 +41,7 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     @Override
     protected List<RuleDefinition> buildRuleDefinitions(Path source) {
         Map<String, Object> map = new HashMap<>();
-        List<Map<String, Object>> rules = this.getValueWithMap(map, "rules");
+        List<Map<String, Object>> rules = this.getValueWithMap(map, "ruleSet");
         return rules.stream()
                 .map(this::buildRuleDefinition)
                 .filter(RuleDefinition::isEnabled)

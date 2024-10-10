@@ -6,26 +6,12 @@ public class RuleDefinition {
 
     private boolean enabled;
 
-    private Type type;
+    private String desc;
 
-    private String expression;
+    private String remark;
 
-    private RuleDefinition next;
+    private RuleUnitDefinition ruleUnitDefinition;
 
-    public enum Type {
-
-        default_("default"), database("database");
-
-        private String key;
-
-        Type(String key) {
-            this.key = key;
-        }
-    }
-
-    public enum Scope {
-        global, data, rule
-    }
 
     public String getId() {
         return id;
@@ -43,27 +29,27 @@ public class RuleDefinition {
         this.enabled = enabled;
     }
 
-    public Type getType() {
-        return type;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
-    public String getExpression() {
-        return expression;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setExpression(String expression) {
-        this.expression = expression;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
-    public RuleDefinition getNext() {
-        return next;
+    public RuleUnitDefinition getRuleUnitDefinition() {
+        return ruleUnitDefinition;
     }
 
-    public void setNext(RuleDefinition next) {
-        this.next = next;
+    public void setRuleUnitDefinition(RuleUnitDefinition ruleUnitDefinition) {
+        this.ruleUnitDefinition = ruleUnitDefinition;
     }
 }

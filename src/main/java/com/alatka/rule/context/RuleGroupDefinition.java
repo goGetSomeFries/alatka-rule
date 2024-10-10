@@ -20,7 +20,7 @@ public class RuleGroupDefinition {
     private boolean enabled = true;
 
     public enum Type {
-
+        greedy, short_circle, level_greedy, level_short_circle
     }
 
     public String getId() {

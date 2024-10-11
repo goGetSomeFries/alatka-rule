@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<alatka-rule xmlns="http://rule.alatka.com"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://rule.alatka.com alatka-rule.xsd">
+    <ruleSet enabled="true" desc="欺诈规则组" type="greedy">
+        <rule id="" desc="风险账户10星" remark="" enabled="true">
+            <unit type="default" path="riskAnalysis/test.av"/>
+            <unit type="" path=""/>
+        </rule>
+        <rule id="" desc="风险账户9星" remark="" enabled="true">
+            <unit type="default" path=""/>
+            <unit type="" path=""/>
+        </rule>
+    </ruleSet>
+</alatka-rule>

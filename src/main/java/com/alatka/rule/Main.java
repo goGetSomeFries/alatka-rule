@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class Main {
 
-    private AviatorEvaluatorInstance aviatorEvaluatorInstance;
+    private final AviatorEvaluatorInstance aviatorEvaluatorInstance;
 
     public Main() {
         this.aviatorEvaluatorInstance = AviatorEvaluator.getInstance();
@@ -24,24 +24,21 @@ public class Main {
 
 
     public <T> List<String> execute(String groupName, T object) {
-        List<RuleDefinition> rules = RuleDefinitionContext.getInstance().getRuleGroup(groupName);
+        List<RuleDefinition> ruleGroup = RuleDefinitionContext.getInstance().getRuleGroup(groupName);
         Map<String, Object> params = JsonUtil.objectToMap(object);
         List<String> result = new ArrayList<>(0);
 
-        for (RuleDefinition ruleDefinition : rules) {
-            this.doExecute(ruleDefinition, ruleDefinition.getRuleUnitDefinition(), params, result);
+        for (RuleDefinition ruleDefinition : ruleGroup) {
+            this.doExecute(ruleDefinition, params, result);
         }
         return result;
     }
 
-    private void doExecute(RuleDefinition ruleDefinition,
-                           RuleUnitDefinition ruleUnitDefinition,
-                           Map<String, Object> params,
-                           List<String> result) {
+    private void doExecute(RuleDefinition ruleDefinition, Map<String, Object> params, List<String> result) {
+        RuleUnitDefinition ruleUnitDefinition = ruleDefinition.getRuleUnitDefinition();
+        Expression exp = aviatorEvaluatorInstance.compile(ruleDefinition.getId(), ruleUnitDefinition.getExpression(), true);
         RuleParser ruleParser = new DefaultRuleParser();
         Map<String, Object> env = ruleParser.getEnv(params, true);
-
-        Expression exp = aviatorEvaluatorInstance.compile(ruleDefinition.getId(), ruleUnitDefinition.getExpression(), true);
         boolean hit = (boolean) exp.execute(env);
 
         if (!hit) {
@@ -50,7 +47,7 @@ public class Main {
         if (ruleUnitDefinition.getNext() == null) {
             result.add(ruleDefinition.getId());
         } else {
-            this.doExecute(ruleDefinition, ruleUnitDefinition.getNext(), env, result);
+            this.doExecute(ruleDefinition, env, result);
         }
     }
 

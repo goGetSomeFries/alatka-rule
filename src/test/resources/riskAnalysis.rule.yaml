@@ -5,7 +5,7 @@ alatka.rule:
   ruleSet:
     - desc: "风险账户10星"
       enabled: false
-      elements:
+      units:
         - type: default
           path: riskAnalysis/test.av
         - type: database
@@ -13,6 +13,6 @@ alatka.rule:
           scope: data
           path: riskAnalysis/test.av
     - desc: "风险账户9星"
-      elements:
+      units:
         - type: default
           path:

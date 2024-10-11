@@ -37,4 +37,14 @@ public class FileUtil {
             throw new RuntimeException(e);
         }
     }
+
+    public static String getFileContent(String classpath) {
+        try {
+            Path path = Paths.get(classpath);
+            byte[] bytes = Files.readAllBytes(path);
+            return new String(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

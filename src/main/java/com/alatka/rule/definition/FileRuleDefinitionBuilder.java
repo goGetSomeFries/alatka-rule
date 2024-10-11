@@ -44,12 +44,8 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     }
 
     @Override
-    protected List<RuleDefinition> buildRuleDefinitions(Path source) {
-        List<Map<String, Object>> rules = this.getValueWithMap(this.rootModel, this.rulesKey());
-        return rules.stream()
-                .map(this::buildRuleDefinition)
-                .filter(RuleDefinition::isEnabled)
-                .collect(Collectors.toList());
+    protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
+        return this.getValueWithMap(this.rootModel, this.rulesKey());
     }
 
     @Override

@@ -2,16 +2,17 @@ package com.alatka.rule.definition;
 
 import com.alatka.rule.context.RuleDefinition;
 import com.alatka.rule.context.RuleGroupDefinition;
+import com.alatka.rule.context.RuleUnitDefinition;
+import com.alatka.rule.util.FileUtil;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder<Map<String, Object>> {
 
@@ -83,6 +84,45 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
         } catch (SQLException e) {
             throw new RuntimeException("查询ALK_RULE_DEFINITION失败", e);
         }
-        return list;
+        return list.stream().map(this::buildRuleDefinition).collect(Collectors.toList());
+    }
+
+    private RuleDefinition buildRuleDefinition(Map<String, Object> map) {
+        String id = this.getValueWithMap(map, "id");
+        String desc = this.getValueWithMap(map, "desc");
+        String remark = this.getValueWithMap(map, "remark");
+        boolean enabled = this.getValueWithMap(map, "enabled", true);
+        List<Map<String, Object>> units = this.getValueWithMap(map, this.ruleUnitsKey());
+        RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinitionChain(units);
+
+        RuleDefinition ruleDefinition = new RuleDefinition();
+        ruleDefinition.setId(id);
+        ruleDefinition.setEnabled(enabled);
+        ruleDefinition.setDesc(desc);
+        ruleDefinition.setRemark(remark);
+        ruleDefinition.setRuleUnitDefinition(ruleUnitDefinition);
+        return ruleDefinition;
+    }
+
+    private RuleUnitDefinition buildRuleUnitDefinitionChain(List<Map<String, Object>> units) {
+        AtomicReference<RuleUnitDefinition> reference = new AtomicReference<>();
+        units.stream()
+                .sorted(Collections.reverseOrder())
+                .map(map -> {
+                    boolean enabled = this.getValueWithMap(map, "enabled", true);
+                    RuleUnitDefinition.Type type = this.getValueWithMap(map, "type", RuleUnitDefinition.Type.default_);
+                    String path = this.getValueWithMap(map, "path");
+                    String expression = path == null ? this.getValueWithMap(map, "expression") : FileUtil.getFileContent(path);
+
+                    RuleUnitDefinition ruleUnitDefinition = new RuleUnitDefinition();
+                    ruleUnitDefinition.setEnabled(enabled);
+                    ruleUnitDefinition.setType(type);
+                    ruleUnitDefinition.setExpression(expression);
+                    return ruleUnitDefinition;
+                })
+                .filter(RuleUnitDefinition::isEnabled)
+                .peek(ruleUnitDefinition -> ruleUnitDefinition.setNext(reference.get()))
+                .forEach(reference::set);
+        return reference.get();
     }
 }

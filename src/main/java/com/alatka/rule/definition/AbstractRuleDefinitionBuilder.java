@@ -25,6 +25,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                     List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
                     context.setRuleGroup(ruleGroupDefinition, ruleDefinitions);
                 });
+        this.postProcess();
     }
 
     @Override
@@ -32,19 +33,20 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
 
     }
 
-    protected <S> S getValueWithMap(Map<String, Object> map, String key) {
-        return (S) map.get(key);
+    private RuleGroupDefinition buildRuleGroupDefinition(T source) {
+        Map<String, Object> map = this.doBuildRuleGroupDefinition(source);
+        String id = this.getValueWithMapOrThrow(map, "id");
+        String desc = this.getValueWithMapOrThrow(map, "desc");
+        String type = this.getValueWithMap(map, "type", RuleGroupDefinition.Type.greedy.name());
+        boolean enabled = this.getValueWithMap(map, "enabled", true);
+
+        RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition();
+        ruleGroupDefinition.setId(id);
+        ruleGroupDefinition.setDesc(desc);
+        ruleGroupDefinition.setType(RuleGroupDefinition.Type.valueOf(type));
+        ruleGroupDefinition.setEnabled(enabled);
+        return ruleGroupDefinition;
     }
-
-    protected <S> S getValueWithMap(Map<String, Object> map, String key, S defaultValue) {
-        return (S) map.getOrDefault(key, defaultValue);
-    }
-
-    protected abstract List<T> getSources();
-
-    protected abstract void preProcess(T source);
-
-    protected abstract RuleGroupDefinition buildRuleGroupDefinition(T source);
 
     protected List<RuleDefinition> buildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> rules = this.doBuildRuleDefinitions(ruleGroupDefinition);
@@ -54,26 +56,26 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 .collect(Collectors.toList());
     }
 
-    protected abstract List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition);
-
     private RuleDefinition buildRuleDefinition(Map<String, Object> map) {
-        String id = this.getValueWithMap(map, "id");
-        String desc = this.getValueWithMap(map, "desc");
-        String remark = this.getValueWithMap(map, "remark");
+        String id = this.getValueWithMapOrThrow(map, "id");
+        String desc = this.getValueWithMapOrThrow(map, "desc");
+        String remark = this.getValueWithMapOrThrow(map, "remark");
         boolean enabled = this.getValueWithMap(map, "enabled", true);
-        List<Map<String, Object>> units = this.getValueWithMap(map, this.ruleUnitsKey());
-        RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinitionChain(units);
 
         RuleDefinition ruleDefinition = new RuleDefinition();
         ruleDefinition.setId(id);
         ruleDefinition.setEnabled(enabled);
         ruleDefinition.setDesc(desc);
         ruleDefinition.setRemark(remark);
+
+        List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(ruleDefinition);
+        RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units);
+
         ruleDefinition.setRuleUnitDefinition(ruleUnitDefinition);
         return ruleDefinition;
     }
 
-    private RuleUnitDefinition buildRuleUnitDefinitionChain(List<Map<String, Object>> units) {
+    private RuleUnitDefinition buildRuleUnitDefinition(List<Map<String, Object>> units) {
         AtomicReference<RuleUnitDefinition> reference = new AtomicReference<>();
         units.stream()
                 .sorted(Collections.reverseOrder())
@@ -81,7 +83,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                     boolean enabled = this.getValueWithMap(map, "enabled", true);
                     RuleUnitDefinition.Type type = this.getValueWithMap(map, "type", RuleUnitDefinition.Type.default_);
                     String path = this.getValueWithMap(map, "path");
-                    String expression = path == null ? this.getValueWithMap(map, "expression") : FileUtil.getFileContent(path);
+                    String expression = path == null ? this.getValueWithMapOrThrow(map, "expression") : FileUtil.getFileContent(path);
 
                     RuleUnitDefinition ruleUnitDefinition = new RuleUnitDefinition();
                     ruleUnitDefinition.setEnabled(enabled);
@@ -94,4 +96,32 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 .forEach(reference::set);
         return reference.get();
     }
+
+    protected <S> S getValueWithMap(Map<String, Object> map, String key) {
+        return (S) map.get(key);
+    }
+
+    protected <S> S getValueWithMap(Map<String, Object> map, String key, S defaultValue) {
+        return (S) map.getOrDefault(key, defaultValue);
+    }
+
+    protected <S> S getValueWithMapOrThrow(Map<String, Object> map, String key) {
+        if (!map.containsKey(key)) {
+            throw new IllegalArgumentException("No such key: " + key);
+        }
+        return (S) map.get(key);
+    }
+
+    protected abstract List<T> getSources();
+
+    protected abstract void preProcess(T source);
+
+    protected abstract Map<String, Object> doBuildRuleGroupDefinition(T source);
+
+    protected abstract List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition);
+
+    protected abstract List<Map<String, Object>> doBuildRuleUnitDefinitions(RuleDefinition ruleDefinition);
+
+    protected abstract void postProcess();
+
 }

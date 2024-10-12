@@ -22,11 +22,6 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
-    protected String[] suffix() {
-        return new String[]{".xml"};
-    }
-
-    @Override
     protected String rulesKey() {
         return "rule";
     }
@@ -35,4 +30,10 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     protected String ruleUnitsKey() {
         return "unit";
     }
+
+    @Override
+    protected String[] suffix() {
+        return new String[]{".xml"};
+    }
+
 }

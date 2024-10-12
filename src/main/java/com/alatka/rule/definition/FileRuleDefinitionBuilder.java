@@ -2,15 +2,13 @@ package com.alatka.rule.definition;
 
 import com.alatka.rule.context.RuleDefinition;
 import com.alatka.rule.context.RuleGroupDefinition;
-import com.alatka.rule.context.RuleUnitDefinition;
 import com.alatka.rule.util.FileUtil;
 
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder<Path> {
@@ -30,22 +28,30 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     }
 
     @Override
-    protected RuleGroupDefinition buildRuleGroupDefinition(Path source) {
+    protected Map<String, Object> doBuildRuleGroupDefinition(Path source) {
         String fileName = source.toFile().getName();
+
         String id = fileName.substring(0, fileName.lastIndexOf(SUFFIX));
         String desc = this.getValueWithMap(this.rootModel, "desc");
-        boolean enabled = this.getValueWithMap(this.rootModel, "enabled", true);
+        String type = this.getValueWithMap(this.rootModel, "type");
+        boolean enabled = this.getValueWithMap(this.rootModel, "enabled");
 
-        RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition();
-        ruleGroupDefinition.setId(id);
-        ruleGroupDefinition.setDesc(desc);
-        ruleGroupDefinition.setEnabled(enabled);
-        return ruleGroupDefinition;
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", id);
+        result.put("desc", desc);
+        result.put("enabled", enabled);
+        result.put("type", type);
+        return result;
     }
 
     @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         return this.getValueWithMap(this.rootModel, this.rulesKey());
+    }
+
+    @Override
+    protected List<Map<String, Object>> doBuildRuleUnitDefinitions(RuleDefinition ruleDefinition) {
+        return this.getValueWithMap(this.rootModel, this.ruleUnitsKey());
     }
 
     @Override
@@ -60,6 +66,11 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
         this.rootModel = this.initRootModel(source);
     }
 
+    @Override
+    protected void postProcess() {
+        this.rootModel = null;
+    }
+
     protected abstract Map<String, Object> initRootModel(Path source);
 
     protected abstract String[] suffix();
@@ -68,42 +79,4 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
 
     protected abstract String ruleUnitsKey();
 
-    private RuleDefinition buildRuleDefinition(Map<String, Object> map) {
-        String id = this.getValueWithMap(map, "id");
-        String desc = this.getValueWithMap(map, "desc");
-        String remark = this.getValueWithMap(map, "remark");
-        boolean enabled = this.getValueWithMap(map, "enabled", true);
-        List<Map<String, Object>> units = this.getValueWithMap(map, this.ruleUnitsKey());
-        RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinitionChain(units);
-
-        RuleDefinition ruleDefinition = new RuleDefinition();
-        ruleDefinition.setId(id);
-        ruleDefinition.setEnabled(enabled);
-        ruleDefinition.setDesc(desc);
-        ruleDefinition.setRemark(remark);
-        ruleDefinition.setRuleUnitDefinition(ruleUnitDefinition);
-        return ruleDefinition;
-    }
-
-    private RuleUnitDefinition buildRuleUnitDefinitionChain(List<Map<String, Object>> units) {
-        AtomicReference<RuleUnitDefinition> reference = new AtomicReference<>();
-        units.stream()
-                .sorted(Collections.reverseOrder())
-                .map(map -> {
-                    boolean enabled = this.getValueWithMap(map, "enabled", true);
-                    RuleUnitDefinition.Type type = this.getValueWithMap(map, "type", RuleUnitDefinition.Type.default_);
-                    String path = this.getValueWithMap(map, "path");
-                    String expression = path == null ? this.getValueWithMap(map, "expression") : FileUtil.getFileContent(path);
-
-                    RuleUnitDefinition ruleUnitDefinition = new RuleUnitDefinition();
-                    ruleUnitDefinition.setEnabled(enabled);
-                    ruleUnitDefinition.setType(type);
-                    ruleUnitDefinition.setExpression(expression);
-                    return ruleUnitDefinition;
-                })
-                .filter(RuleUnitDefinition::isEnabled)
-                .peek(ruleUnitDefinition -> ruleUnitDefinition.setNext(reference.get()))
-                .forEach(reference::set);
-        return reference.get();
-    }
 }

@@ -28,6 +28,18 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     }
 
     @Override
+    protected List<Path> getSources() {
+        return Arrays.stream(suffix())
+                .flatMap(suffix -> FileUtil.getClasspathFiles(this.classpath, SUFFIX + suffix).stream())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    protected void preProcess(Path source) {
+        this.rootModel = this.initRootModel(source);
+    }
+
+    @Override
     protected Map<String, Object> doBuildRuleGroupDefinition(Path source) {
         String fileName = source.toFile().getName();
 
@@ -52,18 +64,6 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     @Override
     protected List<Map<String, Object>> doBuildRuleUnitDefinitions(RuleDefinition ruleDefinition) {
         return this.getValueWithMap(this.rootModel, this.ruleUnitsKey());
-    }
-
-    @Override
-    protected List<Path> getSources() {
-        return Arrays.stream(suffix())
-                .flatMap(suffix -> FileUtil.getClasspathFiles(this.classpath, SUFFIX + suffix).stream())
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    protected void preProcess(Path source) {
-        this.rootModel = this.initRootModel(source);
     }
 
     @Override

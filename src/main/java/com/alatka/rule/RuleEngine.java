@@ -35,7 +35,6 @@ public class RuleEngine {
 
         RuleDefinition theOne = null;
         for (RuleDefinition ruleDefinition : ruleDefinitions) {
-
             if (type == RuleGroupDefinition.Type.greedy) {
                 // do nothing
             } else if (type == RuleGroupDefinition.Type.short_circle) {
@@ -52,7 +51,7 @@ public class RuleEngine {
                 }
             }
 
-            this.doExecute(ruleDefinition, params, result);
+            this.doExecute(ruleDefinition, ruleDefinition.getRuleUnitDefinition(), params, result);
 
             if (result.size() > 0) {
                 theOne = ruleDefinition;
@@ -62,8 +61,8 @@ public class RuleEngine {
         return result;
     }
 
-    private void doExecute(RuleDefinition ruleDefinition, Map<String, Object> params, List<String> result) {
-        RuleUnitDefinition ruleUnitDefinition = ruleDefinition.getRuleUnitDefinition();
+    private void doExecute(RuleDefinition ruleDefinition, RuleUnitDefinition ruleUnitDefinition,
+                           Map<String, Object> params, List<String> result) {
         // TODO 规则在线发布
         String cacheKey = ruleDefinition + ruleUnitDefinition.toString();
         Expression exp = aviatorEvaluatorInstance.compile(cacheKey, ruleUnitDefinition.getExpression(), true);
@@ -78,7 +77,7 @@ public class RuleEngine {
         if (ruleUnitDefinition.getNext() == null) {
             result.add(ruleDefinition.getId());
         } else {
-            this.doExecute(ruleDefinition, env, result);
+            this.doExecute(ruleDefinition, ruleUnitDefinition.getNext(), env, result);
         }
     }
 

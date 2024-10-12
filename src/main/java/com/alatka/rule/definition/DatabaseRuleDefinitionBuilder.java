@@ -70,11 +70,6 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     }
 
     @Override
-    protected void postProcess() {
-        this.ruleUnitList = null;
-    }
-
-    @Override
     protected Map<String, Object> doBuildRuleGroupDefinition(Map<String, Object> source) {
         return source;
     }
@@ -114,4 +109,11 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                 .sorted(Comparator.comparingInt(map -> this.getValueWithMap(map, "order")))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    protected void postProcess() {
+        // 释放对象
+        this.ruleUnitList = null;
+    }
+
 }

@@ -64,8 +64,10 @@ public class RuleEngine {
 
     private void doExecute(RuleDefinition ruleDefinition, Map<String, Object> params, List<String> result) {
         RuleUnitDefinition ruleUnitDefinition = ruleDefinition.getRuleUnitDefinition();
+        // TODO 规则在线发布
         String cacheKey = ruleDefinition + ruleUnitDefinition.toString();
         Expression exp = aviatorEvaluatorInstance.compile(cacheKey, ruleUnitDefinition.getExpression(), true);
+        // TODO
         RuleParser ruleParser = new DefaultRuleParser();
         Map<String, Object> env = ruleParser.getEnv(params, true);
         boolean hit = (boolean) exp.execute(env);

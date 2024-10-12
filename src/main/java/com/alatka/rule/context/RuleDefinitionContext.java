@@ -7,16 +7,24 @@ public class RuleDefinitionContext {
 
     private ConcurrentHashMap<RuleGroupDefinition, List<RuleDefinition>> ruleGroupMap = new ConcurrentHashMap<>();
 
-    public List<RuleDefinition> getRuleGroup(String groupName) {
-        RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(groupName);
+    public RuleGroupDefinition getRuleGroupDefinition(String ruleGroupName) {
+        RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(ruleGroupName);
+        return this.ruleGroupMap.keySet().stream()
+                .filter(ruleGroupDefinition::equals)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(ruleGroupName + " not exists"));
+    }
+
+    public List<RuleDefinition> getRuleDefinitions(String ruleGroupName) {
+        RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(ruleGroupName);
         List<RuleDefinition> ruleDefinitions = this.ruleGroupMap.get(ruleGroupDefinition);
         if (ruleDefinitions == null) {
-            throw new IllegalArgumentException(groupName + " not exists");
+            throw new IllegalArgumentException(ruleGroupName + " not exists");
         }
         return ruleDefinitions;
     }
 
-    public void setRuleGroup(RuleGroupDefinition ruleGroupDefinition, List<RuleDefinition> ruleDefinitions) {
+    public void init(RuleGroupDefinition ruleGroupDefinition, List<RuleDefinition> ruleDefinitions) {
         this.ruleGroupMap.put(ruleGroupDefinition, ruleDefinitions);
     }
 

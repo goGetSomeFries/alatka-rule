@@ -94,13 +94,17 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                     result.put("desc", resultSet.getString("R_DESC"));
                     result.put("remark", resultSet.getString("R_REMARK"));
                     result.put("enabled", resultSet.getBoolean("R_ENABLED"));
+                    result.put("priority", resultSet.getInt("R_PRIORITY"));
+                    result.put("order", resultSet.getInt("R_ORDER"));
                     list.add(result);
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException("查询ALK_RULE_DEFINITION失败", e);
         }
-        return list;
+        return list.stream()
+                .sorted(Comparator.comparingInt(map -> this.getValueWithMap(map, "order")))
+                .collect(Collectors.toList());
     }
 
     @Override

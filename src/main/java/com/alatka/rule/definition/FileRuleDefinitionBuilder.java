@@ -68,6 +68,7 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
 
     @Override
     protected void postProcess() {
+        // 释放对象
         this.rootModel = null;
     }
 

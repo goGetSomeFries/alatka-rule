@@ -23,7 +23,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 .filter(RuleGroupDefinition::isEnabled)
                 .forEach(ruleGroupDefinition -> {
                     List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
-                    context.setRuleGroup(ruleGroupDefinition, ruleDefinitions);
+                    context.init(ruleGroupDefinition, ruleDefinitions);
                 });
         this.postProcess();
     }
@@ -60,6 +60,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         String id = this.getValueWithMapOrThrow(map, "id");
         String desc = this.getValueWithMapOrThrow(map, "desc");
         String remark = this.getValueWithMapOrThrow(map, "remark");
+        int priority = this.getValueWithMap(map, "priority", 1);
         boolean enabled = this.getValueWithMap(map, "enabled", true);
 
         RuleDefinition ruleDefinition = new RuleDefinition();
@@ -67,6 +68,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         ruleDefinition.setEnabled(enabled);
         ruleDefinition.setDesc(desc);
         ruleDefinition.setRemark(remark);
+        ruleDefinition.setPriority(priority);
 
         List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(ruleDefinition);
         RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units);

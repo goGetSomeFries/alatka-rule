@@ -10,6 +10,8 @@ public class RuleDefinition {
 
     private String remark;
 
+    private int priority;
+
     private RuleUnitDefinition ruleUnitDefinition;
 
 
@@ -43,6 +45,14 @@ public class RuleDefinition {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     public RuleUnitDefinition getRuleUnitDefinition() {

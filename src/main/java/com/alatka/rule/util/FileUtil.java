@@ -39,11 +39,16 @@ public class FileUtil {
     }
 
     public static String getFileContent(String classpath) {
+        return getFileContent(classpath, FileUtil.class.getClassLoader());
+    }
+
+    public static String getFileContent(String classpath, ClassLoader classLoader) {
         try {
-            Path path = Paths.get(classpath);
+            URL url = classLoader.getResource(classpath);
+            Path path = Paths.get(url.toURI());
             byte[] bytes = Files.readAllBytes(path);
             return new String(bytes);
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }

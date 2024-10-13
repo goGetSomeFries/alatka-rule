@@ -3,16 +3,20 @@ alatka.rule:
   type: greedy
   desc: 欺诈规则组
   ruleSet:
-    - desc: "风险账户10星"
-      enabled: false
+    - id: "1"
+      desc: "风险账户10星"
+      remark: "testing...."
       units:
-        - type: default
+        - type: current
           path: riskAnalysis/test.av
         - type: database
           kind: tradeDetail
           scope: data
           path: riskAnalysis/test.av
-    - desc: "风险账户9星"
+    - id: "2"
+      desc: "风险账户9星"
+      remark: "testing...."
+      enabled: true
       units:
-        - type: default
-          path:
+        - type: current
+          path: riskAnalysis/test.av

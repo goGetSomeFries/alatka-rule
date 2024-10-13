@@ -1,8 +1,10 @@
 package com.alatka.rule.definition;
 
 import com.alatka.messages.util.YamlUtil;
+import com.alatka.rule.context.RuleGroupDefinition;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
@@ -22,13 +24,13 @@ public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
-    protected String rulesKey() {
-        return "ruleSet";
+    protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
+        return this.getValueWithMap(this.rootModel, "ruleSet");
     }
 
     @Override
-    protected String ruleUnitsKey() {
-        return "units";
+    protected List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> ruleDefinition) {
+        return this.getValueWithMap(ruleDefinition, "units");
     }
 
     @Override

@@ -12,8 +12,8 @@
             <xs:element type="ruleType" name="rule" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute type="xs:string" name="desc" use="required"/>
-        <xs:attribute type="xs:string" name="type" use="required"/>
-        <xs:attribute type="xs:boolean" name="enabled" use="required"/>
+        <xs:attribute type="xs:string" name="type" use="optional"/>
+        <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
         <xs:attribute type="xs:integer" name="priority" use="optional"/>
     </xs:complexType>
     <xs:complexType name="ruleType">
@@ -23,7 +23,7 @@
         <xs:attribute type="xs:string" name="id" use="required"/>
         <xs:attribute type="xs:string" name="desc" use="required"/>
         <xs:attribute type="xs:string" name="remark" use="required"/>
-        <xs:attribute type="xs:boolean" name="enabled" use="required"/>
+        <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
     </xs:complexType>
     <xs:complexType name="unitType">
         <xs:simpleContent>

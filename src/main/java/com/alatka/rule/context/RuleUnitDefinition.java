@@ -12,13 +12,7 @@ public class RuleUnitDefinition {
 
     public enum Type {
 
-        default_("default"), database("database");
-
-        private String key;
-
-        Type(String key) {
-            this.key = key;
-        }
+        current, database;
     }
 
     public enum Scope {

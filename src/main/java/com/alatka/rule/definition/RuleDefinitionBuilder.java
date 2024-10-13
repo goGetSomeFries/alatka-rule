@@ -5,4 +5,6 @@ public interface RuleDefinitionBuilder {
     void build();
 
     void refresh();
+
 }
+

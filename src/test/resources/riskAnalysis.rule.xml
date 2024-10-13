@@ -3,13 +3,12 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://rule.alatka.com alatka-rule.xsd">
     <ruleSet enabled="true" desc="欺诈规则组" type="greedy">
-        <rule id="" desc="风险账户10星" remark="" enabled="true">
-            <unit type="default" path="riskAnalysis/test.av"/>
-            <unit type="" path=""/>
+        <rule id="1" desc="风险账户10星" remark="testing...." enabled="true">
+            <unit type="current" path="riskAnalysis/test.av"/>
+            <unit type="database" path="riskAnalysis/test.av"/>
         </rule>
-        <rule id="" desc="风险账户9星" remark="" enabled="true">
-            <unit type="default" path=""/>
-            <unit type="" path=""/>
+        <rule id="2" desc="风险账户9星" remark="testing...." enabled="true">
+            <unit type="current" path="riskAnalysis/test.av"/>
         </rule>
     </ruleSet>
 </alatka-rule>

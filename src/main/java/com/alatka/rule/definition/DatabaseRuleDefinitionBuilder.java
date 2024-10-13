@@ -1,6 +1,5 @@
 package com.alatka.rule.definition;
 
-import com.alatka.rule.context.RuleDefinition;
 import com.alatka.rule.context.RuleGroupDefinition;
 
 import javax.sql.DataSource;
@@ -103,9 +102,11 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     }
 
     @Override
-    protected List<Map<String, Object>> doBuildRuleUnitDefinitions(RuleDefinition ruleDefinition) {
+    protected List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> ruleDefinition) {
+        String ruleId = this.getValueWithMap(ruleDefinition, "id");
+
         return this.ruleUnitList.stream()
-                .filter(map -> ruleDefinition.getId().equals(this.getValueWithMap(map, "ruleId")))
+                .filter(map -> ruleId.equals(this.getValueWithMap(map, "ruleId")))
                 .sorted(Comparator.comparingInt(map -> this.getValueWithMap(map, "order")))
                 .collect(Collectors.toList());
     }

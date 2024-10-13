@@ -6,6 +6,7 @@ import com.alatka.rule.context.RuleGroupDefinition;
 import com.alatka.rule.context.RuleUnitDefinition;
 import com.alatka.rule.util.FileUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -63,33 +64,34 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         int priority = this.getValueWithMap(map, "priority", 1);
         boolean enabled = this.getValueWithMap(map, "enabled", true);
 
+        List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(map);
+        RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units);
+
         RuleDefinition ruleDefinition = new RuleDefinition();
         ruleDefinition.setId(id);
         ruleDefinition.setEnabled(enabled);
         ruleDefinition.setDesc(desc);
         ruleDefinition.setRemark(remark);
         ruleDefinition.setPriority(priority);
-
-        List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(ruleDefinition);
-        RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units);
-
         ruleDefinition.setRuleUnitDefinition(ruleUnitDefinition);
         return ruleDefinition;
     }
 
     private RuleUnitDefinition buildRuleUnitDefinition(List<Map<String, Object>> units) {
+        List<Map<String, Object>> list = new ArrayList<>(units);
+        Collections.reverse(list);
+
         AtomicReference<RuleUnitDefinition> reference = new AtomicReference<>();
-        units.stream()
-                .sorted(Collections.reverseOrder())
+        list.stream()
                 .map(map -> {
                     boolean enabled = this.getValueWithMap(map, "enabled", true);
-                    RuleUnitDefinition.Type type = this.getValueWithMap(map, "type", RuleUnitDefinition.Type.default_);
+                    String type = this.getValueWithMap(map, "type", RuleUnitDefinition.Type.current.name());
                     String path = this.getValueWithMap(map, "path");
                     String expression = path == null ? this.getValueWithMapOrThrow(map, "expression") : FileUtil.getFileContent(path);
 
                     RuleUnitDefinition ruleUnitDefinition = new RuleUnitDefinition();
                     ruleUnitDefinition.setEnabled(enabled);
-                    ruleUnitDefinition.setType(type);
+                    ruleUnitDefinition.setType(RuleUnitDefinition.Type.valueOf(type));
                     ruleUnitDefinition.setExpression(expression);
                     return ruleUnitDefinition;
                 })
@@ -122,7 +124,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
 
     protected abstract List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition);
 
-    protected abstract List<Map<String, Object>> doBuildRuleUnitDefinitions(RuleDefinition ruleDefinition);
+    protected abstract List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> ruleDefinition);
 
     protected abstract void postProcess();
 

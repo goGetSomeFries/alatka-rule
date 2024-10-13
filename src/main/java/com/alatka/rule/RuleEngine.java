@@ -25,30 +25,37 @@ public class RuleEngine {
 
 
     public List<String> execute(String groupName, Object object) {
-        Map<String, Object> params = JsonUtil.objectToMap(object);
-        List<String> result = new ArrayList<>(0);
-
         RuleDefinitionContext context = RuleDefinitionContext.getInstance();
         List<RuleDefinition> ruleDefinitions = context.getRuleDefinitions(groupName);
         RuleGroupDefinition ruleGroupDefinition = context.getRuleGroupDefinition(groupName);
         RuleGroupDefinition.Type type = ruleGroupDefinition.getType();
 
+        Map<String, Object> params = JsonUtil.objectToMap(object);
+        List<String> result = new ArrayList<>(0);
         RuleDefinition theOne = null;
+
+        outerLoop:
         for (RuleDefinition ruleDefinition : ruleDefinitions) {
-            if (type == RuleGroupDefinition.Type.greedy) {
-                // do nothing
-            } else if (type == RuleGroupDefinition.Type.short_circle) {
-                if (theOne != null) {
+            switch (type) {
+                case greedy:
                     break;
-                }
-            } else if (type == RuleGroupDefinition.Type.priority_greedy) {
-                if (theOne != null && theOne.getPriority() != ruleDefinition.getPriority()) {
+                case short_circle:
+                    if (theOne != null) {
+                        break outerLoop;
+                    }
                     break;
-                }
-            } else if (type == RuleGroupDefinition.Type.priority_short_circle) {
-                if (theOne != null && theOne.getPriority() == ruleDefinition.getPriority()) {
-                    continue;
-                }
+                case priority_greedy:
+                    if (theOne != null && theOne.getPriority() != ruleDefinition.getPriority()) {
+                        break outerLoop;
+                    }
+                    break;
+                case priority_short_circle:
+                    if (theOne != null && theOne.getPriority() == ruleDefinition.getPriority()) {
+                        continue;
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException("error type:" + type);
             }
 
             this.doExecute(ruleDefinition, ruleDefinition.getRuleUnitDefinition(), params, result);

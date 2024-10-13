@@ -1,7 +1,5 @@
 package com.alatka.rule.definition;
 
-import com.alatka.rule.context.RuleDefinition;
-import com.alatka.rule.context.RuleGroupDefinition;
 import com.alatka.rule.util.FileUtil;
 
 import java.nio.file.Path;
@@ -17,7 +15,7 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
 
     private String classpath;
 
-    private Map<String, Object> rootModel;
+    protected Map<String, Object> rootModel;
 
     public FileRuleDefinitionBuilder() {
         this("");
@@ -30,7 +28,7 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     @Override
     protected List<Path> getSources() {
         return Arrays.stream(suffix())
-                .flatMap(suffix -> FileUtil.getClasspathFiles(this.classpath, SUFFIX + suffix).stream())
+                .flatMap(suffix -> FileUtil.getClasspathFiles(this.classpath, "*" + SUFFIX + suffix).stream())
                 .collect(Collectors.toList());
     }
 
@@ -57,16 +55,6 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     }
 
     @Override
-    protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
-        return this.getValueWithMap(this.rootModel, this.rulesKey());
-    }
-
-    @Override
-    protected List<Map<String, Object>> doBuildRuleUnitDefinitions(RuleDefinition ruleDefinition) {
-        return this.getValueWithMap(this.rootModel, this.ruleUnitsKey());
-    }
-
-    @Override
     protected void postProcess() {
         // 释放对象
         this.rootModel = null;
@@ -75,9 +63,5 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     protected abstract Map<String, Object> initRootModel(Path source);
 
     protected abstract String[] suffix();
-
-    protected abstract String rulesKey();
-
-    protected abstract String ruleUnitsKey();
 
 }

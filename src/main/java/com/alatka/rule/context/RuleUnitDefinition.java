@@ -15,10 +15,6 @@ public class RuleUnitDefinition {
         current, database;
     }
 
-    public enum Scope {
-        global, data, rule
-    }
-
     public boolean isEnabled() {
         return enabled;
     }

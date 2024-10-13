@@ -1,7 +1,7 @@
 package com.alatka.rule;
 
 import com.alatka.rule.context.RuleDefinition;
-import com.alatka.rule.context.RuleDefinitionContext;
+import com.alatka.rule.context.RuleGroupDefinitionContext;
 import com.alatka.rule.context.RuleGroupDefinition;
 import com.alatka.rule.context.RuleUnitDefinition;
 import com.alatka.rule.parser.DefaultRuleParser;
@@ -25,7 +25,7 @@ public class RuleEngine {
 
 
     public List<String> execute(String groupName, Object object) {
-        RuleDefinitionContext context = RuleDefinitionContext.getInstance();
+        RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance();
         List<RuleDefinition> ruleDefinitions = context.getRuleDefinitions(groupName);
         RuleGroupDefinition ruleGroupDefinition = context.getRuleGroupDefinition(groupName);
         RuleGroupDefinition.Type type = ruleGroupDefinition.getType();

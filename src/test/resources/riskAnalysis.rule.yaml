@@ -11,7 +11,6 @@ alatka.rule:
           path: riskAnalysis/test.av
         - type: database
           kind: tradeDetail
-          scope: data
           path: riskAnalysis/test.av
     - id: "2"
       desc: "风险账户9星"
@@ -20,3 +19,14 @@ alatka.rule:
       units:
         - type: current
           path: riskAnalysis/test.av
+  support:
+    database:
+      - kind: tradeDetail
+        scope: data
+        sql: "select * from trdetail t where t.xxx = v_date"
+      - kind: vipDetail
+        scope:
+        sql: ""
+      - kind:
+        scope:
+        sql:

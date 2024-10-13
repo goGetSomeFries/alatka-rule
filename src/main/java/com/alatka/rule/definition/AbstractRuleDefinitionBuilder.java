@@ -1,7 +1,7 @@
 package com.alatka.rule.definition;
 
 import com.alatka.rule.context.RuleDefinition;
-import com.alatka.rule.context.RuleDefinitionContext;
+import com.alatka.rule.context.RuleGroupDefinitionContext;
 import com.alatka.rule.context.RuleGroupDefinition;
 import com.alatka.rule.context.RuleUnitDefinition;
 import com.alatka.rule.util.FileUtil;
@@ -17,14 +17,14 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
 
     @Override
     public void build() {
-        RuleDefinitionContext context = RuleDefinitionContext.getInstance();
+        RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance();
         this.getSources().stream()
                 .peek(this::preProcess)
                 .map(this::buildRuleGroupDefinition)
                 .filter(RuleGroupDefinition::isEnabled)
                 .forEach(ruleGroupDefinition -> {
                     List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
-                    context.init(ruleGroupDefinition, ruleDefinitions);
+                    context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
                 });
         this.postProcess();
     }

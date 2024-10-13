@@ -11,4 +11,9 @@
             <unit type="current" path="riskAnalysis/test.av"/>
         </rule>
     </ruleSet>
+    <support>
+        <database>
+            <unit></unit>
+        </database>
+    </support>
 </alatka-rule>

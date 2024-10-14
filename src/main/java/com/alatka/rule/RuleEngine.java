@@ -1,8 +1,8 @@
 package com.alatka.rule;
 
 import com.alatka.rule.context.RuleDefinition;
-import com.alatka.rule.context.RuleGroupDefinitionContext;
 import com.alatka.rule.context.RuleGroupDefinition;
+import com.alatka.rule.context.RuleGroupDefinitionContext;
 import com.alatka.rule.context.RuleUnitDefinition;
 import com.alatka.rule.parser.DefaultRuleParser;
 import com.alatka.rule.parser.RuleParser;
@@ -19,18 +19,21 @@ public class RuleEngine {
 
     private final AviatorEvaluatorInstance aviatorEvaluatorInstance;
 
-    public RuleEngine() {
+    private final String ruleGroupName;
+
+    public RuleEngine(String ruleGroupName) {
+        this.ruleGroupName = ruleGroupName;
         this.aviatorEvaluatorInstance = AviatorEvaluator.getInstance();
     }
 
 
-    public List<String> execute(String groupName, Object object) {
+    public List<String> execute(Object input) {
         RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance();
-        List<RuleDefinition> ruleDefinitions = context.getRuleDefinitions(groupName);
-        RuleGroupDefinition ruleGroupDefinition = context.getRuleGroupDefinition(groupName);
+        List<RuleDefinition> ruleDefinitions = context.getRuleDefinitions(ruleGroupName);
+        RuleGroupDefinition ruleGroupDefinition = context.getRuleGroupDefinition(ruleGroupName);
         RuleGroupDefinition.Type type = ruleGroupDefinition.getType();
 
-        Map<String, Object> params = JsonUtil.objectToMap(object);
+        Map<String, Object> params = JsonUtil.objectToMap(input);
         List<String> result = new ArrayList<>(0);
         RuleDefinition theOne = null;
 

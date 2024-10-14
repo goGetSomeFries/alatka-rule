@@ -1,9 +1,6 @@
 package com.alatka.rule.definition;
 
-import com.alatka.rule.context.RuleDefinition;
-import com.alatka.rule.context.RuleGroupDefinitionContext;
-import com.alatka.rule.context.RuleGroupDefinition;
-import com.alatka.rule.context.RuleUnitDefinition;
+import com.alatka.rule.context.*;
 import com.alatka.rule.util.FileUtil;
 
 import java.util.ArrayList;
@@ -22,6 +19,10 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 .peek(this::preProcess)
                 .map(this::buildRuleGroupDefinition)
                 .filter(RuleGroupDefinition::isEnabled)
+                .peek(ruleGroupDefinition -> {
+                    List<RuleDataSourceDefinition> ruleDataSourceDefinitions = this.buildRuleDataSourceDefinitions(ruleGroupDefinition);
+                    context.initRuleDataSourceDefinitions(ruleGroupDefinition, ruleDataSourceDefinitions);
+                })
                 .forEach(ruleGroupDefinition -> {
                     List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
                     context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
@@ -49,7 +50,33 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         return ruleGroupDefinition;
     }
 
-    protected List<RuleDefinition> buildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
+    private List<RuleDataSourceDefinition> buildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
+        List<Map<String, Object>> ruleDataSources = this.doBuildRuleDataSourceDefinitions(ruleGroupDefinition);
+        return ruleDataSources.stream()
+                .map(this::buildRuleDataSourceDefinition)
+                .filter(RuleDataSourceDefinition::isEnabled)
+                .collect(Collectors.toList());
+    }
+
+    private RuleDataSourceDefinition buildRuleDataSourceDefinition(Map<String, Object> map) {
+        String id = this.getValueWithMapOrThrow(map, "id");
+        String desc = this.getValueWithMapOrThrow(map, "desc");
+        boolean enabled = this.getValueWithMap(map, "enabled", true);
+        String type = this.getValueWithMapOrThrow(map, "type");
+        Map<String, Object> params = this.getValueWithMapOrThrow(map, "params");
+        String scope = this.getValueWithMap(map, "scope", RuleDataSourceDefinition.Scope.data.name());
+
+        RuleDataSourceDefinition definition = new RuleDataSourceDefinition();
+        definition.setId(id);
+        definition.setType(RuleDataSourceDefinition.Type.valueOf(type));
+        definition.setScope(RuleDataSourceDefinition.Scope.valueOf(scope));
+        definition.setEnabled(enabled);
+        definition.setDesc(desc);
+        definition.setParams(params);
+        return definition;
+    }
+
+    private List<RuleDefinition> buildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> rules = this.doBuildRuleDefinitions(ruleGroupDefinition);
         return rules.stream()
                 .map(this::buildRuleDefinition)
@@ -85,13 +112,13 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         list.stream()
                 .map(map -> {
                     boolean enabled = this.getValueWithMap(map, "enabled", true);
-                    String type = this.getValueWithMap(map, "type", RuleUnitDefinition.Type.current.name());
+                    String dataSourceId = this.getValueWithMap(map, "dataSourceId");
                     String path = this.getValueWithMap(map, "path");
                     String expression = path == null ? this.getValueWithMapOrThrow(map, "expression") : FileUtil.getFileContent(path);
 
                     RuleUnitDefinition ruleUnitDefinition = new RuleUnitDefinition();
                     ruleUnitDefinition.setEnabled(enabled);
-                    ruleUnitDefinition.setType(RuleUnitDefinition.Type.valueOf(type));
+                    ruleUnitDefinition.setDataSourceId(dataSourceId);
                     ruleUnitDefinition.setExpression(expression);
                     return ruleUnitDefinition;
                 })
@@ -121,6 +148,8 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     protected abstract void preProcess(T source);
 
     protected abstract Map<String, Object> doBuildRuleGroupDefinition(T source);
+
+    protected abstract List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition);
 
     protected abstract List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition);
 

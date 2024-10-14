@@ -74,6 +74,32 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     }
 
     @Override
+    protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String sql = "select * from ALK_RULE_DATASOURCE_DEFINITION WHERE G_ID = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, Integer.parseInt(ruleGroupDefinition.getId()));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("id", resultSet.getInt("D_ID"));
+                    result.put("desc", resultSet.getString("D_DESC"));
+                    result.put("type", resultSet.getString("D_TYPE"));
+                    result.put("enabled", resultSet.getBoolean("D_ENABLED"));
+                    result.put("scope", resultSet.getInt("D_SCOPE"));
+                    result.put("sql", resultSet.getInt("D_PARAM1"));
+                    list.add(result);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("查询ALK_RULE_DATASOURCE_DEFINITION失败", e);
+        }
+        return list;
+    }
+
+    @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
         String sql = "select * from ALK_RULE_DEFINITION WHERE G_ID = ?";

@@ -25,6 +25,11 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
+    protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
+        return this.getValueWithMap(this.rootModel, "dataSource");
+    }
+
+    @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         Object object = this.getValueWithMap(this.rootModel, "rule");
         return (List<Map<String, Object>>) (object instanceof List ? object : Collections.singletonList(object));

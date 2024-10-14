@@ -5,6 +5,7 @@
     <xs:complexType name="alatka-ruleType">
         <xs:sequence>
             <xs:element type="ruleSetType" name="ruleSet"/>
+            <xs:element type="dataSourceType" name="dataSource"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="ruleSetType">
@@ -29,10 +30,22 @@
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
-                <xs:attribute type="xs:string" name="type" use="optional"/>
+                <xs:attribute type="xs:string" name="dataSource" use="optional"/>
                 <xs:attribute type="xs:string" name="path" use="optional"/>
                 <xs:attribute type="xs:string" name="expression" use="optional"/>
             </xs:extension>
         </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="dataSourceType">
+        <xs:sequence>
+            <xs:element type="databaseType" name="database" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="databaseType">
+        <xs:attribute type="xs:string" name="id" use="required"/>
+        <xs:attribute type="xs:string" name="desc" use="required"/>
+        <xs:attribute type="xs:string" name="scope" use="optional"/>
+        <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
+        <xs:attribute type="xs:string" name="sql" use="required"/>
     </xs:complexType>
 </xs:schema>

@@ -1,10 +1,10 @@
 package com.alatka.rule.context;
 
-public class RuleDefinition {
+public class RuleDefinition extends AbstractDefinition {
 
-    private String id;
-
-    private boolean enabled;
+    public RuleDefinition() {
+        super(null);
+    }
 
     private String desc;
 
@@ -13,23 +13,6 @@ public class RuleDefinition {
     private int priority;
 
     private RuleUnitDefinition ruleUnitDefinition;
-
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 
     public String getDesc() {
         return desc;

@@ -4,16 +4,12 @@ public class RuleUnitDefinition {
 
     private boolean enabled = true;
 
-    private Type type;
+    private String dataSourceId;
 
     private String expression;
 
     private RuleUnitDefinition next;
 
-    public enum Type {
-
-        current, database;
-    }
 
     public boolean isEnabled() {
         return enabled;
@@ -23,12 +19,12 @@ public class RuleUnitDefinition {
         this.enabled = enabled;
     }
 
-    public Type getType() {
-        return type;
+    public String getDataSourceId() {
+        return dataSourceId;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setDataSourceId(String dataSourceId) {
+        this.dataSourceId = dataSourceId;
     }
 
     public String getExpression() {

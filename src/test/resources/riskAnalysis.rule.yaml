@@ -7,26 +7,30 @@ alatka.rule:
       desc: "风险账户10星"
       remark: "testing...."
       units:
-        - type: current
-          path: riskAnalysis/test.av
-        - type: database
-          kind: tradeDetail
-          path: riskAnalysis/test.av
+        - path: riskAnalysis/test.av
+        - path: riskAnalysis/test.av
+          dataSource: tradeDetail
     - id: "2"
       desc: "风险账户9星"
       remark: "testing...."
       enabled: true
       units:
-        - type: current
-          path: riskAnalysis/test.av
-  support:
-    database:
-      - kind: tradeDetail
-        scope: data
+        - path: riskAnalysis/test.av
+  dataSource:
+    - id: tradeDetail
+      type: database
+      desc: ""
+      scope: data
+      params:
         sql: "select * from trdetail t where t.xxx = v_date"
-      - kind: vipDetail
-        scope:
-        sql: ""
-      - kind:
-        scope:
-        sql:
+    - id: vipDetail
+      type: database
+      desc: ""
+      scope: data
+      params:
+        sql: "select * from trdetail t where t.xxx = v_date"
+    - id:
+      desc: ""
+      scope:
+      params:
+        sql: "select * from trdetail t where t.xxx = v_date"

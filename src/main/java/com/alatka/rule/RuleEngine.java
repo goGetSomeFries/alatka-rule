@@ -4,8 +4,7 @@ import com.alatka.rule.context.RuleDefinition;
 import com.alatka.rule.context.RuleGroupDefinition;
 import com.alatka.rule.context.RuleGroupDefinitionContext;
 import com.alatka.rule.context.RuleUnitDefinition;
-import com.alatka.rule.parser.DefaultRuleParser;
-import com.alatka.rule.parser.RuleParser;
+import com.alatka.rule.datasource.DataSourceBuilder;
 import com.alatka.rule.util.JsonUtil;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.AviatorEvaluatorInstance;
@@ -77,8 +76,8 @@ public class RuleEngine {
         String cacheKey = ruleDefinition + ruleUnitDefinition.toString();
         Expression exp = aviatorEvaluatorInstance.compile(cacheKey, ruleUnitDefinition.getExpression(), true);
         // TODO
-        RuleParser ruleParser = new DefaultRuleParser();
-        Map<String, Object> env = ruleParser.getEnv(params, true);
+        DataSourceBuilder dataSourceBuilder = null;
+        Map<String, Object> env = dataSourceBuilder.getContext(ruleUnitDefinition.getDataSourceRef(), params);
         boolean hit = (boolean) exp.execute(env);
 
         if (!hit) {

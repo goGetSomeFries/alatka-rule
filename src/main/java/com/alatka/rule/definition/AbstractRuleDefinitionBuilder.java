@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinitionBuilder {
 
+    private Map<String, RuleDataSourceDefinition> mapping;
+
     @Override
     public void build() {
         RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance();
@@ -20,12 +22,13 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 .peek(this::preProcess)
                 .map(this::buildRuleGroupDefinition)
                 .filter(RuleGroupDefinition::isEnabled)
+                .peek(ruleGroupDefinition -> this.mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition))
                 .forEach(ruleGroupDefinition -> {
-                    Map<String, RuleDataSourceDefinition> mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition);
-                    List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition, mapping);
+                    List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
                     context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
                 });
         this.postProcess();
+        this.mapping = null;
     }
 
     @Override
@@ -66,17 +69,15 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         return definition;
     }
 
-    private List<RuleDefinition> buildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition,
-                                                      Map<String, RuleDataSourceDefinition> mapping) {
+    private List<RuleDefinition> buildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> rules = this.doBuildRuleDefinitions(ruleGroupDefinition);
         return rules.stream()
-                .map(map -> this.buildRuleDefinition(map, mapping))
+                .map(map -> this.buildRuleDefinition(map))
                 .filter(RuleDefinition::isEnabled)
                 .collect(Collectors.toList());
     }
 
-    private RuleDefinition buildRuleDefinition(Map<String, Object> map,
-                                               Map<String, RuleDataSourceDefinition> mapping) {
+    private RuleDefinition buildRuleDefinition(Map<String, Object> map) {
         String id = this.getValueWithMapOrThrow(map, "id");
         String desc = this.getValueWithMapOrThrow(map, "desc");
         String remark = this.getValueWithMapOrThrow(map, "remark");
@@ -84,7 +85,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         boolean enabled = this.getValueWithMap(map, "enabled", true);
 
         List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(map);
-        RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units, mapping);
+        RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units);
 
         RuleDefinition ruleDefinition = new RuleDefinition();
         ruleDefinition.setId(id);
@@ -96,29 +97,28 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         return ruleDefinition;
     }
 
-    private RuleUnitDefinition buildRuleUnitDefinition(List<Map<String, Object>> units,
-                                                       Map<String, RuleDataSourceDefinition> mapping) {
+    private RuleUnitDefinition buildRuleUnitDefinition(List<Map<String, Object>> units
+    ) {
         List<Map<String, Object>> list = new ArrayList<>(units);
         Collections.reverse(list);
 
         AtomicReference<RuleUnitDefinition> reference = new AtomicReference<>();
         list.stream()
-                .map(map -> this.doBuildRuleUnitDefinition(map, mapping))
+                .map(this::doBuildRuleUnitDefinition)
                 .filter(RuleUnitDefinition::isEnabled)
                 .peek(ruleUnitDefinition -> ruleUnitDefinition.setNext(reference.get()))
                 .forEach(reference::set);
         return reference.get();
     }
 
-    private RuleUnitDefinition doBuildRuleUnitDefinition(Map<String, Object> map,
-                                                         Map<String, RuleDataSourceDefinition> mapping) {
+    private RuleUnitDefinition doBuildRuleUnitDefinition(Map<String, Object> map) {
         boolean enabled = this.getValueWithMap(map, "enabled", true);
         String path = this.getValueWithMap(map, "path");
         String expression = path == null ? this.getValueWithMapOrThrow(map, "expression") : FileUtil.getFileContent(path);
         String dataSource = this.getValueWithMap(map, "dataSource");
         RuleDataSourceDefinition dataSrouceRef = null;
         if (dataSource != null) {
-            dataSrouceRef = mapping.get(dataSource);
+            dataSrouceRef = this.mapping.get(dataSource);
             if (dataSrouceRef == null) {
                 throw new IllegalArgumentException("DataSource '" + dataSource + "' not found");
             }

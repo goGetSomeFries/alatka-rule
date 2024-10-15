@@ -8,8 +8,6 @@ public class RuleGroupDefinitionContext {
 
     private Map<RuleGroupDefinition, List<RuleDefinition>> ruleDefinitionsMap = new HashMap<>();
 
-    private Map<RuleGroupDefinition, List<RuleDataSourceDefinition>> ruleDataSourceDefinitionsMap = new HashMap<>();
-
     public RuleGroupDefinition getRuleGroupDefinition(String ruleGroupName) {
         RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(ruleGroupName);
         return this.ruleDefinitionsMap.keySet()
@@ -28,23 +26,8 @@ public class RuleGroupDefinitionContext {
         return ruleDefinitions;
     }
 
-    public RuleDataSourceDefinition getRuleSupportDatabaseDefinition(String ruleGroupName, String id) {
-        RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(ruleGroupName);
-        RuleDataSourceDefinition ruleDataSourceDefinition = new RuleDataSourceDefinition(id);
-        return this.ruleDataSourceDefinitionsMap.get(ruleGroupDefinition)
-                .stream()
-                .filter(ruleDataSourceDefinition::equals)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(id + " not exists"));
-    }
-
     public void initRuleDefinitions(RuleGroupDefinition ruleGroupDefinition, List<RuleDefinition> ruleDefinitions) {
         this.ruleDefinitionsMap.put(ruleGroupDefinition, ruleDefinitions);
-    }
-
-    public void initRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition,
-                                              List<RuleDataSourceDefinition> ruleDataSourceDefinitions) {
-        this.ruleDataSourceDefinitionsMap.put(ruleGroupDefinition, ruleDataSourceDefinitions);
     }
 
     public static RuleGroupDefinitionContext getInstance() {

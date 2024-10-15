@@ -4,7 +4,7 @@ public class RuleUnitDefinition {
 
     private boolean enabled = true;
 
-    private String dataSourceId;
+    private RuleDataSourceDefinition dataSourceRef;
 
     private String expression;
 
@@ -19,12 +19,12 @@ public class RuleUnitDefinition {
         this.enabled = enabled;
     }
 
-    public String getDataSourceId() {
-        return dataSourceId;
+    public RuleDataSourceDefinition getDataSourceRef() {
+        return dataSourceRef;
     }
 
-    public void setDataSourceId(String dataSourceId) {
-        this.dataSourceId = dataSourceId;
+    public void setDataSourceRef(RuleDataSourceDefinition dataSourceRef) {
+        this.dataSourceRef = dataSourceRef;
     }
 
     public String getExpression() {

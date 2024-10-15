@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder<Map<String, Object>> {
 
@@ -88,14 +89,30 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                     result.put("desc", resultSet.getString("D_DESC"));
                     result.put("type", resultSet.getString("D_TYPE"));
                     result.put("enabled", resultSet.getBoolean("D_ENABLED"));
-                    result.put("scope", resultSet.getInt("D_SCOPE"));
-                    result.put("sql", resultSet.getInt("D_PARAM1"));
+                    result.put("scope", resultSet.getString("D_SCOPE"));
+                    result.put("key1", resultSet.getString("D_PARAM_K1"));
+                    result.put("value1", resultSet.getString("D_PARAM_V1"));
+                    result.put("key2", resultSet.getString("D_PARAM_K2"));
+                    result.put("value2", resultSet.getString("D_PARAM_V2"));
+                    result.put("key3", resultSet.getString("D_PARAM_K3"));
+                    result.put("value3", resultSet.getString("D_PARAM_V3"));
                     list.add(result);
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException("查询ALK_RULE_DATASOURCE_DEFINITION失败", e);
         }
+
+        list.stream().forEach(map -> {
+            Map<String, Object> params = new HashMap<>();
+            IntStream.range(1, 4).forEach(i -> {
+                String key = this.getValueWithMap(map, "key" + i);
+                if (key != null) {
+                    params.put(key, this.getValueWithMap(map, "value" + i));
+                }
+            });
+            map.put("params", params);
+        });
         return list;
     }
 

@@ -1,5 +1,6 @@
 package com.alatka.rule.definition;
 
+import com.alatka.rule.context.RuleDataSourceDefinition;
 import com.alatka.rule.context.RuleGroupDefinition;
 import com.alatka.rule.util.XmlUtil;
 
@@ -20,19 +21,26 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     @Override
     protected Map<String, Object> initRootModel(Path source) {
         Map<String, Object> map = XmlUtil.getMap(source.toFile(), Object.class);
-        Map<String, Object> rootModel = this.getValueWithMap(map, "ruleSet");
+        Map<String, Object> rootModel = this.getValueWithMap(map, "alatka-rule");
         return rootModel;
     }
 
     @Override
     protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
-        return this.getValueWithMap(this.rootModel, "dataSource");
+        Map<String, Object> dataSource = this.getValueWithMap(this.rootModel, "dataSource");
+        Object database = this.getValueWithMap(dataSource, "database");
+        List<Map<String, Object>> databases = (List<Map<String, Object>>) (database instanceof List ? database : Collections.singletonList(database));
+        databases.stream()
+                .peek(map -> map.put("type", RuleDataSourceDefinition.Type.database.name()))
+                .forEach(map -> map.put("params", Collections.singletonMap("sql", map.get("sql"))));
+        return databases;
     }
 
     @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
-        Object object = this.getValueWithMap(this.rootModel, "rule");
-        return (List<Map<String, Object>>) (object instanceof List ? object : Collections.singletonList(object));
+        Map<String, Object> ruleSet = this.getValueWithMap(this.rootModel, "ruleSet");
+        Object rule = this.getValueWithMap(ruleSet, "rule");
+        return (List<Map<String, Object>>) (rule instanceof List ? rule : Collections.singletonList(rule));
     }
 
     @Override

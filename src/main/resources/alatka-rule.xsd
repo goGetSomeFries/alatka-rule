@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns="http://rule.alatka.com" targetNamespace="http://rule.alatka.com">
-    <xs:element name="alatka-rule" type="alatka-ruleType"/>
+    <xs:element name="root" type="rootType"/>
+    <xs:complexType name="rootType">
+        <xs:sequence>
+            <xs:element name="alatka-rule" type="alatka-ruleType"/>
+        </xs:sequence>
+    </xs:complexType>
     <xs:complexType name="alatka-ruleType">
         <xs:sequence>
             <xs:element type="ruleSetType" name="ruleSet"/>
             <xs:element type="dataSourceType" name="dataSource"/>
         </xs:sequence>
+        <xs:attribute type="xs:string" name="desc" use="required"/>
+        <xs:attribute type="xs:string" name="type" use="optional"/>
+        <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
     </xs:complexType>
     <xs:complexType name="ruleSetType">
         <xs:sequence>
             <xs:element type="ruleType" name="rule" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute type="xs:string" name="desc" use="required"/>
-        <xs:attribute type="xs:string" name="type" use="optional"/>
-        <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
-        <xs:attribute type="xs:integer" name="priority" use="optional"/>
     </xs:complexType>
     <xs:complexType name="ruleType">
         <xs:sequence>
@@ -25,6 +29,7 @@
         <xs:attribute type="xs:string" name="desc" use="required"/>
         <xs:attribute type="xs:string" name="remark" use="required"/>
         <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
+        <xs:attribute type="xs:integer" name="priority" use="optional"/>
     </xs:complexType>
     <xs:complexType name="unitType">
         <xs:simpleContent>

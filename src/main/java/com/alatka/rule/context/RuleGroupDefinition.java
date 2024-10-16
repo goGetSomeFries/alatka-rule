@@ -54,4 +54,8 @@ public class RuleGroupDefinition extends AbstractDefinition {
         this.type = type;
     }
 
+    @Override
+    public String toString() {
+        return "RuleGroupDefinition{id='" + getId() + "', " + "desc='" + desc + "'}";
+    }
 }

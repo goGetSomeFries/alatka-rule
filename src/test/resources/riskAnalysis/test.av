@@ -1,1 +1,2 @@
-hello world
+println("hello, AviatorScript!");
+test == "1"

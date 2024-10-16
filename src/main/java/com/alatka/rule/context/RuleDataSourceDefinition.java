@@ -4,6 +4,15 @@ import java.util.Map;
 
 public class RuleDataSourceDefinition extends AbstractDefinition {
 
+    public static RuleDataSourceDefinition DEFAULT_INSTANCE;
+
+    static {
+       RuleDataSourceDefinition instance = new RuleDataSourceDefinition();
+       instance.setType(Type.current);
+       instance.setDesc("默认数据源");
+       DEFAULT_INSTANCE = instance;
+    }
+
     private Type type;
 
     private Scope scope;

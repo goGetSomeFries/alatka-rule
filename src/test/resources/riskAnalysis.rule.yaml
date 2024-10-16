@@ -8,14 +8,14 @@ alatka.rule:
       remark: "testing...."
       units:
         - path: riskAnalysis/test.av
-        - path: riskAnalysis/test.av
-          dataSource: tradeDetail
     - id: "2"
       desc: "风险账户9星"
       remark: "testing...."
-      enabled: true
+      enabled: false
       units:
         - path: riskAnalysis/test.av
+        - path: riskAnalysis/test.av
+          dataSource: tradeDetail
   dataSource:
     - id: tradeDetail
       type: database
@@ -28,12 +28,6 @@ alatka.rule:
       type: database
       desc: ""
       scope: data
-      resultType: list
-      config:
-        sql: "select * from trdetail t where t.xxx = v_date"
-    - id:
-      desc: ""
-      scope:
       resultType: single
       config:
         sql: "select * from trdetail t where t.xxx = v_date"

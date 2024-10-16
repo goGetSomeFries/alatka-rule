@@ -7,8 +7,10 @@ import com.alatka.rule.util.JsonUtil;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.AviatorEvaluatorInstance;
 import com.googlecode.aviator.Expression;
+import com.googlecode.aviator.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +32,8 @@ public class RuleEngine {
         RuleGroupDefinition ruleGroupDefinition = definitionContext.getRuleGroupDefinition(ruleGroupName);
         RuleGroupDefinition.Type type = ruleGroupDefinition.getType();
 
-        Map<String, Object> paramContext = JsonUtil.objectToMap(param);
+        Map<String, Object> paramContext =
+                param instanceof Map ? new HashMap<>((Map<String, Object>) param) : JsonUtil.objectToMap(param);
         List<String> result = new ArrayList<>(0);
         RuleDefinition theOne = null;
 
@@ -76,7 +79,7 @@ public class RuleEngine {
         Map<String, Object> env = dataSourceBuilder.buildContext(ruleDataSourceDefinition, paramContext);
 
         // TODO 规则在线发布
-        String cacheKey = ruleDefinition + ruleUnitDefinition.toString();
+        String cacheKey = Utils.md5sum(ruleDefinition + ruleUnitDefinition.toString());
         Expression exp = aviatorEvaluatorInstance.compile(cacheKey, ruleUnitDefinition.getExpression(), true);
         boolean hit = (boolean) exp.execute(env);
 

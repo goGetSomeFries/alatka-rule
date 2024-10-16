@@ -33,6 +33,15 @@
             <artifactId>jackson-dataformat-xml</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- jdbc作为外置数据源使用 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- redis作为外置数据源使用 -->
+        <!-- elasticsearch作为外置数据源使用 -->
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

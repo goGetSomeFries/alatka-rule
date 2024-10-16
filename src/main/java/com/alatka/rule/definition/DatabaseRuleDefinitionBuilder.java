@@ -88,6 +88,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                     result.put("id", resultSet.getInt("D_ID"));
                     result.put("desc", resultSet.getString("D_DESC"));
                     result.put("type", resultSet.getString("D_TYPE"));
+                    result.put("resultType", resultSet.getString("D_RESULT_TYPE"));
                     result.put("enabled", resultSet.getBoolean("D_ENABLED"));
                     result.put("scope", resultSet.getString("D_SCOPE"));
                     result.put("key1", resultSet.getString("D_PARAM_K1"));
@@ -104,14 +105,14 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
         }
 
         list.stream().forEach(map -> {
-            Map<String, Object> params = new HashMap<>();
+            Map<String, Object> config = new HashMap<>();
             IntStream.range(1, 4).forEach(i -> {
                 String key = this.getValueWithMap(map, "key" + i);
                 if (key != null) {
-                    params.put(key, this.getValueWithMap(map, "value" + i));
+                    config.put(key, this.getValueWithMap(map, "value" + i));
                 }
             });
-            map.put("params", params);
+            map.put("config", config);
         });
         return list;
     }

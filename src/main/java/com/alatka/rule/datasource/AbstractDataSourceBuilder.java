@@ -8,15 +8,12 @@ import java.util.Map;
 public abstract class AbstractDataSourceBuilder implements DataSourceBuilder {
 
     @Override
-    public Map<String, Object> getContext(RuleDataSourceDefinition definition, Map<String, Object> params) {
-        Map<String, Object> p = definition.getScope() == RuleDataSourceDefinition.Scope.rule ?
-                new HashMap<>(params) : params;
-        if (!params.containsKey(definition.getId())) {
-            Object result = this.doGetContext(params);
-            p.put(definition.getId(), result);
-        }
-        return p;
+    public Map<String, Object> buildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext) {
+        Map<String, Object> context = definition.getScope() == RuleDataSourceDefinition.Scope.rule ?
+                new HashMap<>(paramContext) : paramContext;
+        context.computeIfAbsent(definition.getId(), k -> this.doBuildContext(definition, context));
+        return context;
     }
 
-    protected abstract <T> T doGetContext(Map<String, Object> params);
+    protected abstract Object doBuildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext);
 }

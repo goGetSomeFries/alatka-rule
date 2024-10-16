@@ -32,7 +32,7 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
         List<Map<String, Object>> databases = (List<Map<String, Object>>) (database instanceof List ? database : Collections.singletonList(database));
         databases.stream()
                 .peek(map -> map.put("type", RuleDataSourceDefinition.Type.database.name()))
-                .forEach(map -> map.put("params", Collections.singletonMap("sql", map.get("sql"))));
+                .forEach(map -> map.put("config", Collections.singletonMap("sql", map.get("sql"))));
         return databases;
     }
 

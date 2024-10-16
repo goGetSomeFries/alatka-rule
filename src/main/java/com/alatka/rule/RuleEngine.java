@@ -1,10 +1,8 @@
 package com.alatka.rule;
 
-import com.alatka.rule.context.RuleDefinition;
-import com.alatka.rule.context.RuleGroupDefinition;
-import com.alatka.rule.context.RuleGroupDefinitionContext;
-import com.alatka.rule.context.RuleUnitDefinition;
+import com.alatka.rule.context.*;
 import com.alatka.rule.datasource.DataSourceBuilder;
+import com.alatka.rule.datasource.DataSourceBuilderFactory;
 import com.alatka.rule.util.JsonUtil;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.AviatorEvaluatorInstance;
@@ -26,13 +24,13 @@ public class RuleEngine {
     }
 
 
-    public List<String> execute(Object input) {
-        RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance();
-        List<RuleDefinition> ruleDefinitions = context.getRuleDefinitions(ruleGroupName);
-        RuleGroupDefinition ruleGroupDefinition = context.getRuleGroupDefinition(ruleGroupName);
+    public List<String> execute(Object param) {
+        RuleGroupDefinitionContext definitionContext = RuleGroupDefinitionContext.getInstance();
+        List<RuleDefinition> ruleDefinitions = definitionContext.getRuleDefinitions(ruleGroupName);
+        RuleGroupDefinition ruleGroupDefinition = definitionContext.getRuleGroupDefinition(ruleGroupName);
         RuleGroupDefinition.Type type = ruleGroupDefinition.getType();
 
-        Map<String, Object> params = JsonUtil.objectToMap(input);
+        Map<String, Object> paramContext = JsonUtil.objectToMap(param);
         List<String> result = new ArrayList<>(0);
         RuleDefinition theOne = null;
 
@@ -60,7 +58,7 @@ public class RuleEngine {
                     throw new IllegalArgumentException("error type:" + type);
             }
 
-            this.doExecute(ruleDefinition, ruleDefinition.getRuleUnitDefinition(), params, result);
+            this.doExecute(ruleDefinition, ruleDefinition.getRuleUnitDefinition(), paramContext, result);
 
             if (result.size() > 0) {
                 theOne = ruleDefinition;
@@ -71,13 +69,15 @@ public class RuleEngine {
     }
 
     private void doExecute(RuleDefinition ruleDefinition, RuleUnitDefinition ruleUnitDefinition,
-                           Map<String, Object> params, List<String> result) {
+                           Map<String, Object> paramContext, List<String> result) {
+        RuleDataSourceDefinition ruleDataSourceDefinition = ruleUnitDefinition.getDataSourceRef();
+        DataSourceBuilder dataSourceBuilder =
+                DataSourceBuilderFactory.getInstance().getDataSourceBuilder(ruleDataSourceDefinition.getType());
+        Map<String, Object> env = dataSourceBuilder.buildContext(ruleDataSourceDefinition, paramContext);
+
         // TODO 规则在线发布
         String cacheKey = ruleDefinition + ruleUnitDefinition.toString();
         Expression exp = aviatorEvaluatorInstance.compile(cacheKey, ruleUnitDefinition.getExpression(), true);
-        // TODO
-        DataSourceBuilder dataSourceBuilder = null;
-        Map<String, Object> env = dataSourceBuilder.getContext(ruleUnitDefinition.getDataSourceRef(), params);
         boolean hit = (boolean) exp.execute(env);
 
         if (!hit) {

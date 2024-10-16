@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface DataSourceBuilder {
 
-    RuleDataSourceDefinition.Type getType();
+    RuleDataSourceDefinition.Type type();
 
-    Map<String, Object> getContext(RuleDataSourceDefinition definition, Map<String, Object> params);
+    Map<String, Object> buildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext);
 }

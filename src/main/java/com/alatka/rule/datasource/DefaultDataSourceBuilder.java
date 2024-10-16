@@ -5,13 +5,14 @@ import com.alatka.rule.context.RuleDataSourceDefinition;
 import java.util.Map;
 
 public class DefaultDataSourceBuilder extends AbstractDataSourceBuilder {
+
     @Override
-    protected <T> T doGetContext(Map<String, Object> params) {
+    protected Object doBuildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext) {
         return null;
     }
 
     @Override
-    public RuleDataSourceDefinition.Type getType() {
-        return null;
+    public RuleDataSourceDefinition.Type type() {
+        return RuleDataSourceDefinition.Type.current;
     }
 }

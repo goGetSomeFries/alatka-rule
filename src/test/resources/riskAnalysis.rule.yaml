@@ -21,16 +21,19 @@ alatka.rule:
       type: database
       desc: ""
       scope: data
-      params:
+      resultType: list
+      config:
         sql: "select * from trdetail t where t.xxx = v_date"
     - id: vipDetail
       type: database
       desc: ""
       scope: data
-      params:
+      resultType: list
+      config:
         sql: "select * from trdetail t where t.xxx = v_date"
     - id:
       desc: ""
       scope:
-      params:
+      resultType: single
+      config:
         sql: "select * from trdetail t where t.xxx = v_date"

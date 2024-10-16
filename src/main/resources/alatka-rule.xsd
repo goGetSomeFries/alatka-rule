@@ -52,5 +52,6 @@
         <xs:attribute type="xs:string" name="scope" use="optional"/>
         <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
         <xs:attribute type="xs:string" name="sql" use="required"/>
+        <xs:attribute type="xs:string" name="resultType" use="required"/>
     </xs:complexType>
 </xs:schema>

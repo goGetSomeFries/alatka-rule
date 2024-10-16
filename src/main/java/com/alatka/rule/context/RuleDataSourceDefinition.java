@@ -10,7 +10,9 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
 
     private String desc;
 
-    private Map<String, Object> params;
+    private ResultType resultType;
+
+    private Map<String, Object> config;
 
     public RuleDataSourceDefinition() {
         super(null);
@@ -27,6 +29,10 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
 
     public enum Scope {
         global, data, rule
+    }
+
+    public enum ResultType {
+        single, list
     }
 
     public Type getType() {
@@ -53,11 +59,19 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
         this.desc = desc;
     }
 
-    public Map<String, Object> getParams() {
-        return params;
+    public ResultType getResultType() {
+        return resultType;
     }
 
-    public void setParams(Map<String, Object> params) {
-        this.params = params;
+    public void setResultType(ResultType resultType) {
+        this.resultType = resultType;
+    }
+
+    public Map<String, Object> getConfig() {
+        return config;
+    }
+
+    public void setConfig(Map<String, Object> config) {
+        this.config = config;
     }
 }

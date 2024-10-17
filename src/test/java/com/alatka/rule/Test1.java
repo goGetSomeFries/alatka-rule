@@ -2,7 +2,6 @@ package com.alatka.rule;
 
 import com.alatka.messages.util.YamlUtil;
 import com.alatka.rule.definition.RuleDefinitionBuilder;
-import com.alatka.rule.definition.XmlRuleDefinitionBuilder;
 import com.alatka.rule.definition.YamlRuleDefinitionBuilder;
 import com.alatka.rule.util.FileUtil;
 import org.junit.jupiter.api.Test;
@@ -19,11 +18,11 @@ public class Test1 {
 //        new YamlRuleDefinitionBuilder().build();
         RuleDefinitionBuilder ruleDefinitionBuilder = new YamlRuleDefinitionBuilder();
         ruleDefinitionBuilder.build();
-        RuleEngine ruleEngine = new RuleEngine("riskAnalysis");
+        RulesEngine rulesEngine = new RulesEngine("riskAnalysis");
 
         Map<String, Object> param = new HashMap<>();
         param.put("test", "1");
-        List<String> result = ruleEngine.execute(param);
+        List<String> result = rulesEngine.execute(param);
         System.out.println(result);
     }
 

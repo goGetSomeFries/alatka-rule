@@ -1,5 +1,10 @@
 package com.alatka.rule.context;
 
+/**
+ * 规则定义类
+ *
+ * @author whocares
+ */
 public class RuleDefinition extends AbstractDefinition {
 
     public RuleDefinition() {

@@ -1,5 +1,10 @@
 package com.alatka.rule.context;
 
+/**
+ * 规则组定义类
+ *
+ * @author whocares
+ */
 public class RuleGroupDefinition extends AbstractDefinition {
 
     public RuleGroupDefinition() {
@@ -12,6 +17,14 @@ public class RuleGroupDefinition extends AbstractDefinition {
 
     private String desc;
 
+    /**
+     * 命中规则类型
+     *
+     * @see Type#greedy
+     * @see Type#short_circle
+     * @see Type#priority_greedy
+     * @see Type#priority_short_circle
+     */
     private Type type;
 
 
@@ -22,17 +35,17 @@ public class RuleGroupDefinition extends AbstractDefinition {
          */
         greedy,
         /**
-         * 首笔规则触发即停止<br><br>
+         * 规则命中即停止<br><br>
          * A, B, C_, D, E_, F_, G --> C_
          */
         short_circle,
         /**
-         * 同一优先级内部所有规则全部执行；不同优先级触发即停止<br><br>
+         * 同一优先级内部所有规则全部执行；不同优先级命中即停止<br><br>
          * (A, B), (C_, D, E_), (F_, G) --> C_, E_
          */
         priority_greedy,
         /**
-         * 同一优先级内部首笔规则触发即停止；不同优先级全部执行<br><br>
+         * 同一优先级内部规则命中即停止；不同优先级全部执行<br><br>
          * (A, B), (C_, D, E_), (F_, G) --> C_, F_
          */
         priority_short_circle

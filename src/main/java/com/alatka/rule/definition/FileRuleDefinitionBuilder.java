@@ -60,8 +60,19 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
         this.rootModel = null;
     }
 
+    /**
+     * 初始化配置
+     *
+     * @param source 配置源
+     * @return 配置Map对象
+     */
     protected abstract Map<String, Object> initRootModel(Path source);
 
+    /**
+     * 文件后缀
+     *
+     * @return 文件后缀集合
+     */
     protected abstract String[] suffix();
 
 }

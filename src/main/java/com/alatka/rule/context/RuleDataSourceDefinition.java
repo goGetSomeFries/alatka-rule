@@ -2,15 +2,20 @@ package com.alatka.rule.context;
 
 import java.util.Map;
 
+/**
+ * 规则外置数据源定义类
+ *
+ * @author whocares
+ */
 public class RuleDataSourceDefinition extends AbstractDefinition {
 
     public static RuleDataSourceDefinition DEFAULT_INSTANCE;
 
     static {
-       RuleDataSourceDefinition instance = new RuleDataSourceDefinition();
-       instance.setType(Type.current);
-       instance.setDesc("默认数据源");
-       DEFAULT_INSTANCE = instance;
+        RuleDataSourceDefinition instance = new RuleDataSourceDefinition();
+        instance.setType(Type.current);
+        instance.setDesc("默认数据源");
+        DEFAULT_INSTANCE = instance;
     }
 
     private Type type;

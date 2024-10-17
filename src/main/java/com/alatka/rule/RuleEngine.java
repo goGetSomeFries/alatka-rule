@@ -14,6 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 规则引擎
+ *
+ * @author whocares
+ */
 public class RuleEngine {
 
     private final AviatorEvaluatorInstance aviatorEvaluatorInstance;
@@ -25,9 +30,19 @@ public class RuleEngine {
         this.aviatorEvaluatorInstance = AviatorEvaluator.getInstance();
     }
 
+    public RuleEngine(String ruleGroupName, AviatorEvaluatorInstance aviatorEvaluatorInstance) {
+        this.ruleGroupName = ruleGroupName;
+        this.aviatorEvaluatorInstance = aviatorEvaluatorInstance;
+    }
 
+    /**
+     * 执行规则，得到命中规则id集合
+     *
+     * @param param 规则入参
+     * @return {@link RuleDefinition#id}集合
+     */
     public List<String> execute(Object param) {
-        RuleGroupDefinitionContext definitionContext = RuleGroupDefinitionContext.getInstance();
+        RuleGroupDefinitionContext definitionContext = RuleGroupDefinitionContext.getInstance(true);
         List<RuleDefinition> ruleDefinitions = definitionContext.getRuleDefinitions(ruleGroupName);
         RuleGroupDefinition ruleGroupDefinition = definitionContext.getRuleGroupDefinition(ruleGroupName);
         RuleGroupDefinition.Type type = ruleGroupDefinition.getType();
@@ -78,7 +93,6 @@ public class RuleEngine {
                 DataSourceBuilderFactory.getInstance().getDataSourceBuilder(ruleDataSourceDefinition.getType());
         Map<String, Object> env = dataSourceBuilder.buildContext(ruleDataSourceDefinition, paramContext);
 
-        // TODO 规则在线发布
         String cacheKey = Utils.md5sum(ruleDefinition + ruleUnitDefinition.toString());
         Expression exp = aviatorEvaluatorInstance.compile(cacheKey, ruleUnitDefinition.getExpression(), true);
         boolean hit = (boolean) exp.execute(env);

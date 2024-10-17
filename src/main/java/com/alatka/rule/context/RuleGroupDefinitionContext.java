@@ -4,7 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 规则组Context，维护{@link RuleGroupDefinition} -> {@link RuleDefinition}集合
+ *
+ * @author whocares
+ */
 public class RuleGroupDefinitionContext {
+
+    /**
+     * 蓝绿发布标识
+     */
+    private static volatile boolean SWITCH_FLAG = true;
 
     private Map<RuleGroupDefinition, List<RuleDefinition>> ruleDefinitionsMap = new HashMap<>();
 
@@ -17,6 +27,12 @@ public class RuleGroupDefinitionContext {
                 .orElseThrow(() -> new IllegalArgumentException(ruleGroupName + " not exists"));
     }
 
+    /**
+     * 根据规则组名称获取规则集合
+     *
+     * @param ruleGroupName 规则组名称
+     * @return 规则集合
+     */
     public List<RuleDefinition> getRuleDefinitions(String ruleGroupName) {
         RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(ruleGroupName);
         List<RuleDefinition> ruleDefinitions = this.ruleDefinitionsMap.get(ruleGroupDefinition);
@@ -26,15 +42,47 @@ public class RuleGroupDefinitionContext {
         return ruleDefinitions;
     }
 
+    /**
+     * 初始化规则组和规则集合映射
+     *
+     * @param ruleGroupDefinition 规则组
+     * @param ruleDefinitions     规则集合
+     */
     public void initRuleDefinitions(RuleGroupDefinition ruleGroupDefinition, List<RuleDefinition> ruleDefinitions) {
         this.ruleDefinitionsMap.put(ruleGroupDefinition, ruleDefinitions);
     }
 
-    public static RuleGroupDefinitionContext getInstance() {
-        return Inner.INSTANCE;
+    /**
+     * 清除
+     */
+    public void reset() {
+        this.ruleDefinitionsMap.clear();
     }
 
-    private static class Inner {
+    /**
+     * 蓝绿发布切换
+     *
+     * @return
+     */
+    public static boolean toggle() {
+        return !SWITCH_FLAG;
+    }
+
+    /**
+     * 获取Context实例，用于蓝绿发布
+     *
+     * @param flag
+     * @return {@link RuleGroupDefinitionContext}实例
+     */
+    public static RuleGroupDefinitionContext getInstance(boolean flag) {
+        return flag == SWITCH_FLAG ? Inner1.INSTANCE : Inner2.INSTANCE;
+    }
+
+    private static class Inner1 {
+        private static final RuleGroupDefinitionContext INSTANCE = new RuleGroupDefinitionContext();
+    }
+
+    private static class Inner2 {
         private static final RuleGroupDefinitionContext INSTANCE = new RuleGroupDefinitionContext();
     }
 }

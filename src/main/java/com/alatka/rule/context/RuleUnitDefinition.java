@@ -1,5 +1,10 @@
 package com.alatka.rule.context;
 
+/**
+ * 规则单元定义类
+ *
+ * @author whocares
+ */
 public class RuleUnitDefinition {
 
     private boolean enabled = true;

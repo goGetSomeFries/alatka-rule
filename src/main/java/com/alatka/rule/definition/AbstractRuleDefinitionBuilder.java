@@ -12,13 +12,22 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * {@link RuleDefinitionBuilder}抽象类，实现{@link #build()}、{@link #refresh()}、{@link #fallback()}方法；
+ * 抽象{@link RuleGroupDefinition}、{@link RuleDataSourceDefinition}、{@link RuleDefinition}、{@link RuleUnitDefinition}构建方法
+ *
+ * @param <T> 配置源类型
+ * @author whocares
+ */
 public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinitionBuilder {
 
     private Map<String, RuleDataSourceDefinition> mapping;
 
     @Override
     public void build() {
-        RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance();
+        RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance(false);
+        context.reset();
+
         this.getSources().stream()
                 .peek(this::preProcess)
                 .map(this::buildRuleGroupDefinition)
@@ -30,13 +39,26 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 });
         this.postProcess();
         this.mapping = null;
+
+        RuleGroupDefinitionContext.toggle();
     }
 
     @Override
     public void refresh() {
-
+        build();
     }
 
+    @Override
+    public void fallback() {
+        RuleGroupDefinitionContext.toggle();
+    }
+
+    /**
+     * 配置源解析为{@link RuleGroupDefinition}
+     *
+     * @param source 配置源
+     * @return {@link RuleGroupDefinition}
+     */
     private RuleGroupDefinition buildRuleGroupDefinition(T source) {
         try {
             Map<String, Object> map = this.doBuildRuleGroupDefinition(source);
@@ -56,6 +78,12 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         }
     }
 
+    /**
+     * {@link RuleGroupDefinition}解析为{@link RuleDataSourceDefinition}Map
+     *
+     * @param ruleGroupDefinition 规则组
+     * @return {@link RuleDataSourceDefinition}Map
+     */
     private Map<String, RuleDataSourceDefinition> buildRuleDataSourceDefinitionMap(RuleGroupDefinition ruleGroupDefinition) {
         try {
             List<Map<String, Object>> ruleDataSources = this.doBuildRuleDataSourceDefinitions(ruleGroupDefinition);
@@ -68,6 +96,12 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         }
     }
 
+    /**
+     * 解析为{@link RuleDataSourceDefinition}
+     *
+     * @param map 配置源的映射
+     * @return {@link RuleDataSourceDefinition}
+     */
     private RuleDataSourceDefinition buildRuleDataSourceDefinition(Map<String, Object> map) {
         try {
             String id = this.getValueWithMapOrThrow(map, "id");
@@ -92,6 +126,12 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         }
     }
 
+    /**
+     * {@link RuleGroupDefinition}解析为{@link RuleDefinition}集合
+     *
+     * @param ruleGroupDefinition 规则组
+     * @return {@link RuleDefinition}集合
+     */
     private List<RuleDefinition> buildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         try {
             List<Map<String, Object>> rules = this.doBuildRuleDefinitions(ruleGroupDefinition);
@@ -104,6 +144,12 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         }
     }
 
+    /**
+     * 解析为{@link RuleDefinition}规则
+     *
+     * @param map 配置源的映射
+     * @return {@link RuleDefinition}
+     */
     private RuleDefinition buildRuleDefinition(Map<String, Object> map) {
         try {
             String id = this.getValueWithMapOrThrow(map, "id");
@@ -128,6 +174,12 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         }
     }
 
+    /**
+     * 解析为{@link RuleUnitDefinition}规则单元
+     *
+     * @param units 配置源的映射
+     * @return {@link RuleUnitDefinition}
+     */
     private RuleUnitDefinition buildRuleUnitDefinition(List<Map<String, Object>> units) {
         List<Map<String, Object>> list = new ArrayList<>(units);
         Collections.reverse(list);
@@ -142,6 +194,12 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         return reference.get();
     }
 
+    /**
+     * 解析为{@link RuleUnitDefinition}规则单元
+     *
+     * @param map 配置源的映射
+     * @return {@link RuleUnitDefinition}
+     */
     private RuleUnitDefinition doBuildRuleUnitDefinition(Map<String, Object> map) {
         boolean enabled = this.getValueWithMap(map, "enabled", true);
         String path = this.getValueWithMap(map, "path");
@@ -179,18 +237,55 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         return (S) map.get(key);
     }
 
+    /**
+     * 获取配置源集合（Xml、Yaml、数据库）
+     *
+     * @return 配置源集合
+     */
     protected abstract List<T> getSources();
 
+    /**
+     * 解析预处理
+     *
+     * @param source 配置源
+     */
     protected abstract void preProcess(T source);
 
+    /**
+     * 解析为{@link RuleGroupDefinition}Map对象
+     *
+     * @param source 配置源
+     * @return {@link RuleGroupDefinition}Map对象
+     */
     protected abstract Map<String, Object> doBuildRuleGroupDefinition(T source);
 
+    /**
+     * 解析为{@link RuleDataSourceDefinition}映射集合
+     *
+     * @param ruleGroupDefinition 规则组
+     * @return {@link RuleDataSourceDefinition}映射集合
+     */
     protected abstract List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition);
 
+    /**
+     * 解析为{@link RuleDefinition}映射集合
+     *
+     * @param ruleGroupDefinition 规则组
+     * @return {@link RuleDefinition}映射集合
+     */
     protected abstract List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition);
 
+    /**
+     * 解析为{@link RuleUnitDefinition}映射集合
+     *
+     * @param ruleDefinition {@link RuleDefinition}映射
+     * @return {@link RuleUnitDefinition}映射集合
+     */
     protected abstract List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> ruleDefinition);
 
+    /**
+     * 解析后处理
+     */
     protected abstract void postProcess();
 
 }

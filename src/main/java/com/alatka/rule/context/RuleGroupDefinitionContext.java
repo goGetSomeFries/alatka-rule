@@ -64,8 +64,8 @@ public class RuleGroupDefinitionContext {
      *
      * @return
      */
-    public static boolean toggle() {
-        return !SWITCH_FLAG;
+    public static void toggle() {
+        SWITCH_FLAG = !SWITCH_FLAG;
     }
 
     /**

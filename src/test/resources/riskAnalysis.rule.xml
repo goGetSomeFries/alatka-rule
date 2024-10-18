@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root xmlns="http://rule.alatka.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://rule.alatka.com alatka-rule.xsd">
-    <alatka-rule enabled="true" name="欺诈规则组" type="greedy">
+    <alatka-rule enabled="true" name="欺诈规则组" type="all">
         <ruleSet>
             <rule id="1" name="风险账户10星" desc="testing...." enabled="true">
                 <unit path="riskAnalysis/test.av"/>

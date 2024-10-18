@@ -20,9 +20,11 @@ public class Test1 {
         RuleDefinitionBuilder ruleDefinitionBuilder = new YamlRuleDefinitionBuilder();
         ruleDefinitionBuilder.build();
 
+/*
         DataSource dataSource = null;
         DataSourceBuilderFactory factory = DataSourceBuilderFactory.getInstance();
         factory.init(new DatabaseDataSourceBuilder(dataSource));
+*/
 
         Map<String, Object> param = new HashMap<>();
         param.put("test", "1");

@@ -64,7 +64,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             Map<String, Object> map = this.doBuildRuleGroupDefinition(source);
             String id = this.getValueWithMapOrThrow(map, "id");
             String name = this.getValueWithMapOrThrow(map, "name");
-            String type = this.getValueWithMap(map, "type", RuleGroupDefinition.Type.greedy.name());
+            String type = this.getValueWithMap(map, "type", RuleGroupDefinition.Type.all.name());
             boolean enabled = this.getValueWithMap(map, "enabled", true);
 
             RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition();

@@ -18,10 +18,10 @@ public class RuleGroupDefinition extends AbstractDefinition {
     /**
      * 命中规则类型
      *
-     * @see Type#greedy
-     * @see Type#short_circle
-     * @see Type#priority_greedy
-     * @see Type#priority_short_circle
+     * @see Type#all
+     * @see Type#once
+     * @see Type#priority_all
+     * @see Type#priority_once
      */
     private Type type;
 
@@ -31,22 +31,22 @@ public class RuleGroupDefinition extends AbstractDefinition {
          * 所有规则全部执行<br><br>
          * A, B, C_, D, E_, F_, G --> C_, E_, F_
          */
-        greedy,
+        all,
         /**
          * 规则命中即停止<br><br>
          * A, B, C_, D, E_, F_, G --> C_
          */
-        short_circle,
+        once,
         /**
          * 同一优先级内部所有规则全部执行；不同优先级命中即停止<br><br>
          * (A, B), (C_, D, E_), (F_, G) --> C_, E_
          */
-        priority_greedy,
+        priority_all,
         /**
          * 同一优先级内部规则命中即停止；不同优先级全部执行<br><br>
          * (A, B), (C_, D, E_), (F_, G) --> C_, F_
          */
-        priority_short_circle
+        priority_once
     }
 
     public Type getType() {

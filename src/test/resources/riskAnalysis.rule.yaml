@@ -1,6 +1,6 @@
 alatka.rule:
   enabled: true
-  type: greedy
+  type: all
   name: 欺诈规则组
   ruleSet:
     - id: "1"

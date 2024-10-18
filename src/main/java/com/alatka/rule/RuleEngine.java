@@ -55,30 +55,35 @@ public class RuleEngine {
         outerLoop:
         for (RuleDefinition ruleDefinition : ruleDefinitions) {
             switch (type) {
-                case greedy:
+                case all:
+                    // 所有规则全部执行
                     break;
-                case short_circle:
+                case once:
+                    // 规则命中即停止
                     if (theOne != null) {
                         break outerLoop;
                     }
                     break;
-                case priority_greedy:
+                case priority_all:
+                    // 同一优先级内部所有规则全部执行；不同优先级命中即停止
                     if (theOne != null && theOne.getPriority() != ruleDefinition.getPriority()) {
                         break outerLoop;
                     }
                     break;
-                case priority_short_circle:
+                case priority_once:
+                    // 同一优先级内部规则命中即停止；不同优先级全部执行
                     if (theOne != null && theOne.getPriority() == ruleDefinition.getPriority()) {
                         continue;
                     }
                     break;
                 default:
-                    throw new IllegalArgumentException("error type:" + type);
+                    throw new IllegalArgumentException("error type: " + type);
             }
 
+            // 规则判断
             this.doExecute(ruleDefinition, ruleDefinition.getRuleUnitDefinition(), paramContext, result);
 
-            if (result.size() > 0) {
+            if (!result.isEmpty()) {
                 theOne = ruleDefinition;
             }
         }

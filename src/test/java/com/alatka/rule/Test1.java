@@ -1,5 +1,6 @@
 package com.alatka.rule;
 
+import com.alatka.rule.context.RuleDefinition;
 import com.alatka.rule.datasource.DataSourceBuilderFactory;
 import com.alatka.rule.datasource.DatabaseDataSourceBuilder;
 import com.alatka.rule.definition.RuleDefinitionBuilder;
@@ -25,8 +26,8 @@ public class Test1 {
 
         Map<String, Object> param = new HashMap<>();
         param.put("test", "1");
-        RulesEngine rulesEngine = new RulesEngine("riskAnalysis");
-        List<String> result = rulesEngine.execute(param);
+        RuleEngine ruleEngine = new RuleEngine("riskAnalysis");
+        List<RuleDefinition> result = ruleEngine.execute(param);
         System.out.println(result);
     }
 

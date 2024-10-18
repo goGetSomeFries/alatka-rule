@@ -42,13 +42,13 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
         String fileName = source.toFile().getName();
 
         String id = fileName.substring(0, fileName.lastIndexOf(SUFFIX));
-        String desc = this.getValueWithMap(this.rootModel, "desc");
+        String name = this.getValueWithMap(this.rootModel, "name");
         String type = this.getValueWithMap(this.rootModel, "type");
         boolean enabled = this.getValueWithMap(this.rootModel, "enabled");
 
         Map<String, Object> result = new HashMap<>();
         result.put("id", id);
-        result.put("desc", desc);
+        result.put("name", name);
         result.put("enabled", enabled);
         result.put("type", type);
         return result;

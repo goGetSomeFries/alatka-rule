@@ -1,16 +1,16 @@
 alatka.rule:
   enabled: true
   type: greedy
-  desc: 欺诈规则组
+  name: 欺诈规则组
   ruleSet:
     - id: "1"
-      desc: "风险账户10星"
-      remark: "testing...."
+      name: "风险账户10星"
+      desc: "testing...."
       units:
         - path: riskAnalysis/test.av
     - id: "2"
-      desc: "风险账户9星"
-      remark: "testing...."
+      name: "风险账户9星"
+      desc: "testing...."
       enabled: false
       units:
         - path: riskAnalysis/test.av
@@ -19,14 +19,14 @@ alatka.rule:
   dataSource:
     - id: tradeDetail
       type: database
-      desc: ""
+      name: ""
       scope: data
       resultType: list
       config:
         sql: "select * from trdetail t where t.xxx = v_date"
     - id: vipDetail
       type: database
-      desc: ""
+      name: ""
       scope: data
       resultType: single
       config:

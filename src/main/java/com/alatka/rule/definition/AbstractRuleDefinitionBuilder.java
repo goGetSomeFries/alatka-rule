@@ -63,13 +63,13 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         try {
             Map<String, Object> map = this.doBuildRuleGroupDefinition(source);
             String id = this.getValueWithMapOrThrow(map, "id");
-            String desc = this.getValueWithMapOrThrow(map, "desc");
+            String name = this.getValueWithMapOrThrow(map, "name");
             String type = this.getValueWithMap(map, "type", RuleGroupDefinition.Type.greedy.name());
             boolean enabled = this.getValueWithMap(map, "enabled", true);
 
             RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition();
             ruleGroupDefinition.setId(id);
-            ruleGroupDefinition.setDesc(desc);
+            ruleGroupDefinition.setName(name);
             ruleGroupDefinition.setType(RuleGroupDefinition.Type.valueOf(type));
             ruleGroupDefinition.setEnabled(enabled);
             return ruleGroupDefinition;
@@ -105,7 +105,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     private RuleDataSourceDefinition buildRuleDataSourceDefinition(Map<String, Object> map) {
         try {
             String id = this.getValueWithMapOrThrow(map, "id");
-            String desc = this.getValueWithMapOrThrow(map, "desc");
+            String name = this.getValueWithMapOrThrow(map, "name");
             boolean enabled = this.getValueWithMap(map, "enabled", true);
             String type = this.getValueWithMapOrThrow(map, "type");
             String resultType = this.getValueWithMapOrThrow(map, "resultType");
@@ -118,7 +118,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             definition.setScope(RuleDataSourceDefinition.Scope.valueOf(scope));
             definition.setResultType(RuleDataSourceDefinition.ResultType.valueOf(resultType));
             definition.setEnabled(enabled);
-            definition.setDesc(desc);
+            definition.setName(name);
             definition.setConfig(config);
             return definition;
         } catch (Exception e) {
@@ -154,8 +154,9 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         try {
             String id = this.getValueWithMapOrThrow(map, "id");
             String desc = this.getValueWithMapOrThrow(map, "desc");
-            String remark = this.getValueWithMapOrThrow(map, "remark");
-            int priority = this.getValueWithMap(map, "priority", 1);
+            String name = this.getValueWithMapOrThrow(map, "name");
+            int priority = this.getValueWithMap(map, "priority", 0);
+            int score = this.getValueWithMap(map, "score", 0);
             boolean enabled = this.getValueWithMap(map, "enabled", true);
 
             List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(map);
@@ -165,8 +166,9 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             ruleDefinition.setId(id);
             ruleDefinition.setEnabled(enabled);
             ruleDefinition.setDesc(desc);
-            ruleDefinition.setRemark(remark);
+            ruleDefinition.setName(name);
             ruleDefinition.setPriority(priority);
+            ruleDefinition.setScore(score);
             ruleDefinition.setRuleUnitDefinition(ruleUnitDefinition);
             return ruleDefinition;
         } catch (Exception e) {

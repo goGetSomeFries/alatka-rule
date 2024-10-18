@@ -33,7 +33,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                     Map<String, Object> result = new HashMap<>();
                     result.put("id", resultSet.getInt("G_ID"));
                     result.put("type", resultSet.getString("G_TYPE"));
-                    result.put("desc", resultSet.getString("G_DESC"));
+                    result.put("name", resultSet.getString("G_NAME"));
                     result.put("enabled", resultSet.getBoolean("G_ENABLED"));
                     list.add(result);
                 }
@@ -86,7 +86,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
                     result.put("id", resultSet.getInt("D_ID"));
-                    result.put("desc", resultSet.getString("D_DESC"));
+                    result.put("name", resultSet.getString("D_NAME"));
                     result.put("type", resultSet.getString("D_TYPE"));
                     result.put("resultType", resultSet.getString("D_RESULT_TYPE"));
                     result.put("enabled", resultSet.getBoolean("D_ENABLED"));
@@ -129,10 +129,11 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
                     result.put("id", resultSet.getInt("R_ID"));
+                    result.put("name", resultSet.getString("R_NAME"));
                     result.put("desc", resultSet.getString("R_DESC"));
-                    result.put("remark", resultSet.getString("R_REMARK"));
                     result.put("enabled", resultSet.getBoolean("R_ENABLED"));
                     result.put("priority", resultSet.getInt("R_PRIORITY"));
+                    result.put("score", resultSet.getInt("R_SCORE"));
                     result.put("order", resultSet.getInt("R_ORDER"));
                     list.add(result);
                 }

@@ -14,15 +14,13 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
     static {
         RuleDataSourceDefinition instance = new RuleDataSourceDefinition();
         instance.setType(Type.current);
-        instance.setDesc("默认数据源");
+        instance.setName("默认数据源");
         DEFAULT_INSTANCE = instance;
     }
 
     private Type type;
 
     private Scope scope;
-
-    private String desc;
 
     private ResultType resultType;
 
@@ -63,14 +61,6 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
 
     public void setScope(Scope scope) {
         this.scope = scope;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 
     public ResultType getResultType() {

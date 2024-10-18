@@ -13,9 +13,9 @@ public class RuleDefinition extends AbstractDefinition {
 
     private String desc;
 
-    private String remark;
-
     private int priority;
+
+    private int score;
 
     private RuleUnitDefinition ruleUnitDefinition;
 
@@ -27,14 +27,6 @@ public class RuleDefinition extends AbstractDefinition {
         this.desc = desc;
     }
 
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
     public int getPriority() {
         return priority;
     }
@@ -43,11 +35,24 @@ public class RuleDefinition extends AbstractDefinition {
         this.priority = priority;
     }
 
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     public RuleUnitDefinition getRuleUnitDefinition() {
         return ruleUnitDefinition;
     }
 
     public void setRuleUnitDefinition(RuleUnitDefinition ruleUnitDefinition) {
         this.ruleUnitDefinition = ruleUnitDefinition;
+    }
+
+    @Override
+    public String toString() {
+        return "RuleDefinition{id='" + getId() + "', " + "name='" + getName() + "', priority='" + priority + "', score='" + score + "'}";
     }
 }

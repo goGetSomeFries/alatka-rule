@@ -15,8 +15,6 @@ public class RuleGroupDefinition extends AbstractDefinition {
         super(id);
     }
 
-    private String desc;
-
     /**
      * 命中规则类型
      *
@@ -51,14 +49,6 @@ public class RuleGroupDefinition extends AbstractDefinition {
         priority_short_circle
     }
 
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
     public Type getType() {
         return type;
     }
@@ -69,6 +59,6 @@ public class RuleGroupDefinition extends AbstractDefinition {
 
     @Override
     public String toString() {
-        return "RuleGroupDefinition{id='" + getId() + "', " + "desc='" + desc + "'}";
+        return "RuleGroupDefinition{id='" + getId() + "', " + "name='" + getName() + "'}";
     }
 }

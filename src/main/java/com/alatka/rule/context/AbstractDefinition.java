@@ -6,6 +6,8 @@ public abstract class AbstractDefinition {
 
     private String id;
 
+    private String name;
+
     private boolean enabled = true;
 
     public AbstractDefinition(String id) {
@@ -18,6 +20,14 @@ public abstract class AbstractDefinition {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isEnabled() {

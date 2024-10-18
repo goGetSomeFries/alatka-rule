@@ -19,18 +19,18 @@ import java.util.Map;
  *
  * @author whocares
  */
-public class RulesEngine {
+public class RuleEngine {
 
     private final AviatorEvaluatorInstance aviatorEvaluatorInstance;
 
     private final String ruleGroupName;
 
-    public RulesEngine(String ruleGroupName) {
+    public RuleEngine(String ruleGroupName) {
         this.ruleGroupName = ruleGroupName;
         this.aviatorEvaluatorInstance = AviatorEvaluator.getInstance();
     }
 
-    public RulesEngine(String ruleGroupName, AviatorEvaluatorInstance aviatorEvaluatorInstance) {
+    public RuleEngine(String ruleGroupName, AviatorEvaluatorInstance aviatorEvaluatorInstance) {
         this.ruleGroupName = ruleGroupName;
         this.aviatorEvaluatorInstance = aviatorEvaluatorInstance;
     }
@@ -39,9 +39,9 @@ public class RulesEngine {
      * 执行规则，得到命中规则id集合
      *
      * @param param 规则入参
-     * @return {@link RuleDefinition#id}集合
+     * @return {@link RuleDefinition}集合
      */
-    public List<String> execute(Object param) {
+    public List<RuleDefinition> execute(Object param) {
         RuleGroupDefinitionContext definitionContext = RuleGroupDefinitionContext.getInstance(true);
         List<RuleDefinition> ruleDefinitions = definitionContext.getRuleDefinitions(ruleGroupName);
         RuleGroupDefinition ruleGroupDefinition = definitionContext.getRuleGroupDefinition(ruleGroupName);
@@ -49,7 +49,7 @@ public class RulesEngine {
 
         Map<String, Object> paramContext =
                 param instanceof Map ? new HashMap<>((Map<String, Object>) param) : JsonUtil.objectToMap(param);
-        List<String> result = new ArrayList<>(0);
+        List<RuleDefinition> result = new ArrayList<>(0);
         RuleDefinition theOne = null;
 
         outerLoop:
@@ -95,7 +95,7 @@ public class RulesEngine {
      * @param result             命中结果集
      */
     private void doExecute(RuleDefinition ruleDefinition, RuleUnitDefinition ruleUnitDefinition,
-                           Map<String, Object> paramContext, List<String> result) {
+                           Map<String, Object> paramContext, List<RuleDefinition> result) {
         RuleDataSourceDefinition ruleDataSourceDefinition = ruleUnitDefinition.getDataSourceRef();
         DataSourceBuilder dataSourceBuilder =
                 DataSourceBuilderFactory.getInstance().getDataSourceBuilder(ruleDataSourceDefinition.getType());
@@ -111,7 +111,7 @@ public class RulesEngine {
         }
         if (ruleUnitDefinition.getNext() == null) {
             // 命中规则单元，无后续规则单元，则当前规则命中
-            result.add(ruleDefinition.getId());
+            result.add(ruleDefinition);
         } else {
             // 命中规则单元，有后续规则单元，则继续执行后续规则单元
             this.doExecute(ruleDefinition, ruleUnitDefinition.getNext(), env, result);

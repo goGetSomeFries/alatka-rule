@@ -7,12 +7,24 @@ package com.alatka.rule.context;
  */
 public class RuleUnitDefinition {
 
+    /**
+     * 是否可用
+     */
     private boolean enabled = true;
 
+    /**
+     * {@link RuleDataSourceDefinition}引用
+     */
     private RuleDataSourceDefinition dataSourceRef;
 
+    /**
+     * 规则表达式
+     */
     private String expression;
 
+    /**
+     * 下一个{@link RuleUnitDefinition}实例，null则代表没有
+     */
     private RuleUnitDefinition next;
 
 

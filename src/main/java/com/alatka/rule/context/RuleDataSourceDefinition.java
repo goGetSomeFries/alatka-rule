@@ -18,12 +18,31 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
         DEFAULT_INSTANCE = instance;
     }
 
+    /**
+     * 类型
+     */
     private Type type;
 
+    /**
+     * 数据范围
+     *
+     * @see Scope#global
+     * @see Scope#data
+     * @see Scope#rule
+     */
     private Scope scope;
 
+    /**
+     * 返回数据类型
+     *
+     * @see ResultType#list
+     * @see ResultType#single
+     */
     private ResultType resultType;
 
+    /**
+     * 自定义参数
+     */
     private Map<String, Object> config;
 
     public RuleDataSourceDefinition() {
@@ -36,15 +55,33 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
 
     public enum Type {
 
-        current, database;
+        current, database, redis, elasticsearch;
     }
 
     public enum Scope {
-        global, data, rule
+        /**
+         * 全局范围
+         */
+        global,
+        /**
+         * 请求数据范围
+         */
+        data,
+        /**
+         * 规则范围
+         */
+        rule
     }
 
     public enum ResultType {
-        single, list
+        /**
+         * 单笔
+         */
+        single,
+        /**
+         * 集合
+         */
+        list
     }
 
     public Type getType() {

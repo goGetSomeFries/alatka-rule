@@ -11,12 +11,24 @@ public class RuleDefinition extends AbstractDefinition {
         super(null);
     }
 
+    /**
+     * 规则描述
+     */
     private String desc;
 
+    /**
+     * 规则优先级
+     */
     private int priority;
 
+    /**
+     * 规则评分
+     */
     private int score;
 
+    /**
+     * {@link RuleUnitDefinition}引用
+     */
     private RuleUnitDefinition ruleUnitDefinition;
 
     public String getDesc() {

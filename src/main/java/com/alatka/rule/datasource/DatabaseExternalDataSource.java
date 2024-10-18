@@ -7,6 +7,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import javax.sql.DataSource;
 import java.util.Map;
 
+/**
+ * 数据库外部数据源
+ *
+ * @author whocares
+ */
 public class DatabaseExternalDataSource extends AbstractExternalDataSource {
 
     private static final String KEY_SQL = "sql";

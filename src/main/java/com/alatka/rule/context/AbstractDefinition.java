@@ -4,10 +4,19 @@ import java.util.Objects;
 
 public abstract class AbstractDefinition {
 
+    /**
+     * 唯一标识
+     */
     private String id;
 
+    /**
+     * 名称
+     */
     private String name;
 
+    /**
+     * 是否可用
+     */
     private boolean enabled = true;
 
     public AbstractDefinition(String id) {

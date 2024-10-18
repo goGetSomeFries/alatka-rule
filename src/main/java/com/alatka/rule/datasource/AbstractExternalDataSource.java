@@ -14,7 +14,7 @@ public abstract class AbstractExternalDataSource implements ExternalDataSource {
 
     @Override
     public Map<String, Object> buildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext) {
-        // TODO
+        // 外部数据源数据范围判定
         Map<String, Object> context = definition.getScope() == RuleDataSourceDefinition.Scope.rule ?
                 new HashMap<>(paramContext) : paramContext;
 

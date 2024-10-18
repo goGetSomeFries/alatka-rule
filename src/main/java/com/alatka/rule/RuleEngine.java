@@ -36,7 +36,7 @@ public class RuleEngine {
     }
 
     /**
-     * 执行规则，得到命中规则id集合
+     * 执行规则，得到命中规则集合
      *
      * @param param 规则入参
      * @return {@link RuleDefinition}集合

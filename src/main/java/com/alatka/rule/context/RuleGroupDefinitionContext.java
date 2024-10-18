@@ -71,11 +71,12 @@ public class RuleGroupDefinitionContext {
     /**
      * 获取Context实例，用于蓝绿发布
      *
-     * @param flag
+     * @param mode 读写模式，代表调用该方法得到Context实例的目的是配置（写）还是使用（读）<br>
+     *             true:读模式 false:写模式
      * @return {@link RuleGroupDefinitionContext}实例
      */
-    public static RuleGroupDefinitionContext getInstance(boolean flag) {
-        return flag == SWITCH_FLAG ? Inner1.INSTANCE : Inner2.INSTANCE;
+    public static RuleGroupDefinitionContext getInstance(boolean mode) {
+        return mode == SWITCH_FLAG ? Inner1.INSTANCE : Inner2.INSTANCE;
     }
 
     private static class Inner1 {

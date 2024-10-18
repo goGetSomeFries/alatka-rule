@@ -7,25 +7,25 @@ import java.util.Map;
 
 public class DataSourceBuilderFactory {
 
-    private Map<RuleDataSourceDefinition.Type, DataSourceBuilder> dataSourceBuilders = new HashMap<>();
+    private Map<RuleDataSourceDefinition.Type, ExternalDataSource> dataSourceBuilders = new HashMap<>();
 
     private DataSourceBuilderFactory() {
-        this.init(new DefaultDataSourceBuilder());
+        this.init(new DefaultExternalDataSource());
     }
 
-    public void init(DataSourceBuilder builder) {
+    public void init(ExternalDataSource builder) {
         if (this.dataSourceBuilders.containsKey(builder.type())) {
             throw new IllegalArgumentException("DataSourceBuilder already exists");
         }
         this.dataSourceBuilders.put(builder.type(), builder);
     }
 
-    public DataSourceBuilder getDataSourceBuilder(RuleDataSourceDefinition.Type type) {
-        DataSourceBuilder dataSourceBuilder = this.dataSourceBuilders.get(type);
-        if (dataSourceBuilder == null) {
+    public ExternalDataSource getDataSourceBuilder(RuleDataSourceDefinition.Type type) {
+        ExternalDataSource externalDataSource = this.dataSourceBuilders.get(type);
+        if (externalDataSource == null) {
             throw new IllegalArgumentException("No DataSourceBuilder found for type " + type);
         }
-        return dataSourceBuilder;
+        return externalDataSource;
     }
 
     public static DataSourceBuilderFactory getInstance() {

@@ -61,8 +61,6 @@ public class RuleGroupDefinitionContext {
 
     /**
      * 蓝绿发布切换
-     *
-     * @return
      */
     public static void toggle() {
         SWITCH_FLAG = !SWITCH_FLAG;

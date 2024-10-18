@@ -8,7 +8,7 @@
 
 - **规则配置方式多样**：支持Yaml、Xml、数据库三种配置方式
 - **规则动态部署**：零代码开发，可在线部署，支持蓝绿发布
-- **支持多种外置数据源**：数据库、redis、elasticsearch、mongodb等
+- **支持多种外部数据源**：数据库、redis、elasticsearch、mongodb等
 - **小巧灵活**：只包括核心逻辑，整体包大小40k，可快速与应用集成
 
 ### [访问wiki查看更多教程](https://gitee.com/asuka2001/alatka-rule/wikis)

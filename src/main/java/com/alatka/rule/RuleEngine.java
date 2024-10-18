@@ -1,7 +1,7 @@
 package com.alatka.rule;
 
 import com.alatka.rule.context.*;
-import com.alatka.rule.datasource.DataSourceBuilder;
+import com.alatka.rule.datasource.ExternalDataSource;
 import com.alatka.rule.datasource.DataSourceBuilderFactory;
 import com.alatka.rule.util.JsonUtil;
 import com.googlecode.aviator.AviatorEvaluator;
@@ -102,9 +102,9 @@ public class RuleEngine {
     private void doExecute(RuleDefinition ruleDefinition, RuleUnitDefinition ruleUnitDefinition,
                            Map<String, Object> paramContext, List<RuleDefinition> result) {
         RuleDataSourceDefinition ruleDataSourceDefinition = ruleUnitDefinition.getDataSourceRef();
-        DataSourceBuilder dataSourceBuilder =
+        ExternalDataSource externalDataSource =
                 DataSourceBuilderFactory.getInstance().getDataSourceBuilder(ruleDataSourceDefinition.getType());
-        Map<String, Object> env = dataSourceBuilder.buildContext(ruleDataSourceDefinition, paramContext);
+        Map<String, Object> env = externalDataSource.buildContext(ruleDataSourceDefinition, paramContext);
 
         String cacheKey = Utils.md5sum(ruleDefinition + ruleUnitDefinition.toString());
         Expression exp = aviatorEvaluatorInstance.compile(cacheKey, ruleUnitDefinition.getExpression(), true);

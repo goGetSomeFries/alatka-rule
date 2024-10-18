@@ -7,13 +7,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import javax.sql.DataSource;
 import java.util.Map;
 
-public class DatabaseDataSourceBuilder extends AbstractDataSourceBuilder {
+public class DatabaseExternalDataSource extends AbstractExternalDataSource {
 
     private static final String KEY_SQL = "sql";
 
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-    public DatabaseDataSourceBuilder(DataSource dataSource) {
+    public DatabaseExternalDataSource(DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 

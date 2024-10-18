@@ -3,7 +3,7 @@ package com.alatka.rule.context;
 import java.util.Map;
 
 /**
- * 规则外置数据源定义类
+ * 规则外部数据源定义类
  *
  * @author whocares
  */

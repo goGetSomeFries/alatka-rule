@@ -4,7 +4,7 @@ import com.alatka.rule.context.RuleDataSourceDefinition;
 
 import java.util.Map;
 
-public class DefaultDataSourceBuilder extends AbstractDataSourceBuilder {
+public class DefaultExternalDataSource extends AbstractExternalDataSource {
 
     @Override
     protected Object doBuildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext) {

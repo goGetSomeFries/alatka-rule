@@ -1,13 +1,10 @@
 package com.alatka.rule;
 
 import com.alatka.rule.context.RuleDefinition;
-import com.alatka.rule.datasource.DataSourceBuilderFactory;
-import com.alatka.rule.datasource.DatabaseDataSourceBuilder;
 import com.alatka.rule.definition.RuleDefinitionBuilder;
 import com.alatka.rule.definition.YamlRuleDefinitionBuilder;
 import org.junit.jupiter.api.Test;
 
-import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

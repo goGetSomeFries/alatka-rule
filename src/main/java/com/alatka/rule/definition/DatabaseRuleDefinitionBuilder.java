@@ -31,7 +31,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
-                    result.put("id", resultSet.getInt("G_ID"));
+                    result.put("id", resultSet.getString("G_KEY"));
                     result.put("type", resultSet.getString("G_TYPE"));
                     result.put("name", resultSet.getString("G_NAME"));
                     result.put("enabled", resultSet.getBoolean("G_ENABLED"));
@@ -47,15 +47,15 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected void preProcess(Map<String, Object> source) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_UNIT_DEFINITION WHERE G_ID = ?";
+        String sql = "select * from ALK_RULE_UNIT_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, Integer.parseInt(source.get("id").toString()));
+            statement.setString(1, source.get("id").toString());
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
-                    result.put("ruleId", resultSet.getString("R_ID"));
+                    result.put("ruleId", resultSet.getInt("R_ID"));
                     result.put("type", resultSet.getString("U_TYPE"));
                     result.put("expression", resultSet.getString("U_EXPRESSION"));
                     result.put("enabled", resultSet.getBoolean("U_ENABLED"));
@@ -77,15 +77,15 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_DATASOURCE_DEFINITION WHERE G_ID = ?";
+        String sql = "select * from ALK_RULE_DATASOURCE_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, Integer.parseInt(ruleGroupDefinition.getId()));
+            statement.setString(1, ruleGroupDefinition.getId());
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
-                    result.put("id", resultSet.getInt("D_ID"));
+                    result.put("id", resultSet.getString("D_KEY"));
                     result.put("name", resultSet.getString("D_NAME"));
                     result.put("type", resultSet.getString("D_TYPE"));
                     result.put("resultType", resultSet.getString("D_RESULT_TYPE"));
@@ -120,15 +120,15 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_DEFINITION WHERE G_ID = ?";
+        String sql = "select * from ALK_RULE_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, Integer.parseInt(ruleGroupDefinition.getId()));
+            statement.setString(1, ruleGroupDefinition.getId());
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
-                    result.put("id", resultSet.getInt("R_ID"));
+                    result.put("id", resultSet.getString("R_ID"));
                     result.put("name", resultSet.getString("R_NAME"));
                     result.put("desc", resultSet.getString("R_DESC"));
                     result.put("enabled", resultSet.getBoolean("R_ENABLED"));
@@ -151,7 +151,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
         String ruleId = this.getValueWithMap(ruleDefinition, "id");
 
         return this.ruleUnitList.stream()
-                .filter(map -> ruleId.equals(this.getValueWithMap(map, "ruleId")))
+                .filter(map -> ruleId.equals(String.valueOf(this.getValueWithMap(map, "ruleId"))))
                 .sorted(Comparator.comparingInt(map -> this.getValueWithMap(map, "order")))
                 .collect(Collectors.toList());
     }

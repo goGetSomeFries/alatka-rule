@@ -13,8 +13,8 @@
 
 ### 使用场景
 
-- 风控类系统欺诈风险识别
-- TODO
+- 风控类欺诈风险识别
+- 营销类客户评分
  
 ### [访问wiki查看更多教程](https://gitee.com/asuka2001/alatka-rule/wikis)
 

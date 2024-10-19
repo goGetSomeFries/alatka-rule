@@ -4,10 +4,14 @@ import com.alatka.messages.util.YamlUtil;
 import com.alatka.rule.context.RuleGroupDefinition;
 
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Yaml文件规则构建器
+ *
+ * @author whocares
+ */
 public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
 
     private static final String YAML_ROOT_NAME = "alatka.rule";

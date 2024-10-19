@@ -11,6 +11,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * 数据库规则构建器
+ *
+ * @author whocares
+ */
 public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder<Map<String, Object>> {
 
     private final DataSource dataSource;
@@ -56,7 +61,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
                     result.put("ruleId", resultSet.getInt("R_ID"));
-                    result.put("type", resultSet.getString("U_TYPE"));
+                    result.put("dataSource", resultSet.getString("D_KEY"));
                     result.put("expression", resultSet.getString("U_EXPRESSION"));
                     result.put("enabled", resultSet.getBoolean("U_ENABLED"));
                     result.put("order", resultSet.getInt("U_ORDER"));
@@ -97,6 +102,10 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                     result.put("value2", resultSet.getString("D_PARAM_V2"));
                     result.put("key3", resultSet.getString("D_PARAM_K3"));
                     result.put("value3", resultSet.getString("D_PARAM_V3"));
+                    result.put("key4", resultSet.getString("D_PARAM_K4"));
+                    result.put("value4", resultSet.getString("D_PARAM_V4"));
+                    result.put("key5", resultSet.getString("D_PARAM_K5"));
+                    result.put("value5", resultSet.getString("D_PARAM_V5"));
                     list.add(result);
                 }
             }
@@ -106,7 +115,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
 
         list.stream().forEach(map -> {
             Map<String, Object> config = new HashMap<>();
-            IntStream.range(1, 4).forEach(i -> {
+            IntStream.range(1, 6).forEach(i -> {
                 String key = this.getValueWithMap(map, "key" + i);
                 if (key != null) {
                     config.put(key, this.getValueWithMap(map, "value" + i));
@@ -151,7 +160,10 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
         String ruleId = this.getValueWithMap(ruleDefinition, "id");
 
         return this.ruleUnitList.stream()
-                .filter(map -> ruleId.equals(String.valueOf(this.getValueWithMap(map, "ruleId"))))
+                .filter(map -> {
+                    int value = this.getValueWithMap(map, "ruleId");
+                    return ruleId.equals(String.valueOf(value));
+                })
                 .sorted(Comparator.comparingInt(map -> this.getValueWithMap(map, "order")))
                 .collect(Collectors.toList());
     }

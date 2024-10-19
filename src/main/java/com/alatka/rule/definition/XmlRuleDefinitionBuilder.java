@@ -9,6 +9,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Xml文件规则构建器
+ *
+ * @author whocares
+ */
 public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
 
     public XmlRuleDefinitionBuilder() {

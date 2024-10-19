@@ -9,6 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 文件规则构建器
+ *
+ * @author whocares
+ * @see XmlRuleDefinitionBuilder
+ * @see YamlRuleDefinitionBuilder
+ */
 public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder<Path> {
 
     private static final String SUFFIX = ".rule";

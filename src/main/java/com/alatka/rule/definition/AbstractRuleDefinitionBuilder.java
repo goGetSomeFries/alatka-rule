@@ -26,6 +26,9 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * 外部数据源映射，属于构建中间状态，构建结束后清除
+     */
     private Map<String, RuleDataSourceDefinition> mapping;
 
     @Override

@@ -6,8 +6,10 @@ import com.alatka.rule.util.XmlUtil;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Xml文件规则构建器
@@ -33,24 +35,44 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     @Override
     protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         Map<String, Object> dataSource = this.getValueWithMap(this.rootModel, "dataSource");
-        Object database = this.getValueWithMap(dataSource, "database");
-        List<Map<String, Object>> databases = (List<Map<String, Object>>) (database instanceof List ? database : Collections.singletonList(database));
-        databases.stream()
-                .peek(map -> map.put("type", RuleDataSourceDefinition.Type.database.name()))
-                .forEach(map -> map.put("config", Collections.singletonMap("sql", map.get("sql"))));
-        return databases;
+        if (dataSource == null) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<Map<String, Object>> databaseList =
+                doBuildRuleDataSourceItems(dataSource, RuleDataSourceDefinition.Type.database, "sql", "resultType");
+        List<Map<String, Object>> redisList =
+                doBuildRuleDataSourceItems(dataSource, RuleDataSourceDefinition.Type.redis, "type", "key", "hashKey", "setKey");
+
+        databaseList.addAll(redisList);
+        return databaseList;
+    }
+
+    private List<Map<String, Object>> doBuildRuleDataSourceItems(Map<String, Object> dataSource,
+                                                                 RuleDataSourceDefinition.Type type,
+                                                                 String... keys) {
+        Object item = this.getValueWithMap(dataSource, type.name(), Collections.EMPTY_LIST);
+        List<Map<String, Object>> list = (List<Map<String, Object>>) (item instanceof List ? item : Collections.singletonList(item));
+        list.stream()
+                .peek(map -> map.put("type", type.name()))
+                .forEach(map -> {
+                    Map<String, Object> config = new HashMap<>();
+                    Stream.of(keys).forEach(key -> config.put(key, map.remove(key)));
+                    map.put("config", config);
+                });
+        return list;
     }
 
     @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
-        Map<String, Object> ruleSet = this.getValueWithMap(this.rootModel, "ruleSet");
-        Object rule = this.getValueWithMap(ruleSet, "rule");
+        Map<String, Object> ruleSet = this.getValueWithMap(this.rootModel, "ruleSet", Collections.EMPTY_MAP);
+        Object rule = this.getValueWithMap(ruleSet, "rule", Collections.emptyList());
         return (List<Map<String, Object>>) (rule instanceof List ? rule : Collections.singletonList(rule));
     }
 
     @Override
     protected List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> ruleDefinition) {
-        Object object = this.getValueWithMap(ruleDefinition, "unit");
+        Object object = this.getValueWithMap(ruleDefinition, "unit", Collections.emptyList());
         return (List<Map<String, Object>>) (object instanceof List ? object : Collections.singletonList(object));
     }
 

@@ -44,6 +44,10 @@
             <optional>true</optional>
         </dependency>
         <!-- redis作为外部数据源使用 -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+        </dependency>
         <!-- elasticsearch作为外部数据源使用 -->
 
         <dependency>

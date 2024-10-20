@@ -18,16 +18,24 @@ public abstract class AbstractExternalDataSource implements ExternalDataSource {
         Map<String, Object> context = definition.getScope() == RuleDataSourceDefinition.Scope.rule ?
                 new HashMap<>(paramContext) : paramContext;
 
-        context.computeIfAbsent(definition.getId(), k -> this.doBuildContext(definition, context));
+        context.computeIfAbsent(definition.getId(), k -> this.doBuildContext(definition.getConfig(), context));
         return context;
     }
 
     /**
      * 构建外部数据源返回的数据，如果结果为null，则不整合到请求数据Context中
      *
-     * @param definition   {@link RuleDataSourceDefinition}
+     * @param config       {@link RuleDataSourceDefinition#getConfig()}
      * @param paramContext 请求数据
      * @return 外部数据源返回的数据对象
      */
-    protected abstract Object doBuildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext);
+    protected abstract Object doBuildContext(Map<String, String> config, Map<String, Object> paramContext);
+
+    protected String getWithConfig(Map<String, String> config, String key) {
+        String value = config.get(key);
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException(key + " is required");
+        }
+        return value;
+    }
 }

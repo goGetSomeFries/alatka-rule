@@ -33,17 +33,9 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
     private Scope scope;
 
     /**
-     * 返回数据类型
-     *
-     * @see ResultType#list
-     * @see ResultType#single
-     */
-    private ResultType resultType;
-
-    /**
      * 自定义参数
      */
-    private Map<String, Object> config;
+    private Map<String, String> config;
 
     public RuleDataSourceDefinition() {
         super(null);
@@ -73,17 +65,6 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
         rule
     }
 
-    public enum ResultType {
-        /**
-         * 单笔
-         */
-        single,
-        /**
-         * 集合
-         */
-        list
-    }
-
     public Type getType() {
         return type;
     }
@@ -100,19 +81,11 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
         this.scope = scope;
     }
 
-    public ResultType getResultType() {
-        return resultType;
-    }
-
-    public void setResultType(ResultType resultType) {
-        this.resultType = resultType;
-    }
-
-    public Map<String, Object> getConfig() {
+    public Map<String, String> getConfig() {
         return config;
     }
 
-    public void setConfig(Map<String, Object> config) {
+    public void setConfig(Map<String, String> config) {
         this.config = config;
     }
 }

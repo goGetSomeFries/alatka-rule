@@ -8,6 +8,10 @@ package com.alatka.rule.context;
 public class RuleUnitDefinition {
 
     /**
+     * 序号
+     */
+    private int index;
+    /**
      * 是否可用
      */
     private boolean enabled = true;
@@ -27,6 +31,13 @@ public class RuleUnitDefinition {
      */
     private RuleUnitDefinition next;
 
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
     public boolean isEnabled() {
         return enabled;

@@ -110,7 +110,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             String type = this.getValueWithMapOrThrow(map, "type");
             String resultType = this.getValueWithMapOrThrow(map, "resultType");
             Map<String, Object> config = this.getValueWithMapOrThrow(map, "config");
-            String scope = this.getValueWithMap(map, "scope", RuleDataSourceDefinition.Scope.data.name());
+            String scope = this.getValueWithMap(map, "scope", RuleDataSourceDefinition.Scope.request.name());
 
             RuleDataSourceDefinition definition = new RuleDataSourceDefinition();
             definition.setId(id);

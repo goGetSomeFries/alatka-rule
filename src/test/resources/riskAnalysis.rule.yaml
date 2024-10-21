@@ -20,14 +20,14 @@ alatka.rule:
     - id: tradeDetail
       type: database
       name: ""
-      scope: data
+      scope: request
       resultType: list
       config:
         sql: ""
     - id: vipDetail
       type: database
       name: ""
-      scope: data
+      scope: request
       resultType: single
       config:
         sql: "select * from trdetail t where t.xxx = v_date"

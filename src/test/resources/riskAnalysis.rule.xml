@@ -12,8 +12,8 @@
             </rule>
         </ruleSet>
         <dataSource>
-            <database id="tradeDetail" scope="data" name="" resultType="list" sql="select * from trdetail where xxxxxx"/>
-            <database id="vipDetail" scope="data" name="" resultType="single" sql="select * from trdetail where xxxxxx"/>
+            <database id="tradeDetail" scope="request" name="" resultType="list" sql="select * from trdetail where xxxxxx"/>
+            <database id="vipDetail" scope="request" name="" resultType="single" sql="select * from trdetail where xxxxxx"/>
         </dataSource>
     </alatka-rule>
 </root>

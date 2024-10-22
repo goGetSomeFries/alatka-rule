@@ -6,8 +6,10 @@ import com.alatka.rule.util.XmlUtil;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Xml文件规则构建器
@@ -33,12 +35,38 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     @Override
     protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         Map<String, Object> dataSource = this.getValueWithMap(this.rootModel, "dataSource");
-        Object database = this.getValueWithMap(dataSource, "database");
-        List<Map<String, Object>> databases = (List<Map<String, Object>>) (database instanceof List ? database : Collections.singletonList(database));
-        databases.stream()
-                .peek(map -> map.put("type", RuleDataSourceDefinition.Type.database.name()))
-                .forEach(map -> map.put("config", Collections.singletonMap("sql", map.get("sql"))));
-        return databases;
+        if (dataSource == null) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<Map<String, Object>> databaseList =
+                doBuildRuleDataSourceItems(dataSource, RuleDataSourceDefinition.Type.database, "sql");
+        List<Map<String, Object>> redisList =
+                doBuildRuleDataSourceItems(dataSource, RuleDataSourceDefinition.Type.redis, "type", "key", "hashKey", "setKey");
+
+        databaseList.addAll(redisList);
+        return databaseList;
+    }
+
+    private List<Map<String, Object>> doBuildRuleDataSourceItems(Map<String, Object> dataSource,
+                                                                 RuleDataSourceDefinition.Type type,
+                                                                 String... keys) {
+        Object item = this.getValueWithMap(dataSource, type.name());
+        List<Map<String, Object>> list = null;
+        if (item == null) {
+            list = Collections.EMPTY_LIST;
+        } else {
+            list = (List<Map<String, Object>>) (item instanceof List ? item : Collections.singletonList(item));
+        }
+        list.stream()
+                .peek(map -> map.put("type", type.name()))
+                .forEach(map -> {
+                    Map<String, Object> config = new HashMap<>();
+                    Stream.of(keys).forEach(key -> config.put(key, map.remove(key)));
+                    map.put("config", config);
+                });
+
+        return list;
     }
 
     @Override

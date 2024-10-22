@@ -4,6 +4,7 @@ import com.alatka.messages.util.YamlUtil;
 import com.alatka.rule.context.RuleGroupDefinition;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,8 @@ public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
 
     @Override
     protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
-        return this.getValueWithMap(this.rootModel, "dataSource");
+        List<Map<String, Object>> list = this.getValueWithMap(this.rootModel, "dataSource");
+        return list == null ? Collections.EMPTY_LIST : list;
     }
 
     @Override

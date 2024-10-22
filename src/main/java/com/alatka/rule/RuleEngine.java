@@ -46,7 +46,7 @@ public class RuleEngine {
 
         // 入参预处理
         List<RuleParamDefinition> ruleParamDefinitions = definitionContext.getRuleParamDefinitions(ruleGroupName);
-        Map<String, Object> paramContext = this.preProcessParam(aviatorEvaluatorInstance, param, ruleParamDefinitions);
+        Map<String, Object> paramContext = this.initParamContext(aviatorEvaluatorInstance, param, ruleParamDefinitions);
 
         // 黑白名单过滤
         if (this.listFilter(aviatorEvaluatorInstance, paramContext, ruleGroupDefinition.getRuleListDefinition())) {
@@ -86,9 +86,10 @@ public class RuleEngine {
             }
 
             // 规则判断
-            this.doExecute(aviatorEvaluatorInstance, ruleDefinition, ruleDefinition.getRuleUnitDefinition(), paramContext, result);
+            boolean hit = this.doExecute(aviatorEvaluatorInstance, ruleDefinition.getRuleUnitDefinition(), paramContext);
 
-            if (!result.isEmpty()) {
+            if (hit) {
+                result.add(ruleDefinition);
                 theOne = ruleDefinition;
             }
         }
@@ -105,8 +106,8 @@ public class RuleEngine {
      * @param list                     {@link RuleParamDefinition}集合
      * @return 处理后入参
      */
-    private Map<String, Object> preProcessParam(AviatorEvaluatorInstance aviatorEvaluatorInstance,
-                                                Object param, List<RuleParamDefinition> list) {
+    private Map<String, Object> initParamContext(AviatorEvaluatorInstance aviatorEvaluatorInstance,
+                                                 Object param, List<RuleParamDefinition> list) {
         Map<String, Object> paramContext =
                 param instanceof Map ? new HashMap<>((Map<String, Object>) param) : JsonUtil.objectToMap(param);
 
@@ -146,18 +147,18 @@ public class RuleEngine {
      */
     private boolean doListFilter(AviatorEvaluatorInstance aviatorEvaluatorInstance,
                                  RuleUnitDefinition ruleUnitDefinition, Map<String, Object> paramContext) {
-        RuleDataSourceDefinition ruleDataSourceDefinition = ruleUnitDefinition.getDataSourceRef();
-        ExternalDataSource externalDataSource =
-                ExternalDataSourceFactory.getInstance().getExternalDataSource(ruleDataSourceDefinition.getType());
-        Map<String, Object> env = externalDataSource.buildContext(ruleDataSourceDefinition, paramContext);
-
+        Map<String, Object> env = this.extendParamContext(ruleUnitDefinition.getDataSourceRef(), paramContext);
         boolean hit = this.calculateExpression(aviatorEvaluatorInstance, ruleUnitDefinition.getExpression(), env);
+
         if (hit) {
+            // 命中规则单元，结束当前规则判断
             return true;
         }
         if (ruleUnitDefinition.getNext() == null) {
+            // 未命中规则单元，无后续规则单元，则当前规则未命中
             return false;
         }
+        // 未命中规则单元，有后续规则单元，则继续执行后续规则单元
         return this.doListFilter(aviatorEvaluatorInstance, ruleUnitDefinition.getNext(), env);
     }
 
@@ -165,33 +166,40 @@ public class RuleEngine {
      * 递归判断{@link RuleUnitDefinition}规则单元，全部命中则其归属{@link RuleDefinition}规则命中
      *
      * @param aviatorEvaluatorInstance aviator实例
-     * @param ruleDefinition           规则
      * @param ruleUnitDefinition       规则单元
      * @param paramContext             规则入参
-     * @param result                   命中结果集
+     * @return 是否命中
      */
-    private void doExecute(AviatorEvaluatorInstance aviatorEvaluatorInstance, RuleDefinition ruleDefinition,
-                           RuleUnitDefinition ruleUnitDefinition, Map<String, Object> paramContext,
-                           List<RuleDefinition> result) {
-        RuleDataSourceDefinition ruleDataSourceDefinition = ruleUnitDefinition.getDataSourceRef();
-        ExternalDataSource externalDataSource =
-                ExternalDataSourceFactory.getInstance().getExternalDataSource(ruleDataSourceDefinition.getType());
-        Map<String, Object> env = externalDataSource.buildContext(ruleDataSourceDefinition, paramContext);
-
+    private boolean doExecute(AviatorEvaluatorInstance aviatorEvaluatorInstance,
+                              RuleUnitDefinition ruleUnitDefinition, Map<String, Object> paramContext) {
+        Map<String, Object> env = this.extendParamContext(ruleUnitDefinition.getDataSourceRef(), paramContext);
         boolean hit = this.calculateExpression(aviatorEvaluatorInstance, ruleUnitDefinition.getExpression(), env);
 
         if (!hit) {
             // 未命中规则单元，结束当前规则判断
-            this.logger.debug("规则：{}，规则单元{}未命中", ruleDefinition, ruleUnitDefinition.getIndex());
-            return;
+            return false;
         }
         if (ruleUnitDefinition.getNext() == null) {
             // 命中规则单元，无后续规则单元，则当前规则命中
-            result.add(ruleDefinition);
+            return true;
         } else {
             // 命中规则单元，有后续规则单元，则继续执行后续规则单元
-            this.doExecute(aviatorEvaluatorInstance, ruleDefinition, ruleUnitDefinition.getNext(), env, result);
+            return this.doExecute(aviatorEvaluatorInstance, ruleUnitDefinition.getNext(), env);
         }
+    }
+
+    /**
+     * 通过外部数据源构建请求上下文
+     *
+     * @param ruleDataSourceDefinition {@link RuleDataSourceDefinition}
+     * @param paramContext             请求上下文
+     * @return 结果上下文
+     */
+    private Map<String, Object> extendParamContext(RuleDataSourceDefinition ruleDataSourceDefinition,
+                                                   Map<String, Object> paramContext) {
+        ExternalDataSourceFactory factory = ExternalDataSourceFactory.getInstance();
+        ExternalDataSource externalDataSource = factory.getExternalDataSource(ruleDataSourceDefinition.getType());
+        return externalDataSource.buildContext(ruleDataSourceDefinition, paramContext);
     }
 
     /**

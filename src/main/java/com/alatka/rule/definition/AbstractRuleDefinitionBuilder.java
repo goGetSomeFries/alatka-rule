@@ -214,11 +214,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             String type = this.getValueWithMapOrThrow(map, "type");
             boolean enabled = this.getValueWithMap(map, "enabled", true);
 
-            List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(map);
-            if (units.isEmpty()) {
-                throw new IllegalArgumentException("must contain at least one unit");
-            }
-            RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units);
+            RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(map);
 
             RuleListDefinition ruleListDefinition = new RuleListDefinition();
             ruleListDefinition.setId(id);
@@ -275,11 +271,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             int score = this.getValueWithMap(map, "score", 0);
             boolean enabled = this.getValueWithMap(map, "enabled", true);
 
-            List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(map);
-            if (units.isEmpty()) {
-                throw new IllegalArgumentException("must contain at least one unit");
-            }
-            RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units);
+            RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(map);
 
             RuleDefinition ruleDefinition = new RuleDefinition();
             ruleDefinition.setId(id);
@@ -298,10 +290,15 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     /**
      * 解析为{@link RuleUnitDefinition}规则单元
      *
-     * @param units 配置源的映射
+     * @param map {@link RuleDefinition}/{@link RuleListDefinition}映射
      * @return {@link RuleUnitDefinition}
      */
-    private RuleUnitDefinition buildRuleUnitDefinition(List<Map<String, Object>> units) {
+    private RuleUnitDefinition buildRuleUnitDefinition(Map<String, Object> map) {
+        List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(map);
+        if (units.isEmpty()) {
+            throw new IllegalArgumentException("must contain at least one unit");
+        }
+
         List<Map<String, Object>> list = new ArrayList<>(units);
         Collections.reverse(list);
 
@@ -417,10 +414,10 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     /**
      * 解析为{@link RuleUnitDefinition}映射集合
      *
-     * @param ruleDefinition {@link RuleDefinition}映射
+     * @param map {@link RuleDefinition}/{@link RuleListDefinition}映射
      * @return {@link RuleUnitDefinition}映射集合
      */
-    protected abstract List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> ruleDefinition);
+    protected abstract List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> map);
 
     /**
      * 解析后处理

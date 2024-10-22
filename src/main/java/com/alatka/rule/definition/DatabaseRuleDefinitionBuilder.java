@@ -173,7 +173,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
         }
         Map<String, Object> result = list.isEmpty() ? new HashMap<>(0) : list.get(0);
         result.computeIfPresent("type", (k, v) -> "2".equals(v) ?
-                RuleListDefinition.Type.blackList.name() : RuleListDefinition.Type.whiteList);
+                RuleListDefinition.Type.blackList.name() : RuleListDefinition.Type.whiteList.name());
         return result;
     }
 
@@ -207,15 +207,15 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     }
 
     @Override
-    protected List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> ruleDefinition) {
-        String ruleId = this.getValueWithMap(ruleDefinition, "id");
+    protected List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> map) {
+        String ruleId = this.getValueWithMap(map, "id");
 
         return this.ruleUnitList.stream()
-                .filter(map -> {
-                    int value = this.getValueWithMap(map, "ruleId");
+                .filter(mapping -> {
+                    int value = this.getValueWithMap(mapping, "ruleId");
                     return ruleId.equals(String.valueOf(value));
                 })
-                .sorted(Comparator.comparingInt(map -> this.getValueWithMap(map, "order")))
+                .sorted(Comparator.comparingInt(mapping -> this.getValueWithMap(mapping, "order")))
                 .collect(Collectors.toList());
     }
 

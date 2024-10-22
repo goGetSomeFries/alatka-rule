@@ -8,6 +8,8 @@ import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.AviatorEvaluatorInstance;
 import com.googlecode.aviator.Expression;
 import com.googlecode.aviator.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +22,8 @@ import java.util.Map;
  * @author whocares
  */
 public class RuleEngine {
+
+    private final Logger logger = LoggerFactory.getLogger(RuleEngine.class);
 
     private final AviatorEvaluatorInstance aviatorEvaluatorInstance;
 
@@ -88,6 +92,7 @@ public class RuleEngine {
             }
         }
 
+        this.logger.debug("execute: {}; params: {}; result: {}", ruleGroupDefinition, paramContext, result);
         return result;
     }
 
@@ -112,6 +117,7 @@ public class RuleEngine {
 
         if (!hit) {
             // 未命中规则单元，结束当前规则判断
+            this.logger.debug("规则：{}，规则单元{}未命中", ruleDefinition, ruleUnitDefinition.getIndex());
             return;
         }
         if (ruleUnitDefinition.getNext() == null) {

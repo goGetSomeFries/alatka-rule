@@ -27,7 +27,7 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
      * 数据范围
      *
      * @see Scope#global
-     * @see Scope#data
+     * @see Scope#request
      * @see Scope#rule
      */
     private Scope scope;
@@ -66,7 +66,7 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
         /**
          * 请求数据范围
          */
-        data,
+        request,
         /**
          * 规则范围
          */

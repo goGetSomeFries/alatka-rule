@@ -3,11 +3,14 @@ package com.alatka.rule.definition;
 import com.alatka.rule.context.*;
 import com.alatka.rule.util.FileUtil;
 import com.googlecode.aviator.AviatorEvaluator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,10 +24,29 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinitionBuilder {
 
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private Map<String, RuleDataSourceDefinition> mapping;
 
     @Override
     public void build() {
+        doBuild();
+        this.logger.info("********* 规则配置build完成 *********");
+    }
+
+    @Override
+    public void refresh() {
+        build();
+        this.logger.info("********* 规则配置refresh完成 *********");
+    }
+
+    @Override
+    public void fallback() {
+        RuleGroupDefinitionContext.toggle();
+        this.logger.info("********* 规则配置回退上一版本 *********");
+    }
+
+    private void doBuild() {
         RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance(false);
         context.reset();
 
@@ -32,6 +54,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 .peek(this::preProcess)
                 .map(this::buildRuleGroupDefinition)
                 .filter(RuleGroupDefinition::isEnabled)
+                .peek(ruleGroupDefinition -> this.logger.info("build {}", ruleGroupDefinition))
                 .peek(ruleGroupDefinition -> this.mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition))
                 .forEach(ruleGroupDefinition -> {
                     List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
@@ -40,16 +63,6 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         this.postProcess();
         this.mapping = null;
 
-        RuleGroupDefinitionContext.toggle();
-    }
-
-    @Override
-    public void refresh() {
-        build();
-    }
-
-    @Override
-    public void fallback() {
         RuleGroupDefinitionContext.toggle();
     }
 
@@ -110,7 +123,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             String type = this.getValueWithMapOrThrow(map, "type");
             String resultType = this.getValueWithMapOrThrow(map, "resultType");
             Map<String, Object> config = this.getValueWithMapOrThrow(map, "config");
-            String scope = this.getValueWithMap(map, "scope", RuleDataSourceDefinition.Scope.data.name());
+            String scope = this.getValueWithMap(map, "scope", RuleDataSourceDefinition.Scope.request.name());
 
             RuleDataSourceDefinition definition = new RuleDataSourceDefinition();
             definition.setId(id);
@@ -186,9 +199,11 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         List<Map<String, Object>> list = new ArrayList<>(units);
         Collections.reverse(list);
 
+        AtomicInteger counter = new AtomicInteger(list.size());
         AtomicReference<RuleUnitDefinition> reference = new AtomicReference<>();
         list.stream()
                 .map(this::doBuildRuleUnitDefinition)
+                .peek(ruleUnitDefinition -> ruleUnitDefinition.setIndex(counter.getAndDecrement()))
                 .filter(RuleUnitDefinition::isEnabled)
                 .peek(ruleUnitDefinition -> AviatorEvaluator.getInstance().validate(ruleUnitDefinition.getExpression()))
                 .peek(ruleUnitDefinition -> ruleUnitDefinition.setNext(reference.get()))

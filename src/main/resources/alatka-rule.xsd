@@ -64,6 +64,6 @@
         <xs:attribute type="xs:string" name="type" use="required"/>
         <xs:attribute type="xs:string" name="key" use="required"/>
         <xs:attribute type="xs:string" name="hashKey" use="optional"/>
-        <xs:attribute type="xs:string" name="setKey" use="optional"/>
+        <xs:attribute type="xs:string" name="setValue" use="optional"/>
     </xs:complexType>
 </xs:schema>

@@ -71,14 +71,14 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
 
     @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
-        Map<String, Object> ruleSet = this.getValueWithMap(this.rootModel, "ruleSet");
-        Object rule = this.getValueWithMap(ruleSet, "rule");
+        Map<String, Object> ruleSet = this.getValueWithMap(this.rootModel, "ruleSet", Collections.EMPTY_MAP);
+        Object rule = this.getValueWithMap(ruleSet, "rule", Collections.emptyList());
         return (List<Map<String, Object>>) (rule instanceof List ? rule : Collections.singletonList(rule));
     }
 
     @Override
     protected List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> ruleDefinition) {
-        Object object = this.getValueWithMap(ruleDefinition, "unit");
+        Object object = this.getValueWithMap(ruleDefinition, "unit", Collections.emptyList());
         return (List<Map<String, Object>>) (object instanceof List ? object : Collections.singletonList(object));
     }
 

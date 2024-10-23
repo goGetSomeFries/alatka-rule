@@ -151,6 +151,10 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     private List<RuleDefinition> buildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         try {
             List<Map<String, Object>> rules = this.doBuildRuleDefinitions(ruleGroupDefinition);
+            if (rules.isEmpty()) {
+                throw new IllegalArgumentException("must contain at least one rule");
+            }
+
             return rules.stream()
                     .map(map -> this.buildRuleDefinition(map))
                     .filter(RuleDefinition::isEnabled)
@@ -176,6 +180,9 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             boolean enabled = this.getValueWithMap(map, "enabled", true);
 
             List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(map);
+            if (units.isEmpty()) {
+                throw new IllegalArgumentException("must contain at least one unit");
+            }
             RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units);
 
             RuleDefinition ruleDefinition = new RuleDefinition();

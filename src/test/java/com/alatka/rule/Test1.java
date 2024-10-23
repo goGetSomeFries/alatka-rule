@@ -2,6 +2,7 @@ package com.alatka.rule;
 
 import com.alatka.rule.context.RuleDefinition;
 import com.alatka.rule.definition.RuleDefinitionBuilder;
+import com.alatka.rule.definition.XmlRuleDefinitionBuilder;
 import com.alatka.rule.definition.YamlRuleDefinitionBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ public class Test1 {
     @Test
     public void test() {
 //        new YamlRuleDefinitionBuilder().build();
-        RuleDefinitionBuilder ruleDefinitionBuilder = new YamlRuleDefinitionBuilder();
+        RuleDefinitionBuilder ruleDefinitionBuilder = new XmlRuleDefinitionBuilder();
         ruleDefinitionBuilder.build();
 
 /*

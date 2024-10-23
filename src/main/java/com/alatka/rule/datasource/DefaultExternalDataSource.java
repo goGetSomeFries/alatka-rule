@@ -12,7 +12,7 @@ import java.util.Map;
 public class DefaultExternalDataSource extends AbstractExternalDataSource {
 
     @Override
-    protected Object doBuildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext) {
+    protected Object doBuildContext(Map<String, String> config, Map<String, Object> paramContext) {
         return null;
     }
 

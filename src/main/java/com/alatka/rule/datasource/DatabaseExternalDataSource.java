@@ -16,6 +16,8 @@ public class DatabaseExternalDataSource extends AbstractExternalDataSource {
 
     private static final String KEY_SQL = "sql";
 
+    private static final String KEY_RESULT_TYPE = "resultType";
+
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     public DatabaseExternalDataSource(DataSource dataSource) {
@@ -23,10 +25,11 @@ public class DatabaseExternalDataSource extends AbstractExternalDataSource {
     }
 
     @Override
-    protected Object doBuildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext) {
-        Map<String, Object> config = definition.getConfig();
-        String sql = config.get(KEY_SQL).toString();
-        return definition.getResultType() == RuleDataSourceDefinition.ResultType.list ?
+    protected Object doBuildContext(Map<String, String> config, Map<String, Object> paramContext) {
+        String sql = this.getWithConfig(config, KEY_SQL);
+        String resultType = this.getWithConfig(config, KEY_RESULT_TYPE);
+
+        return ResultType.valueOf(resultType) == ResultType.list ?
                 this.jdbcTemplate.queryForList(sql, new MapSqlParameterSource(paramContext)) :
                 this.jdbcTemplate.queryForMap(sql, new MapSqlParameterSource(paramContext));
     }
@@ -35,4 +38,16 @@ public class DatabaseExternalDataSource extends AbstractExternalDataSource {
     public RuleDataSourceDefinition.Type type() {
         return RuleDataSourceDefinition.Type.database;
     }
+
+    private enum ResultType {
+        /**
+         * 单笔
+         */
+        single,
+        /**
+         * 集合
+         */
+        list
+    }
+
 }

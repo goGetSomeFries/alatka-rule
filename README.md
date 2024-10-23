@@ -15,6 +15,7 @@
 
 - 风控类欺诈风险识别
 - 营销类客户评分
+- 合规管理审计风险评估
  
 ### [访问wiki查看更多教程](https://gitee.com/asuka2001/alatka-rule/wikis)
 

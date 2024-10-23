@@ -26,6 +26,9 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * 外部数据源映射，属于构建中间状态，构建结束后清除
+     */
     private Map<String, RuleDataSourceDefinition> mapping;
 
     @Override
@@ -121,15 +124,13 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             String name = this.getValueWithMapOrThrow(map, "name");
             boolean enabled = this.getValueWithMap(map, "enabled", true);
             String type = this.getValueWithMapOrThrow(map, "type");
-            String resultType = this.getValueWithMapOrThrow(map, "resultType");
-            Map<String, Object> config = this.getValueWithMapOrThrow(map, "config");
+            Map<String, String> config = this.getValueWithMapOrThrow(map, "config");
             String scope = this.getValueWithMap(map, "scope", RuleDataSourceDefinition.Scope.request.name());
 
             RuleDataSourceDefinition definition = new RuleDataSourceDefinition();
             definition.setId(id);
             definition.setType(RuleDataSourceDefinition.Type.valueOf(type));
             definition.setScope(RuleDataSourceDefinition.Scope.valueOf(scope));
-            definition.setResultType(RuleDataSourceDefinition.ResultType.valueOf(resultType));
             definition.setEnabled(enabled);
             definition.setName(name);
             definition.setConfig(config);
@@ -148,6 +149,10 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     private List<RuleDefinition> buildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         try {
             List<Map<String, Object>> rules = this.doBuildRuleDefinitions(ruleGroupDefinition);
+            if (rules.isEmpty()) {
+                throw new IllegalArgumentException("must contain at least one rule");
+            }
+
             return rules.stream()
                     .map(map -> this.buildRuleDefinition(map))
                     .filter(RuleDefinition::isEnabled)
@@ -173,6 +178,9 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             boolean enabled = this.getValueWithMap(map, "enabled", true);
 
             List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(map);
+            if (units.isEmpty()) {
+                throw new IllegalArgumentException("must contain at least one unit");
+            }
             RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units);
 
             RuleDefinition ruleDefinition = new RuleDefinition();

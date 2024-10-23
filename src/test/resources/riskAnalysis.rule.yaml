@@ -7,27 +7,31 @@ alatka.rule:
       name: "风险账户10星"
       desc: "testing...."
       units:
-        - path: riskAnalysis/test.av
+        - path: riskAnalysis/test1.av
     - id: "2"
       name: "风险账户9星"
       desc: "testing...."
-      enabled: false
       units:
-        - path: riskAnalysis/test.av
-        - path: riskAnalysis/test.av
+        - path: riskAnalysis/test2.av
+    - id: "3"
+      name: "风险账户8星"
+      desc: "testing...."
+      units:
+        - path: riskAnalysis/test3.av
+        - path: riskAnalysis/test4.av
           dataSource: tradeDetail
   dataSource:
     - id: tradeDetail
       type: database
       name: ""
       scope: request
-      resultType: list
       config:
+        resultType: list
         sql: ""
     - id: vipDetail
       type: database
       name: ""
       scope: request
-      resultType: single
       config:
+        resultType: single
         sql: "select * from trdetail t where t.xxx = v_date"

@@ -45,6 +45,7 @@
     <xs:complexType name="dataSourceType">
         <xs:sequence>
             <xs:element type="databaseType" name="database" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element type="redisType" name="redis" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="databaseType">
@@ -54,5 +55,15 @@
         <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
         <xs:attribute type="xs:string" name="sql" use="required"/>
         <xs:attribute type="xs:string" name="resultType" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="redisType">
+        <xs:attribute type="xs:string" name="id" use="required"/>
+        <xs:attribute type="xs:string" name="name" use="required"/>
+        <xs:attribute type="xs:string" name="scope" use="optional"/>
+        <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
+        <xs:attribute type="xs:string" name="type" use="required"/>
+        <xs:attribute type="xs:string" name="key" use="required"/>
+        <xs:attribute type="xs:string" name="hashKey" use="optional"/>
+        <xs:attribute type="xs:string" name="setValue" use="optional"/>
     </xs:complexType>
 </xs:schema>

@@ -50,7 +50,7 @@ public class RedisExternalDataSource extends AbstractExternalDataSource {
         return RuleDataSourceDefinition.Type.redis;
     }
 
-    private static enum Type {
+    private enum Type {
         string, hash, set, list
     }
 }

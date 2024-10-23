@@ -93,7 +93,6 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                     result.put("id", resultSet.getString("D_KEY"));
                     result.put("name", resultSet.getString("D_NAME"));
                     result.put("type", resultSet.getString("D_TYPE"));
-                    result.put("resultType", resultSet.getString("D_RESULT_TYPE"));
                     result.put("enabled", resultSet.getBoolean("D_ENABLED"));
                     result.put("scope", resultSet.getString("D_SCOPE"));
                     result.put("key1", resultSet.getString("D_PARAM_K1"));

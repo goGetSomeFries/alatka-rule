@@ -52,7 +52,6 @@ CREATE TABLE `ALK_RULE_DATASOURCE_DEFINITION`
     `D_NAME`        varchar(100) NOT NULL COMMENT '名称',
     `D_TYPE`        varchar(20)  NOT NULL COMMENT '类型',
     `D_SCOPE`       varchar(50)  NOT NULL COMMENT '数据范围',
-    `D_RESULT_TYPE` varchar(20)  NOT NULL COMMENT '数据结果类型',
     `D_ENABLED`     tinyint(1) NOT NULL COMMENT '是否可用',
     `G_KEY`         varchar(50)  NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
     `D_PARAM_K1`    varchar(50)    DEFAULT NULL COMMENT '自定义参数key1',

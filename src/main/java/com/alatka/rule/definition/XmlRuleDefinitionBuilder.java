@@ -51,13 +51,8 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     private List<Map<String, Object>> doBuildRuleDataSourceItems(Map<String, Object> dataSource,
                                                                  RuleDataSourceDefinition.Type type,
                                                                  String... keys) {
-        Object item = this.getValueWithMap(dataSource, type.name());
-        List<Map<String, Object>> list = null;
-        if (item == null) {
-            list = Collections.EMPTY_LIST;
-        } else {
-            list = (List<Map<String, Object>>) (item instanceof List ? item : Collections.singletonList(item));
-        }
+        Object item = this.getValueWithMap(dataSource, type.name(), Collections.EMPTY_LIST);
+        List<Map<String, Object>> list = (List<Map<String, Object>>) (item instanceof List ? item : Collections.singletonList(item));
         list.stream()
                 .peek(map -> map.put("type", type.name()))
                 .forEach(map -> {
@@ -65,7 +60,6 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
                     Stream.of(keys).forEach(key -> config.put(key, map.remove(key)));
                     map.put("config", config);
                 });
-
         return list;
     }
 

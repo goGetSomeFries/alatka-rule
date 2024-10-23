@@ -18,6 +18,10 @@ public class RuleGroupDefinitionContext {
 
     private Map<RuleGroupDefinition, List<RuleDefinition>> ruleDefinitionsMap = new HashMap<>();
 
+    private RuleGroupDefinitionContext() {
+
+    }
+
     public RuleGroupDefinition getRuleGroupDefinition(String ruleGroupName) {
         RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(ruleGroupName);
         return this.ruleDefinitionsMap.keySet()

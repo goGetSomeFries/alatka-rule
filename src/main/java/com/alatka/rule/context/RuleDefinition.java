@@ -65,6 +65,6 @@ public class RuleDefinition extends AbstractDefinition {
 
     @Override
     public String toString() {
-        return "{id='" + getId() + "', " + "name='" + getName() + "', priority='" + priority + "', score='" + score + "'}";
+        return "{id='" + getId() + "', name='" + getName() + "', priority='" + priority + "', score='" + score + "'}";
     }
 }

@@ -124,7 +124,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             String name = this.getValueWithMapOrThrow(map, "name");
             boolean enabled = this.getValueWithMap(map, "enabled", true);
             String type = this.getValueWithMapOrThrow(map, "type");
-            Map<String, Object> config = this.getValueWithMapOrThrow(map, "config");
+            Map<String, String> config = this.getValueWithMapOrThrow(map, "config");
             String scope = this.getValueWithMap(map, "scope", RuleDataSourceDefinition.Scope.request.name());
 
             RuleDataSourceDefinition definition = new RuleDataSourceDefinition();

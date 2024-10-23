@@ -35,7 +35,7 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
     /**
      * 自定义参数
      */
-    private Map<String, Object> config;
+    private Map<String, String> config;
 
     public RuleDataSourceDefinition() {
         super(null);
@@ -81,11 +81,11 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
         this.scope = scope;
     }
 
-    public Map<String, Object> getConfig() {
+    public Map<String, String> getConfig() {
         return config;
     }
 
-    public void setConfig(Map<String, Object> config) {
+    public void setConfig(Map<String, String> config) {
         this.config = config;
     }
 }

@@ -25,11 +25,11 @@ public class DatabaseExternalDataSource extends AbstractExternalDataSource {
     }
 
     @Override
-    protected Object doBuildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext) {
-        Map<String, Object> config = definition.getConfig();
-        String sql = config.get(KEY_SQL).toString();
-        ResultType resultType = ResultType.valueOf(config.get(KEY_RESULT_TYPE).toString());
-        return resultType == ResultType.list ?
+    protected Object doBuildContext(Map<String, String> config, Map<String, Object> paramContext) {
+        String sql = this.getWithConfig(config, KEY_SQL);
+        String resultType = this.getWithConfig(config, KEY_RESULT_TYPE);
+
+        return ResultType.valueOf(resultType) == ResultType.list ?
                 this.jdbcTemplate.queryForList(sql, new MapSqlParameterSource(paramContext)) :
                 this.jdbcTemplate.queryForMap(sql, new MapSqlParameterSource(paramContext));
     }

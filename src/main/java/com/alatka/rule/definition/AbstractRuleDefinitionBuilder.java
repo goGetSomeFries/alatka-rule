@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,11 @@ import java.util.stream.Collectors;
 public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinitionBuilder {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * 全局加锁，保证{@link #build()} {@link #refresh()} {@link #fallback()}串行执行
+     */
+    private static final Lock lock = new ReentrantLock(true);
 
     /**
      * 外部数据源映射，属于构建中间状态，构建结束后清除
@@ -45,28 +52,38 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
 
     @Override
     public void fallback() {
-        RuleGroupDefinitionContext.toggle();
-        this.logger.info("********* 规则配置回退上一版本 *********");
+        try {
+            lock.lock();
+            RuleGroupDefinitionContext.toggle();
+            this.logger.info("********* 规则配置回退上一版本 *********");
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void doBuild() {
-        RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance(false);
-        context.reset();
+        try {
+            lock.lock();
+            RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance(false);
+            context.reset();
 
-        this.getSources().stream()
-                .peek(this::preProcess)
-                .map(this::buildRuleGroupDefinition)
-                .filter(RuleGroupDefinition::isEnabled)
-                .peek(ruleGroupDefinition -> this.logger.info("build {}", ruleGroupDefinition))
-                .peek(ruleGroupDefinition -> this.mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition))
-                .forEach(ruleGroupDefinition -> {
-                    List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
-                    context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
-                });
-        this.postProcess();
-        this.mapping = null;
+            this.getSources().stream()
+                    .peek(this::preProcess)
+                    .map(this::buildRuleGroupDefinition)
+                    .filter(RuleGroupDefinition::isEnabled)
+                    .peek(ruleGroupDefinition -> this.logger.info("build {}", ruleGroupDefinition))
+                    .peek(ruleGroupDefinition -> this.mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition))
+                    .forEach(ruleGroupDefinition -> {
+                        List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
+                        context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
+                    });
+            this.postProcess();
+            this.mapping = null;
 
-        RuleGroupDefinitionContext.toggle();
+            RuleGroupDefinitionContext.toggle();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**

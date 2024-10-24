@@ -46,7 +46,7 @@ public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
 
     @Override
     protected String[] suffix() {
-        return new String[]{".yaml", "yml"};
+        return new String[]{".yaml", ".yml"};
     }
 
 }

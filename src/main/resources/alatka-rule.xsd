@@ -8,22 +8,23 @@
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="alatka-ruleType">
-        <xs:sequence>
+        <xs:all>
             <xs:element type="ruleSetType" name="ruleSet"/>
-            <xs:element type="dataSourceType" name="dataSource"/>
-        </xs:sequence>
+            <xs:element type="dataSourceType" name="dataSource" minOccurs="0"/>
+            <xs:element type="paramsType" name="params" minOccurs="0"/>
+        </xs:all>
         <xs:attribute type="xs:string" name="name" use="required"/>
         <xs:attribute type="xs:string" name="type" use="optional"/>
         <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
     </xs:complexType>
     <xs:complexType name="ruleSetType">
         <xs:sequence>
-            <xs:element type="ruleType" name="rule" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element type="ruleType" name="rule" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="ruleType">
         <xs:sequence>
-            <xs:element type="unitType" name="unit" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element type="unitType" name="unit" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute type="xs:string" name="id" use="required"/>
         <xs:attribute type="xs:string" name="name" use="required"/>
@@ -65,5 +66,17 @@
         <xs:attribute type="xs:string" name="key" use="required"/>
         <xs:attribute type="xs:string" name="hashKey" use="optional"/>
         <xs:attribute type="xs:string" name="setValue" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="paramsType">
+        <xs:sequence>
+            <xs:element type="paramType" name="param" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="paramType">
+        <xs:attribute type="xs:string" name="id" use="required"/>
+        <xs:attribute type="xs:string" name="name" use="required"/>
+        <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
+        <xs:attribute type="xs:string" name="path" use="optional"/>
+        <xs:attribute type="xs:string" name="expression" use="optional"/>
     </xs:complexType>
 </xs:schema>

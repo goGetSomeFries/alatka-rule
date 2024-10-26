@@ -11,6 +11,10 @@
                 <unit path="riskAnalysis/test.av"/>
             </rule>
         </ruleSet>
+        <params>
+            <param id="v_amount" name="金额1" path="riskAnalysis/test1.av"/>
+            <param id="v_card_1" name="卡号1" expression="v_card == nil ? nil : string.length(v_card)"/>
+        </params>
         <dataSource>
             <database id="tradeDetail" scope="request" name="" resultType="list" sql="select * from trdetail where xxxxxx"/>
             <database id="vipDetail" scope="request" name="" resultType="single" sql="select * from trdetail where xxxxxx"/>

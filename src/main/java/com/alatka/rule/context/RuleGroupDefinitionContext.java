@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 规则组Context，维护{@link RuleGroupDefinition} -> {@link RuleDefinition}集合
+ * 规则组Context，维护{@link RuleGroupDefinition} -> {@link RuleDefinition}/{@link RuleParamDefinition}集合
  *
  * @author whocares
  */
@@ -17,6 +17,8 @@ public class RuleGroupDefinitionContext {
     private static volatile boolean SWITCH_FLAG = true;
 
     private Map<RuleGroupDefinition, List<RuleDefinition>> ruleDefinitionsMap = new HashMap<>();
+
+    private Map<RuleGroupDefinition, List<RuleParamDefinition>> ruleParamDefinitionsMap = new HashMap<>();
 
     public RuleGroupDefinition getRuleGroupDefinition(String ruleGroupName) {
         RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(ruleGroupName);
@@ -43,13 +45,44 @@ public class RuleGroupDefinitionContext {
     }
 
     /**
+     * 根据规则组名称获取规则入参处理集合
+     *
+     * @param ruleGroupName 规则组名称
+     * @return 规则入参处理集合
+     */
+    public List<RuleParamDefinition> getRuleParamDefinitions(String ruleGroupName) {
+        RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(ruleGroupName);
+        List<RuleParamDefinition> ruleParamDefinitions = this.ruleParamDefinitionsMap.get(ruleGroupDefinition);
+        if (ruleParamDefinitions == null) {
+            throw new IllegalArgumentException(ruleGroupName + " not exists");
+        }
+        return ruleParamDefinitions;
+    }
+
+    /**
      * 初始化规则组和规则集合映射
      *
      * @param ruleGroupDefinition 规则组
      * @param ruleDefinitions     规则集合
      */
     public void initRuleDefinitions(RuleGroupDefinition ruleGroupDefinition, List<RuleDefinition> ruleDefinitions) {
+        if (this.ruleDefinitionsMap.containsKey(ruleGroupDefinition)) {
+            throw new IllegalArgumentException(ruleGroupDefinition + " already exists");
+        }
         this.ruleDefinitionsMap.put(ruleGroupDefinition, ruleDefinitions);
+    }
+
+    /**
+     * 初始化规则组和规则入参处理集合映射
+     *
+     * @param ruleGroupDefinition  规则组
+     * @param ruleParamDefinitions 规则入参处理集合
+     */
+    public void initRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition, List<RuleParamDefinition> ruleParamDefinitions) {
+        if (ruleParamDefinitionsMap.containsKey(ruleGroupDefinition)) {
+            throw new IllegalArgumentException(ruleGroupDefinition + " already exists");
+        }
+        this.ruleParamDefinitionsMap.put(ruleGroupDefinition, ruleParamDefinitions);
     }
 
     /**
@@ -57,6 +90,7 @@ public class RuleGroupDefinitionContext {
      */
     public void reset() {
         this.ruleDefinitionsMap.clear();
+        this.ruleParamDefinitionsMap.clear();
     }
 
     /**

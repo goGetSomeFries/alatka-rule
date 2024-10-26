@@ -47,22 +47,35 @@ CREATE TABLE `ALK_RULE_UNIT_DEFINITION`
 
 CREATE TABLE `ALK_RULE_DATASOURCE_DEFINITION`
 (
-    `D_ID`          int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `D_KEY`         varchar(50)  NOT NULL COMMENT '关键字',
-    `D_NAME`        varchar(100) NOT NULL COMMENT '名称',
-    `D_TYPE`        varchar(20)  NOT NULL COMMENT '类型',
-    `D_SCOPE`       varchar(50)  NOT NULL COMMENT '数据范围',
-    `D_ENABLED`     tinyint(1) NOT NULL COMMENT '是否可用',
-    `G_KEY`         varchar(50)  NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
-    `D_PARAM_K1`    varchar(50)    DEFAULT NULL COMMENT '自定义参数key1',
-    `D_PARAM_V1`    varchar(10000) DEFAULT NULL COMMENT '自定义参数value1',
-    `D_PARAM_K2`    varchar(50)    DEFAULT NULL COMMENT '自定义参数key2',
-    `D_PARAM_V2`    varchar(1000)  DEFAULT NULL COMMENT '自定义参数value2',
-    `D_PARAM_K3`    varchar(50)    DEFAULT NULL COMMENT '自定义参数key3',
-    `D_PARAM_V3`    varchar(1000)  DEFAULT NULL COMMENT '自定义参数value3',
-    `D_PARAM_K4`    varchar(50)    DEFAULT NULL COMMENT '自定义参数key4',
-    `D_PARAM_V4`    varchar(1000)  DEFAULT NULL COMMENT '自定义参数value4',
-    `D_PARAM_K5`    varchar(50)    DEFAULT NULL COMMENT '自定义参数key5',
-    `D_PARAM_V5`    varchar(1000)  DEFAULT NULL COMMENT '自定义参数value5',
+    `D_ID`       int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `D_KEY`      varchar(50)  NOT NULL COMMENT '关键字',
+    `D_NAME`     varchar(100) NOT NULL COMMENT '名称',
+    `D_TYPE`     varchar(20)  NOT NULL COMMENT '类型',
+    `D_SCOPE`    varchar(50)  NOT NULL COMMENT '数据范围',
+    `D_ENABLED`  tinyint(1) NOT NULL COMMENT '是否可用',
+    `G_KEY`      varchar(50)  NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
+    `D_PARAM_K1` varchar(50)    DEFAULT NULL COMMENT '自定义参数key1',
+    `D_PARAM_V1` varchar(10000) DEFAULT NULL COMMENT '自定义参数value1',
+    `D_PARAM_K2` varchar(50)    DEFAULT NULL COMMENT '自定义参数key2',
+    `D_PARAM_V2` varchar(1000)  DEFAULT NULL COMMENT '自定义参数value2',
+    `D_PARAM_K3` varchar(50)    DEFAULT NULL COMMENT '自定义参数key3',
+    `D_PARAM_V3` varchar(1000)  DEFAULT NULL COMMENT '自定义参数value3',
+    `D_PARAM_K4` varchar(50)    DEFAULT NULL COMMENT '自定义参数key4',
+    `D_PARAM_V4` varchar(1000)  DEFAULT NULL COMMENT '自定义参数value4',
+    `D_PARAM_K5` varchar(50)    DEFAULT NULL COMMENT '自定义参数key5',
+    `D_PARAM_V5` varchar(1000)  DEFAULT NULL COMMENT '自定义参数value5',
     PRIMARY KEY (`D_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规则外部数据源表';
+
+-- alatka.ALK_RULE_PARAM_DEFINITION definition
+
+CREATE TABLE `ALK_RULE_PARAM_DEFINITION`
+(
+    `P_ID`         int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `P_KEY`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci    NOT NULL COMMENT '关键字',
+    `P_NAME`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci   NOT NULL COMMENT '名称',
+    `P_EXPRESSION` varchar(10000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '表达式',
+    `P_ENABLED`    tinyint(1) NOT NULL COMMENT '是否可用',
+    `G_KEY`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci    NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
+    PRIMARY KEY (`P_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规则入参处理表';

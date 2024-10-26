@@ -73,6 +73,10 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                     .filter(RuleGroupDefinition::isEnabled)
                     .peek(ruleGroupDefinition -> this.logger.info("build {}", ruleGroupDefinition))
                     .peek(ruleGroupDefinition -> this.mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition))
+                    .peek(ruleGroupDefinition -> {
+                        List<RuleParamDefinition> ruleParamDefinitions = this.buildRuleParamDefinitions(ruleGroupDefinition);
+                        context.initRuleParamDefinitions(ruleGroupDefinition, ruleParamDefinitions);
+                    })
                     .forEach(ruleGroupDefinition -> {
                         List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
                         context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
@@ -123,7 +127,9 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             return ruleDataSources.stream()
                     .map(this::buildRuleDataSourceDefinition)
                     .filter(RuleDataSourceDefinition::isEnabled)
-                    .collect(Collectors.toMap(RuleDataSourceDefinition::getId, Function.identity()));
+                    .collect(Collectors.toMap(RuleDataSourceDefinition::getId, Function.identity(), (e1, e2) -> {
+                        throw new IllegalArgumentException("外部数据源id重复：" + e1 + ", " + e2);
+                    }));
         } catch (Exception e) {
             throw new RuntimeException("build RuleDataSourceDefinitionMap failed, " + ruleGroupDefinition, e);
         }
@@ -158,6 +164,33 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     }
 
     /**
+     * {@link RuleGroupDefinition}解析为{@link RuleParamDefinition}集合
+     *
+     * @param ruleGroupDefinition 规则组
+     * @return {@link RuleParamDefinition}集合
+     */
+    private List<RuleParamDefinition> buildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition) {
+        List<Map<String, Object>> list = this.doBuildRuleParamDefinitions(ruleGroupDefinition);
+        return list.stream()
+                .map(map -> {
+                    String id = this.getValueWithMapOrThrow(map, "id");
+                    String name = this.getValueWithMapOrThrow(map, "name");
+                    boolean enabled = this.getValueWithMap(map, "enabled", true);
+                    String path = this.getValueWithMap(map, "path");
+                    String expression = path == null ? this.getValueWithMapOrThrow(map, "expression") : FileUtil.getFileContent(path);
+
+                    RuleParamDefinition definition = new RuleParamDefinition();
+                    definition.setId(id);
+                    definition.setName(name);
+                    definition.setEnabled(enabled);
+                    definition.setExpression(expression);
+                    return definition;
+                })
+                .filter(RuleParamDefinition::isEnabled)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * {@link RuleGroupDefinition}解析为{@link RuleDefinition}集合
      *
      * @param ruleGroupDefinition 规则组
@@ -170,10 +203,16 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 throw new IllegalArgumentException("must contain at least one rule");
             }
 
-            return rules.stream()
-                    .map(map -> this.buildRuleDefinition(map))
+            List<RuleDefinition> result = rules.stream()
+                    .map(this::buildRuleDefinition)
                     .filter(RuleDefinition::isEnabled)
                     .collect(Collectors.toList());
+
+            result.stream().collect(Collectors.toMap(Function.identity(), Function.identity(), (e1, e2) -> {
+                throw new IllegalArgumentException("规则id重复：" + e1 + ", " + e2);
+            }));
+
+            return result;
         } catch (Exception e) {
             throw new RuntimeException("build RuleDefinitions failed, " + ruleGroupDefinition, e);
         }
@@ -308,6 +347,14 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
      * @return {@link RuleDataSourceDefinition}映射集合
      */
     protected abstract List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition);
+
+    /**
+     * 解析为{@link RuleParamDefinition}映射集合
+     *
+     * @param ruleGroupDefinition 规则组
+     * @return {@link RuleParamDefinition}映射集合
+     */
+    protected abstract List<Map<String, Object>> doBuildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition);
 
     /**
      * 解析为{@link RuleDefinition}映射集合

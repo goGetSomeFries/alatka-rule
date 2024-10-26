@@ -26,6 +26,8 @@ public class Test1 {
 
         Map<String, Object> param = new HashMap<>();
         param.put("test", "1");
+        param.put("v_amount", 200);
+        param.put("v_card", "18911119834");
         RuleEngine ruleEngine = new RuleEngine("riskAnalysis");
         List<RuleDefinition> result = ruleEngine.execute(param);
         System.out.println(result);

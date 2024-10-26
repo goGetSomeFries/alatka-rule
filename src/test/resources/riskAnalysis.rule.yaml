@@ -7,19 +7,26 @@ alatka.rule:
       name: "风险账户10星"
       desc: "testing...."
       units:
-        - path: riskAnalysis/test1.av
+        - path: riskAnalysis/test.av
     - id: "2"
       name: "风险账户9星"
       desc: "testing...."
       units:
-        - path: riskAnalysis/test2.av
+        - path: riskAnalysis/test.av
     - id: "3"
       name: "风险账户8星"
       desc: "testing...."
       units:
-        - path: riskAnalysis/test3.av
-        - path: riskAnalysis/test4.av
+        - path: riskAnalysis/test.av
+        - path: riskAnalysis/test.av
           dataSource: tradeDetail
+  params:
+    - id: "v_amount"
+      name: "金额1"
+      path: "riskAnalysis/test1.av"
+    - id: "v_card_1"
+      name: "卡号1"
+      expression: "v_card == nil ? nil : string.length(v_card)"
   dataSource:
     - id: tradeDetail
       type: database

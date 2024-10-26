@@ -35,6 +35,11 @@ public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
+    protected List<Map<String, Object>> doBuildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition) {
+        return this.getValueWithMap(this.rootModel, "params", Collections.EMPTY_LIST);
+    }
+
+    @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         return this.getValueWithMap(this.rootModel, "ruleSet", Collections.EMPTY_LIST);
     }
@@ -46,7 +51,7 @@ public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
 
     @Override
     protected String[] suffix() {
-        return new String[]{".yaml", "yml"};
+        return new String[]{".yaml", ".yml"};
     }
 
 }

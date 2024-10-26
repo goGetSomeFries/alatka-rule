@@ -47,12 +47,14 @@ public class RuleEngine {
      */
     public List<RuleDefinition> execute(Object param) {
         RuleGroupDefinitionContext definitionContext = RuleGroupDefinitionContext.getInstance(true);
-        List<RuleDefinition> ruleDefinitions = definitionContext.getRuleDefinitions(ruleGroupName);
+
+        List<RuleParamDefinition> ruleParamDefinitions = definitionContext.getRuleParamDefinitions(ruleGroupName);
+        Map<String, Object> paramContext = this.preProcessParam(param, ruleParamDefinitions);
+
         RuleGroupDefinition ruleGroupDefinition = definitionContext.getRuleGroupDefinition(ruleGroupName);
         RuleGroupDefinition.Type type = ruleGroupDefinition.getType();
+        List<RuleDefinition> ruleDefinitions = definitionContext.getRuleDefinitions(ruleGroupName);
 
-        Map<String, Object> paramContext =
-                param instanceof Map ? new HashMap<>((Map<String, Object>) param) : JsonUtil.objectToMap(param);
         List<RuleDefinition> result = new ArrayList<>(0);
         RuleDefinition theOne = null;
 
@@ -97,6 +99,26 @@ public class RuleEngine {
     }
 
     /**
+     * 规则入参预处理
+     *
+     * @param param 规则入参
+     * @param list  {@link RuleParamDefinition}集合
+     * @return 处理后入参
+     */
+    private Map<String, Object> preProcessParam(Object param, List<RuleParamDefinition> list) {
+        Map<String, Object> paramContext =
+                param instanceof Map ? new HashMap<>((Map<String, Object>) param) : JsonUtil.objectToMap(param);
+
+        list.forEach(ruleParamDefinition -> {
+            Object value = this.runWithEngine(ruleParamDefinition.getExpression(), paramContext);
+            if (value != null) {
+                paramContext.put(ruleParamDefinition.getId(), value);
+            }
+        });
+        return paramContext;
+    }
+
+    /**
      * 递归判断{@link RuleUnitDefinition}规则单元，全部命中则其归属{@link RuleDefinition}规则命中
      *
      * @param ruleDefinition     规则
@@ -111,9 +133,7 @@ public class RuleEngine {
                 ExternalDataSourceFactory.getInstance().getExternalDataSource(ruleDataSourceDefinition.getType());
         Map<String, Object> env = externalDataSource.buildContext(ruleDataSourceDefinition, paramContext);
 
-        String cacheKey = Utils.md5sum(ruleDefinition + ruleUnitDefinition.toString());
-        Expression exp = aviatorEvaluatorInstance.compile(cacheKey, ruleUnitDefinition.getExpression(), true);
-        boolean hit = (boolean) exp.execute(env);
+        boolean hit = this.runWithEngine(ruleUnitDefinition.getExpression(), env);
 
         if (!hit) {
             // 未命中规则单元，结束当前规则判断
@@ -127,6 +147,19 @@ public class RuleEngine {
             // 命中规则单元，有后续规则单元，则继续执行后续规则单元
             this.doExecute(ruleDefinition, ruleUnitDefinition.getNext(), env, result);
         }
+    }
+
+    /**
+     * 执行表达式
+     *
+     * @param expression 表达式
+     * @param env        表达式入参
+     * @param <T>        返回值类型
+     * @return 表达式执行结果
+     */
+    private <T> T runWithEngine(String expression, Map<String, Object> env) {
+        Expression exp = this.aviatorEvaluatorInstance.compile(Utils.md5sum(expression), expression, true);
+        return (T) exp.execute(env);
     }
 
 }

@@ -126,6 +126,30 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     }
 
     @Override
+    protected List<Map<String, Object>> doBuildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String sql = "select * from ALK_RULE_PARAM_DEFINITION WHERE G_KEY = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, ruleGroupDefinition.getId());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("id", resultSet.getString("P_KEY"));
+                    result.put("name", resultSet.getString("P_NAME"));
+                    result.put("enabled", resultSet.getBoolean("P_ENABLED"));
+                    result.put("expression", resultSet.getString("P_EXPRESSION"));
+                    list.add(result);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("查询ALK_RULE_PARAM_DEFINITION失败", e);
+        }
+        return list;
+    }
+
+    @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
         String sql = "select * from ALK_RULE_DEFINITION WHERE G_KEY = ?";

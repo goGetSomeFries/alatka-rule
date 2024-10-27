@@ -25,6 +25,11 @@ public class RuleGroupDefinition extends AbstractDefinition {
      */
     private Type type;
 
+    /**
+     * 规则黑白名单
+     */
+    private RuleListDefinition ruleListDefinition;
+
 
     public enum Type {
         /**
@@ -55,6 +60,14 @@ public class RuleGroupDefinition extends AbstractDefinition {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public RuleListDefinition getRuleListDefinition() {
+        return ruleListDefinition;
+    }
+
+    public void setRuleListDefinition(RuleListDefinition ruleListDefinition) {
+        this.ruleListDefinition = ruleListDefinition;
     }
 
     @Override

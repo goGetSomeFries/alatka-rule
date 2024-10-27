@@ -17,6 +17,7 @@ CREATE TABLE `ALK_RULE_GROUP_DEFINITION`
 CREATE TABLE `ALK_RULE_DEFINITION`
 (
     `R_ID`       int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `R_TYPE`     varchar(1)    NOT NULL COMMENT '类型 1:规则/2:黑名单/3:白名单',
     `R_NAME`     varchar(100)  NOT NULL COMMENT '名称',
     `R_DESC`     varchar(5000) NOT NULL COMMENT '描述',
     `R_PRIORITY` int           NOT NULL COMMENT '优先级',

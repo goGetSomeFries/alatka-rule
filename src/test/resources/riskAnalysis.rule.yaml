@@ -20,6 +20,12 @@ alatka.rule:
         - path: riskAnalysis/test.av
         - path: riskAnalysis/test.av
           dataSource: tradeDetail
+  filterList:
+    enabled: true
+    name: ""
+    type: blackList
+    units:
+      - path: riskAnalysis/test.av
   params:
     - id: "v_amount"
       name: "金额1"

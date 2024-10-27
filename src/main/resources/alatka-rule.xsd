@@ -12,6 +12,7 @@
             <xs:element type="ruleSetType" name="ruleSet"/>
             <xs:element type="dataSourceType" name="dataSource" minOccurs="0"/>
             <xs:element type="paramsType" name="params" minOccurs="0"/>
+            <xs:element type="filterListType" name="filterList" minOccurs="0"/>
         </xs:all>
         <xs:attribute type="xs:string" name="name" use="required"/>
         <xs:attribute type="xs:string" name="type" use="optional"/>
@@ -78,5 +79,13 @@
         <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
         <xs:attribute type="xs:string" name="path" use="optional"/>
         <xs:attribute type="xs:string" name="expression" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="filterListType">
+        <xs:sequence>
+            <xs:element type="unitType" name="unit" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="name" use="required"/>
+        <xs:attribute type="xs:string" name="type" use="required"/>
+        <xs:attribute type="xs:boolean" name="enabled" use="optional"/>
     </xs:complexType>
 </xs:schema>

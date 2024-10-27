@@ -74,10 +74,17 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                     .peek(ruleGroupDefinition -> this.logger.info("build {}", ruleGroupDefinition))
                     .peek(ruleGroupDefinition -> this.mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition))
                     .peek(ruleGroupDefinition -> {
+                        // 规则入参预处理
                         List<RuleParamDefinition> ruleParamDefinitions = this.buildRuleParamDefinitions(ruleGroupDefinition);
                         context.initRuleParamDefinitions(ruleGroupDefinition, ruleParamDefinitions);
                     })
+                    .peek(ruleGroupDefinition -> {
+                        // 黑白名单
+                        RuleListDefinition ruleListDefinition = this.buildRuleListDefinition(ruleGroupDefinition);
+                        ruleGroupDefinition.setRuleListDefinition(ruleListDefinition);
+                    })
                     .forEach(ruleGroupDefinition -> {
+                        // 规则集合
                         List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
                         context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
                     });
@@ -188,6 +195,41 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 })
                 .filter(RuleParamDefinition::isEnabled)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 规则黑白名单
+     *
+     * @param ruleGroupDefinition 规则组
+     * @return 规则黑白名单
+     */
+    private RuleListDefinition buildRuleListDefinition(RuleGroupDefinition ruleGroupDefinition) {
+        try {
+            Map<String, Object> map = this.doBuildRuleListDefinition(ruleGroupDefinition);
+            if (map.isEmpty()) {
+                return null;
+            }
+            String id = this.getValueWithMap(map, "id");
+            String name = this.getValueWithMapOrThrow(map, "name");
+            String type = this.getValueWithMapOrThrow(map, "type");
+            boolean enabled = this.getValueWithMap(map, "enabled", true);
+
+            List<Map<String, Object>> units = this.doBuildRuleUnitDefinitions(map);
+            if (units.isEmpty()) {
+                throw new IllegalArgumentException("must contain at least one unit");
+            }
+            RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(units);
+
+            RuleListDefinition ruleListDefinition = new RuleListDefinition();
+            ruleListDefinition.setId(id);
+            ruleListDefinition.setEnabled(enabled);
+            ruleListDefinition.setName(name);
+            ruleListDefinition.setType(RuleListDefinition.Type.valueOf(type));
+            ruleListDefinition.setRuleUnitDefinition(ruleUnitDefinition);
+            return ruleListDefinition;
+        } catch (Exception e) {
+            throw new RuntimeException("build RuleListDefinition failed, " + ruleGroupDefinition, e);
+        }
     }
 
     /**
@@ -355,6 +397,14 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
      * @return {@link RuleParamDefinition}映射集合
      */
     protected abstract List<Map<String, Object>> doBuildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition);
+
+    /**
+     * 黑白名单映射
+     *
+     * @param ruleGroupDefinition 规则组
+     * @return 黑白名单
+     */
+    protected abstract Map<String, Object> doBuildRuleListDefinition(RuleGroupDefinition ruleGroupDefinition);
 
     /**
      * 解析为{@link RuleDefinition}映射集合

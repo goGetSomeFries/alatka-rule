@@ -40,6 +40,11 @@ public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
+    protected Map<String, Object> doBuildRuleListDefinition(RuleGroupDefinition ruleGroupDefinition) {
+        return this.getValueWithMap(this.rootModel, "filterList", Collections.EMPTY_MAP);
+    }
+
+    @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         return this.getValueWithMap(this.rootModel, "ruleSet", Collections.EMPTY_LIST);
     }

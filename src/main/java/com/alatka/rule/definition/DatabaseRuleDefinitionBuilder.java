@@ -1,6 +1,7 @@
 package com.alatka.rule.definition;
 
 import com.alatka.rule.context.RuleGroupDefinition;
+import com.alatka.rule.context.RuleListDefinition;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -150,9 +151,36 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     }
 
     @Override
+    protected Map<String, Object> doBuildRuleListDefinition(RuleGroupDefinition ruleGroupDefinition) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String sql = "select * from ALK_RULE_DEFINITION WHERE G_KEY = ? AND R_TYPE IN ('2', '3') ORDER BY R_ORDER";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, ruleGroupDefinition.getId());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("id", resultSet.getString("R_ID"));
+                    result.put("type", resultSet.getString("R_TYPE"));
+                    result.put("name", resultSet.getString("R_NAME"));
+                    result.put("enabled", resultSet.getBoolean("R_ENABLED"));
+                    list.add(result);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("查询ALK_RULE_DEFINITION失败", e);
+        }
+        Map<String, Object> result = list.isEmpty() ? new HashMap<>(0) : list.get(0);
+        result.computeIfPresent("type", (k, v) -> "2".equals(v) ?
+                RuleListDefinition.Type.blackList.name() : RuleListDefinition.Type.whiteList);
+        return result;
+    }
+
+    @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_DEFINITION WHERE G_KEY = ?";
+        String sql = "select * from ALK_RULE_DEFINITION WHERE G_KEY = ? AND R_TYPE = '1'";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {

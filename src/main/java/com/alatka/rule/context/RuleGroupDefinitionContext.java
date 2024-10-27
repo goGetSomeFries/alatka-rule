@@ -1,5 +1,8 @@
 package com.alatka.rule.context;
 
+import com.googlecode.aviator.AviatorEvaluator;
+import com.googlecode.aviator.AviatorEvaluatorInstance;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,16 @@ public class RuleGroupDefinitionContext {
     private Map<RuleGroupDefinition, List<RuleDefinition>> ruleDefinitionsMap = new HashMap<>();
 
     private Map<RuleGroupDefinition, List<RuleParamDefinition>> ruleParamDefinitionsMap = new HashMap<>();
+
+    private final AviatorEvaluatorInstance aviatorEvaluatorInstance;
+
+    private RuleGroupDefinitionContext() {
+        this.aviatorEvaluatorInstance = AviatorEvaluator.newInstance();
+    }
+
+    public AviatorEvaluatorInstance getAviatorEvaluatorInstance() {
+        return this.aviatorEvaluatorInstance;
+    }
 
     public RuleGroupDefinition getRuleGroupDefinition(String ruleGroupName) {
         RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(ruleGroupName);
@@ -91,6 +104,7 @@ public class RuleGroupDefinitionContext {
     public void reset() {
         this.ruleDefinitionsMap.clear();
         this.ruleParamDefinitionsMap.clear();
+        this.aviatorEvaluatorInstance.clearExpressionCache();
     }
 
     /**

@@ -41,10 +41,6 @@ public class RuleDataSourceDefinition extends AbstractDefinition {
         super(null);
     }
 
-    public RuleDataSourceDefinition(String id) {
-        super(id);
-    }
-
     public enum Type {
 
         current, database, redis, elasticsearch;

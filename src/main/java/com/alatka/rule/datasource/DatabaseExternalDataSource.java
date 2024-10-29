@@ -24,6 +24,10 @@ public class DatabaseExternalDataSource extends AbstractExternalDataSource {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
+    public DatabaseExternalDataSource(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
     protected Object doBuildContext(Map<String, String> config, Map<String, Object> paramContext) {
         String sql = this.getWithConfig(config, KEY_SQL);

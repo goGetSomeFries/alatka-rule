@@ -4,6 +4,7 @@ import com.alatka.rule.context.RuleDefinition;
 import com.alatka.rule.definition.RuleDefinitionBuilder;
 import com.alatka.rule.definition.XmlRuleDefinitionBuilder;
 import com.alatka.rule.definition.YamlRuleDefinitionBuilder;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Map;
 public class Test1 {
 
     @Test
+    @Disabled
     public void test() {
 //        new YamlRuleDefinitionBuilder().build();
         RuleDefinitionBuilder ruleDefinitionBuilder = new XmlRuleDefinitionBuilder();

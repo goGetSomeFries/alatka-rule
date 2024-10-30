@@ -47,6 +47,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- elasticsearch作为外部数据源使用 -->
 

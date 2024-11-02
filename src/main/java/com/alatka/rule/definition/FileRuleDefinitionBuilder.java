@@ -1,5 +1,6 @@
 package com.alatka.rule.definition;
 
+import com.alatka.rule.context.RuleGroupDefinition;
 import com.alatka.rule.util.FileUtil;
 
 import java.nio.file.Path;
@@ -50,8 +51,8 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
 
         String id = fileName.substring(0, fileName.lastIndexOf(SUFFIX));
         String name = this.getValueWithMap(this.rootModel, "name");
-        String type = this.getValueWithMap(this.rootModel, "type");
-        boolean enabled = this.getValueWithMap(this.rootModel, "enabled");
+        String type = this.getValueWithMap(this.rootModel, "type", RuleGroupDefinition.Type.all.name());
+        boolean enabled = this.getValueWithMap(this.rootModel, "enabled", true);
 
         Map<String, Object> result = new HashMap<>();
         result.put("id", id);

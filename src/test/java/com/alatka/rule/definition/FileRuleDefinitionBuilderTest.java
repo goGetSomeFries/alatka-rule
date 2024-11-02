@@ -55,8 +55,8 @@ public class FileRuleDefinitionBuilderTest {
         FileRuleDefinitionBuilder builder = Mockito.spy(FileRuleDefinitionBuilder.class);
         Map<String, Object> map = Mockito.mock(Map.class);
         Mockito.when(map.get("name")).thenReturn("testing");
-        Mockito.when(map.get("type")).thenReturn("all");
-        Mockito.when(map.get("enabled")).thenReturn(false);
+        Mockito.when(map.getOrDefault("type", "all")).thenReturn("all");
+        Mockito.when(map.getOrDefault("enabled", true)).thenReturn(false);
 
         ReflectionMemberAccessor reflectionMemberAccessor = new ReflectionMemberAccessor();
         Field field = FileRuleDefinitionBuilder.class.getDeclaredField("rootModel");

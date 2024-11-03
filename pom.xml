@@ -6,64 +6,21 @@
     <parent>
         <groupId>com.alatka</groupId>
         <artifactId>alatka</artifactId>
-        <version>1.6.0</version>
+        <version>1.8.0</version>
     </parent>
 
+    <groupId>com.alatka.rule</groupId>
     <artifactId>alatka-rule</artifactId>
-    <version>0.7.0</version>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.aviator</groupId>
-            <artifactId>aviator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <!-- yaml配置方式 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- xml配置方式 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-xml</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- jdbc作为外部数据源使用 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- redis作为外部数据源使用 -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-        </dependency>
-        <!-- elasticsearch作为外部数据源使用 -->
+    <modules>
+        <module>alatka-rule-core</module>
+        <module>alatka-rule-spring-boot-starter</module>
+    </modules>
 
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <properties>
+        <revision>1.0.0</revision>
+    </properties>
+
 </project>

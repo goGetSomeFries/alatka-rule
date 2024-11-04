@@ -40,7 +40,7 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
         }
 
         List<Map<String, Object>> databaseList =
-                doBuildRuleDataSourceItems(dataSource, RuleDataSourceDefinition.Type.database, "sql", "resultType");
+                doBuildRuleDataSourceItems(dataSource, RuleDataSourceDefinition.Type.database, "sql", "resultType", "resultClass");
         List<Map<String, Object>> redisList =
                 doBuildRuleDataSourceItems(dataSource, RuleDataSourceDefinition.Type.redis, "type", "key", "hashKey", "setKey");
 

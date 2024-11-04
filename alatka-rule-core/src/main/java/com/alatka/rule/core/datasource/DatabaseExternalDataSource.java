@@ -1,7 +1,7 @@
 package com.alatka.rule.core.datasource;
 
 import com.alatka.rule.core.context.RuleDataSourceDefinition;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import com.alatka.rule.core.util.ClassUtil;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
@@ -18,6 +18,8 @@ public class DatabaseExternalDataSource extends AbstractExternalDataSource {
 
     private static final String KEY_RESULT_TYPE = "resultType";
 
+    private static final String KEY_RESULT_CLASS = "resultClass";
+
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     public DatabaseExternalDataSource(DataSource dataSource) {
@@ -32,10 +34,16 @@ public class DatabaseExternalDataSource extends AbstractExternalDataSource {
     protected Object doBuildContext(Map<String, String> config, Map<String, Object> paramContext) {
         String sql = this.getWithConfig(config, KEY_SQL);
         String resultType = this.getWithConfig(config, KEY_RESULT_TYPE);
+        String resultClass = this.getWithConfig(config, KEY_RESULT_CLASS);
+        Class<?> clazz = ClassUtil.forName(resultClass);
 
-        return ResultType.valueOf(resultType) == ResultType.list ?
-                this.jdbcTemplate.queryForList(sql, new MapSqlParameterSource(paramContext)) :
-                this.jdbcTemplate.queryForMap(sql, new MapSqlParameterSource(paramContext));
+
+        if (ResultType.valueOf(resultType) == ResultType.list) {
+            return clazz == null ? this.jdbcTemplate.queryForList(sql, paramContext) :
+                    this.jdbcTemplate.queryForList(sql, paramContext, clazz);
+        }
+        return clazz == null ? this.jdbcTemplate.queryForMap(sql, paramContext) :
+                this.jdbcTemplate.queryForObject(sql, paramContext, clazz);
     }
 
     @Override

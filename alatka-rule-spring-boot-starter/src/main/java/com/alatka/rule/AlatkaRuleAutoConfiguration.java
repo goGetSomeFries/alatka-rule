@@ -10,7 +10,6 @@ import com.alatka.rule.core.definition.RuleDefinitionBuilder;
 import com.alatka.rule.core.definition.XmlRuleDefinitionBuilder;
 import com.alatka.rule.core.definition.YamlRuleDefinitionBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -64,14 +63,6 @@ public class AlatkaRuleAutoConfiguration {
         Map<String, ExternalDataSource> map = context.getBeansOfType(ExternalDataSource.class);
         map.values().stream().forEach(factory::init);
         return factory;
-    }
-
-    @Bean
-//    @ConditionalOnBean(name = "dataSource")
-    @ConditionalOnMissingBean
-    public ExternalDataSource databaseExternalDataSource(DataSource dataSource) {
-        // TODO
-        return new DatabaseExternalDataSource(dataSource);
     }
 
     @Configuration

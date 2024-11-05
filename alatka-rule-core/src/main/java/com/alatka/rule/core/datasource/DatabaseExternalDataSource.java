@@ -34,16 +34,15 @@ public class DatabaseExternalDataSource extends AbstractExternalDataSource {
     protected Object doBuildContext(Map<String, String> config, Map<String, Object> paramContext) {
         String sql = this.getWithConfig(config, KEY_SQL);
         String resultType = this.getWithConfig(config, KEY_RESULT_TYPE);
-        String resultClass = this.getWithConfig(config, KEY_RESULT_CLASS);
-        Class<?> clazz = ClassUtil.forName(resultClass);
+        Class<?> resultClass = config.get(KEY_RESULT_CLASS) == null ? null : ClassUtil.forName(config.get(KEY_RESULT_CLASS));
 
 
         if (ResultType.valueOf(resultType) == ResultType.list) {
-            return clazz == null ? this.jdbcTemplate.queryForList(sql, paramContext) :
-                    this.jdbcTemplate.queryForList(sql, paramContext, clazz);
+            return resultClass == null ? this.jdbcTemplate.queryForList(sql, paramContext) :
+                    this.jdbcTemplate.queryForList(sql, paramContext, resultClass);
         }
-        return clazz == null ? this.jdbcTemplate.queryForMap(sql, paramContext) :
-                this.jdbcTemplate.queryForObject(sql, paramContext, clazz);
+        return resultClass == null ? this.jdbcTemplate.queryForMap(sql, paramContext) :
+                this.jdbcTemplate.queryForObject(sql, paramContext, resultClass);
     }
 
     @Override

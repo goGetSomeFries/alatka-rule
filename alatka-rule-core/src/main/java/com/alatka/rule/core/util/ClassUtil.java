@@ -7,7 +7,7 @@ public class ClassUtil {
 
     public static Class<?> forName(String className) {
         try {
-            return className == null ? null : Class.forName(className);
+            return Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

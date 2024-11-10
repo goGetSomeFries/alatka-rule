@@ -46,7 +46,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
 
     @Override
     public void refresh() {
-        build();
+        doBuild();
         this.logger.info("********* 规则配置refresh完成 *********");
     }
 
@@ -270,6 +270,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             int priority = this.getValueWithMap(map, "priority", 0);
             int score = this.getValueWithMap(map, "score", 0);
             boolean enabled = this.getValueWithMap(map, "enabled", true);
+            Map<String, Object> extended = this.buildRuleExtendedProperties(map);
 
             RuleUnitDefinition ruleUnitDefinition = this.buildRuleUnitDefinition(map);
 
@@ -280,6 +281,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             ruleDefinition.setName(name);
             ruleDefinition.setPriority(priority);
             ruleDefinition.setScore(score);
+            ruleDefinition.setExtended(extended);
             ruleDefinition.setRuleUnitDefinition(ruleUnitDefinition);
             return ruleDefinition;
         } catch (Exception e) {
@@ -410,6 +412,14 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
      * @return {@link RuleDefinition}映射集合
      */
     protected abstract List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition);
+
+    /**
+     * 构建规则扩展属性
+     *
+     * @param map {@link RuleDefinition}映射
+     * @return 扩展属性
+     */
+    protected abstract Map<String, Object> buildRuleExtendedProperties(Map<String, Object> map);
 
     /**
      * 解析为{@link RuleUnitDefinition}映射集合

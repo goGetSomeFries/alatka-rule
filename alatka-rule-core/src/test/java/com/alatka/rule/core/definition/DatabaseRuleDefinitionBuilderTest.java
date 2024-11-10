@@ -3,8 +3,10 @@ package com.alatka.rule.core.definition;
 import com.alatka.rule.core.context.RuleGroupDefinition;
 import com.alatka.rule.core.context.RuleListDefinition;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.ReflectionUtils;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.ReflectionMemberAccessor;
 
@@ -40,9 +42,16 @@ public class DatabaseRuleDefinitionBuilderTest {
         Assertions.assertNull(reflectionMemberAccessor.get(field, builder));
     }
 
+    @Disabled
     @Test
     @DisplayName("preProcess()")
-    void test02() throws NoSuchFieldException, IllegalAccessException, SQLException {
+    void test02() {
+        // TODO
+    }
+
+    @Test
+    @DisplayName("getRuleUnitList()")
+    void test11() throws SQLException, NoSuchMethodException {
         ResultSet resultSet = Mockito.mock(ResultSet.class);
         doReturn(true, true, false).when(resultSet).next();
         doReturn(1, 2).when(resultSet).getInt("R_ID");
@@ -59,21 +68,45 @@ public class DatabaseRuleDefinitionBuilderTest {
         doReturn(connection).when(dataSource).getConnection();
 
         DatabaseRuleDefinitionBuilder builder = new DatabaseRuleDefinitionBuilder(dataSource);
-        builder.preProcess(Collections.singletonMap("id", "1"));
-        ReflectionMemberAccessor reflectionMemberAccessor = new ReflectionMemberAccessor();
-        Field field = DatabaseRuleDefinitionBuilder.class.getDeclaredField("ruleUnitList");
-        List<Map<String, Object>> sources = (List<Map<String, Object>>) reflectionMemberAccessor.get(field, builder);
+        List<Map<String, Object>> result = (List<Map<String, Object>>) ReflectionUtils.invokeMethod(DatabaseRuleDefinitionBuilder.class.getDeclaredMethod("getRuleUnitList", Map.class), builder, Collections.singletonMap("id", "1"));
 
-        Assertions.assertEquals("riskAnalysis", sources.get(0).get("dataSource"));
-        Assertions.assertEquals("antiFrand", sources.get(1).get("dataSource"));
-        Assertions.assertEquals("all", sources.get(0).get("expression"));
-        Assertions.assertEquals("once", sources.get(1).get("expression"));
-        Assertions.assertEquals(true, sources.get(0).get("enabled"));
-        Assertions.assertEquals(false, sources.get(1).get("enabled"));
-        Assertions.assertEquals(1, sources.get(0).get("order"));
-        Assertions.assertEquals(2, sources.get(1).get("order"));
-        Assertions.assertEquals(1, sources.get(0).get("ruleId"));
-        Assertions.assertEquals(2, sources.get(1).get("ruleId"));
+        Assertions.assertEquals("riskAnalysis", result.get(0).get("dataSource"));
+        Assertions.assertEquals("antiFrand", result.get(1).get("dataSource"));
+        Assertions.assertEquals("all", result.get(0).get("expression"));
+        Assertions.assertEquals("once", result.get(1).get("expression"));
+        Assertions.assertEquals(true, result.get(0).get("enabled"));
+        Assertions.assertEquals(false, result.get(1).get("enabled"));
+        Assertions.assertEquals(1, result.get(0).get("order"));
+        Assertions.assertEquals(2, result.get(1).get("order"));
+        Assertions.assertEquals(1, result.get(0).get("ruleId"));
+        Assertions.assertEquals(2, result.get(1).get("ruleId"));
+    }
+
+    @Test
+    @DisplayName("getRuleExtendedList()")
+    void test12() throws SQLException, NoSuchMethodException {
+        ResultSet resultSet = Mockito.mock(ResultSet.class);
+        doReturn(true, true, false).when(resultSet).next();
+        doReturn(1, 2).when(resultSet).getInt("R_ID");
+        doReturn("color", "autoAction").when(resultSet).getString("E_KEY");
+        doReturn("#000FFF", "true").when(resultSet).getString("E_VALUE");
+
+        PreparedStatement statement = Mockito.mock(PreparedStatement.class);
+        doReturn(resultSet).when(statement).executeQuery();
+        Connection connection = Mockito.mock(Connection.class);
+        doReturn(statement).when(connection).prepareStatement("select * from ALK_RULE_EXTENDED_DEFINITION WHERE G_KEY = ?");
+        DataSource dataSource = Mockito.mock(DataSource.class);
+        doReturn(connection).when(dataSource).getConnection();
+
+        DatabaseRuleDefinitionBuilder builder = new DatabaseRuleDefinitionBuilder(dataSource);
+        List<Map<String, Object>> result = (List<Map<String, Object>>) ReflectionUtils.invokeMethod(DatabaseRuleDefinitionBuilder.class.getDeclaredMethod("getRuleExtendedList", Map.class), builder, Collections.singletonMap("id", "1"));
+
+        Assertions.assertEquals("color", result.get(0).get("key"));
+        Assertions.assertEquals("autoAction", result.get(1).get("key"));
+        Assertions.assertEquals("#000FFF", result.get(0).get("value"));
+        Assertions.assertEquals("true", result.get(1).get("value"));
+        Assertions.assertEquals(1, result.get(0).get("ruleId"));
+        Assertions.assertEquals(2, result.get(1).get("ruleId"));
     }
 
     @Test

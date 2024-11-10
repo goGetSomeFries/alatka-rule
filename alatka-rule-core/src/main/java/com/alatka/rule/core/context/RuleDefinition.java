@@ -1,5 +1,7 @@
 package com.alatka.rule.core.context;
 
+import java.util.Map;
+
 /**
  * 规则定义类
  *
@@ -25,6 +27,11 @@ public class RuleDefinition extends AbstractDefinition {
      * 规则评分
      */
     private int score;
+
+    /**
+     * 扩展字段
+     */
+    private Map<String, Object> extended;
 
     /**
      * {@link RuleUnitDefinition}引用
@@ -53,6 +60,14 @@ public class RuleDefinition extends AbstractDefinition {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public Map<String, Object> getExtended() {
+        return extended;
+    }
+
+    public void setExtended(Map<String, Object> extended) {
+        this.extended = extended;
     }
 
     public RuleUnitDefinition getRuleUnitDefinition() {

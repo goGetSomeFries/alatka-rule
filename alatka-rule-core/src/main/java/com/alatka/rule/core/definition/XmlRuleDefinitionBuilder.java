@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -80,6 +81,16 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
         Map<String, Object> ruleSet = this.getValueWithMap(this.rootModel, "ruleSet", Collections.EMPTY_MAP);
         Object rule = this.getValueWithMap(ruleSet, "rule", Collections.emptyList());
         return (List<Map<String, Object>>) (rule instanceof List ? rule : Collections.singletonList(rule));
+    }
+
+    @Override
+    protected Map<String, Object> buildRuleExtendedProperties(Map<String, Object> map) {
+        Object object = this.getValueWithMap(map, "extended", Collections.emptyList());
+        List<Map<String, Object>> list =
+                (List<Map<String, Object>>) (object instanceof List ? object : Collections.singletonList(object));
+        return list.stream()
+                .collect(Collectors.toMap(e -> getValueWithMapOrThrow(e, "key"),
+                        e -> getValueWithMapOrThrow(e, "value")));
     }
 
     @Override

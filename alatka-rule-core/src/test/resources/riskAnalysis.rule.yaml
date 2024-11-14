@@ -6,11 +6,16 @@ alatka.rule:
     - id: "1"
       name: "风险账户10星"
       desc: "testing...."
+      extended:
+        color: "#000FFF"
+        autoAction: true
       units:
         - path: riskAnalysis/test.av
     - id: "2"
       name: "风险账户9星"
       desc: "testing...."
+      extended:
+        color: "#000FFF"
       units:
         - path: riskAnalysis/test.av
     - id: "3"

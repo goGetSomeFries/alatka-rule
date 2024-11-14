@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class RuleDefinitionTest {
@@ -17,6 +19,7 @@ public class RuleDefinitionTest {
         String desc = "description";
         int priority = 20;
         int score = 100;
+        Map<String, Object> extended = new HashMap<>();
         RuleUnitDefinition ruleUnitDefinition = new RuleUnitDefinition();
 
         RuleDefinition ruleDefinition = new RuleDefinition();
@@ -26,6 +29,7 @@ public class RuleDefinitionTest {
         ruleDefinition.setDesc(desc);
         ruleDefinition.setPriority(priority);
         ruleDefinition.setScore(score);
+        ruleDefinition.setExtended(extended);
         ruleDefinition.setRuleUnitDefinition(ruleUnitDefinition);
 
         Assertions.assertEquals(id, ruleDefinition.getId());
@@ -34,6 +38,7 @@ public class RuleDefinitionTest {
         Assertions.assertEquals(desc, ruleDefinition.getDesc());
         Assertions.assertEquals(priority, ruleDefinition.getPriority());
         Assertions.assertEquals(score, ruleDefinition.getScore());
+        Assertions.assertEquals(extended, ruleDefinition.getExtended());
         Assertions.assertEquals(ruleUnitDefinition, ruleDefinition.getRuleUnitDefinition());
     }
 
@@ -48,6 +53,7 @@ public class RuleDefinitionTest {
         Assertions.assertNull(definition.getDesc());
         Assertions.assertEquals(0, definition.getPriority());
         Assertions.assertEquals(0, definition.getScore());
+        Assertions.assertNull(definition.getExtended());
         Assertions.assertNull(definition.getRuleUnitDefinition());
     }
 

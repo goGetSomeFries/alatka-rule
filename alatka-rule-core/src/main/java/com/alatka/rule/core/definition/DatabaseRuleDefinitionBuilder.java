@@ -23,6 +23,8 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
 
     private List<Map<String, Object>> ruleUnitList;
 
+    private List<Map<String, Object>> ruleExtendedList;
+
     public DatabaseRuleDefinitionBuilder(DataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -52,6 +54,11 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
 
     @Override
     protected void preProcess(Map<String, Object> source) {
+        this.ruleUnitList = this.getRuleUnitList(source);
+        this.ruleExtendedList = this.getRuleExtendedList(source);
+    }
+
+    private List<Map<String, Object>> getRuleUnitList(Map<String, Object> source) {
         List<Map<String, Object>> list = new ArrayList<>();
         String sql = "select * from ALK_RULE_UNIT_DEFINITION WHERE G_KEY = ?";
 
@@ -72,7 +79,29 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
         } catch (SQLException e) {
             throw new RuntimeException("查询ALK_RULE_UNIT_DEFINITION失败", e);
         }
-        this.ruleUnitList = list;
+        return list;
+    }
+
+    private List<Map<String, Object>> getRuleExtendedList(Map<String, Object> source) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String sql = "select * from ALK_RULE_EXTENDED_DEFINITION WHERE G_KEY = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, source.get("id").toString());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("ruleId", resultSet.getInt("R_ID"));
+                    result.put("key", resultSet.getString("E_KEY"));
+                    result.put("value", resultSet.getString("E_VALUE"));
+                    list.add(result);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("查询ALK_RULE_EXTENDED_DEFINITION失败", e);
+        }
+        return list;
     }
 
     @Override
@@ -207,6 +236,18 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     }
 
     @Override
+    protected Map<String, Object> buildRuleExtendedProperties(Map<String, Object> map) {
+        String ruleId = this.getValueWithMap(map, "id");
+        return this.ruleExtendedList.stream()
+                .filter(mapping -> {
+                    int value = this.getValueWithMap(mapping, "ruleId");
+                    return ruleId.equals(String.valueOf(value));
+                })
+                .collect(Collectors.toMap(e -> getValueWithMapOrThrow(e, "key"),
+                        e -> getValueWithMapOrThrow(e, "value")));
+    }
+
+    @Override
     protected List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> map) {
         String ruleId = this.getValueWithMap(map, "id");
 
@@ -223,6 +264,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     protected void postProcess() {
         // 释放对象
         this.ruleUnitList = null;
+        this.ruleExtendedList = null;
     }
 
 }

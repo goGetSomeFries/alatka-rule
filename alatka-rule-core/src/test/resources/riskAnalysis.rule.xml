@@ -4,6 +4,8 @@
     <alatka-rule enabled="true" name="欺诈规则组" type="all">
         <ruleSet>
             <rule id="1" name="风险账户10星" desc="testing...." enabled="true">
+                <extended key="color" value="#000FFF"/>
+                <extended key="autoAction" value="true"/>
                 <unit path="riskAnalysis/test.av"/>
                 <unit path="riskAnalysis/test.av" dataSource="tradeDetail"/>
             </rule>

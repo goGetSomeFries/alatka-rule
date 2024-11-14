@@ -114,4 +114,16 @@ public class YamlRuleDefinitionBuilderTest {
         Assertions.assertSame(result, builder.initRootModel(path));
         mockedStatic.close();
     }
+
+    @Test
+    @DisplayName("buildRuleExtendedProperties()")
+    void test09() {
+        YamlRuleDefinitionBuilder builder = new YamlRuleDefinitionBuilder();
+        Map<String, Object> map = new HashMap<>();
+        Assertions.assertEquals(0, builder.buildRuleExtendedProperties(map).size());
+
+        map.put("extended", Collections.singletonMap("key", "value"));
+        Assertions.assertEquals(1, builder.buildRuleExtendedProperties(map).size());
+    }
 }
+

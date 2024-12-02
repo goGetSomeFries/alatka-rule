@@ -40,14 +40,24 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
 
     @Override
     public void build() {
-        doBuild();
-        this.logger.info("********* 规则配置build完成 *********");
+        try {
+            lock.lock();
+            this.doBuild();
+            this.logger.info("********* 规则配置build完成 *********");
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
     public void refresh() {
-        doBuild();
-        this.logger.info("********* 规则配置refresh完成 *********");
+        try {
+            lock.lock();
+            this.doBuild();
+            this.logger.info("********* 规则配置refresh完成 *********");
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -62,38 +72,46 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     }
 
     private void doBuild() {
+        RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance(false);
+        context.reset();
+
+        this.getSources().stream()
+                .peek(this::preProcess)
+                .map(this::buildRuleGroupDefinition)
+                .filter(RuleGroupDefinition::isEnabled)
+                .peek(ruleGroupDefinition -> this.logger.info("build {}", ruleGroupDefinition))
+                .peek(ruleGroupDefinition -> this.mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition))
+                .peek(ruleGroupDefinition -> {
+                    // 规则入参预处理
+                    List<RuleParamDefinition> ruleParamDefinitions = this.buildRuleParamDefinitions(ruleGroupDefinition);
+                    context.initRuleParamDefinitions(ruleGroupDefinition, ruleParamDefinitions);
+                })
+                .peek(ruleGroupDefinition -> {
+                    // 黑白名单
+                    RuleListDefinition ruleListDefinition = this.buildRuleListDefinition(ruleGroupDefinition);
+                    ruleGroupDefinition.setRuleListDefinition(ruleListDefinition);
+                })
+                .forEach(ruleGroupDefinition -> {
+                    // 规则集合
+                    List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
+                    context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
+                });
+        this.postProcess();
+        this.mapping = null;
+
+        RuleGroupDefinitionContext.toggle();
+    }
+
+    /**
+     * 解析预处理
+     *
+     * @param source 配置源
+     */
+    private void preProcess(T source) {
         try {
-            lock.lock();
-            RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance(false);
-            context.reset();
-
-            this.getSources().stream()
-                    .peek(this::preProcess)
-                    .map(this::buildRuleGroupDefinition)
-                    .filter(RuleGroupDefinition::isEnabled)
-                    .peek(ruleGroupDefinition -> this.logger.info("build {}", ruleGroupDefinition))
-                    .peek(ruleGroupDefinition -> this.mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition))
-                    .peek(ruleGroupDefinition -> {
-                        // 规则入参预处理
-                        List<RuleParamDefinition> ruleParamDefinitions = this.buildRuleParamDefinitions(ruleGroupDefinition);
-                        context.initRuleParamDefinitions(ruleGroupDefinition, ruleParamDefinitions);
-                    })
-                    .peek(ruleGroupDefinition -> {
-                        // 黑白名单
-                        RuleListDefinition ruleListDefinition = this.buildRuleListDefinition(ruleGroupDefinition);
-                        ruleGroupDefinition.setRuleListDefinition(ruleListDefinition);
-                    })
-                    .forEach(ruleGroupDefinition -> {
-                        // 规则集合
-                        List<RuleDefinition> ruleDefinitions = this.buildRuleDefinitions(ruleGroupDefinition);
-                        context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
-                    });
-            this.postProcess();
-            this.mapping = null;
-
-            RuleGroupDefinitionContext.toggle();
-        } finally {
-            lock.unlock();
+            this.doPreProcess(source);
+        } catch (Exception e) {
+            throw new RuntimeException("pre processing failed, source: " + source, e);
         }
     }
 
@@ -177,24 +195,28 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
      * @return {@link RuleParamDefinition}集合
      */
     private List<RuleParamDefinition> buildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition) {
-        List<Map<String, Object>> list = this.doBuildRuleParamDefinitions(ruleGroupDefinition);
-        return list.stream()
-                .map(map -> {
-                    String id = this.getValueWithMapOrThrow(map, "id");
-                    String name = this.getValueWithMapOrThrow(map, "name");
-                    boolean enabled = this.getValueWithMap(map, "enabled", true);
-                    String path = this.getValueWithMap(map, "path");
-                    String expression = path == null ? this.getValueWithMapOrThrow(map, "expression") : FileUtil.getFileContent(path);
+        try {
+            List<Map<String, Object>> list = this.doBuildRuleParamDefinitions(ruleGroupDefinition);
+            return list.stream()
+                    .map(map -> {
+                        String id = this.getValueWithMapOrThrow(map, "id");
+                        String name = this.getValueWithMapOrThrow(map, "name");
+                        boolean enabled = this.getValueWithMap(map, "enabled", true);
+                        String path = this.getValueWithMap(map, "path");
+                        String expression = path == null ? this.getValueWithMapOrThrow(map, "expression") : FileUtil.getFileContent(path);
 
-                    RuleParamDefinition definition = new RuleParamDefinition();
-                    definition.setId(id);
-                    definition.setName(name);
-                    definition.setEnabled(enabled);
-                    definition.setExpression(expression);
-                    return definition;
-                })
-                .filter(RuleParamDefinition::isEnabled)
-                .collect(Collectors.toList());
+                        RuleParamDefinition definition = new RuleParamDefinition();
+                        definition.setId(id);
+                        definition.setName(name);
+                        definition.setEnabled(enabled);
+                        definition.setExpression(expression);
+                        return definition;
+                    })
+                    .filter(RuleParamDefinition::isEnabled)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("build RuleParamDefinitions failed, " + ruleGroupDefinition, e);
+        }
     }
 
     /**
@@ -371,7 +393,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
      *
      * @param source 配置源
      */
-    protected abstract void preProcess(T source);
+    protected abstract void doPreProcess(T source);
 
     /**
      * 解析为{@link RuleGroupDefinition}Map对象

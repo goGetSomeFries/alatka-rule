@@ -41,7 +41,7 @@ public class FileRuleDefinitionBuilderTest {
         HashMap<String, Object> map = new HashMap<>(0);
         Mockito.when(builder.initRootModel(Mockito.any())).thenReturn(map);
 
-        builder.preProcess(null);
+        builder.doPreProcess(null);
         ReflectionMemberAccessor reflectionMemberAccessor = new ReflectionMemberAccessor();
         Assertions.assertSame(map, reflectionMemberAccessor.get(FileRuleDefinitionBuilder.class.getDeclaredField("rootModel"), builder));
     }

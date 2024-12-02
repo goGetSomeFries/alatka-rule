@@ -53,7 +53,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     }
 
     @Override
-    protected void preProcess(Map<String, Object> source) {
+    protected void doPreProcess(Map<String, Object> source) {
         this.ruleUnitList = this.getRuleUnitList(source);
         this.ruleExtendedList = this.getRuleExtendedList(source);
     }

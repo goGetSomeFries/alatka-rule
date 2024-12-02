@@ -41,7 +41,7 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     }
 
     @Override
-    protected void preProcess(Path source) {
+    protected void doPreProcess(Path source) {
         this.rootModel = this.initRootModel(source);
     }
 

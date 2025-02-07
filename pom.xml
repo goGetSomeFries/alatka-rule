@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.alatka</groupId>
         <artifactId>alatka</artifactId>
-        <version>1.21.0</version>
+        <version>1.32.0-SNAPSHOT</version>
     </parent>
 
     <groupId>com.alatka.rule</groupId>
@@ -20,7 +20,7 @@
     </modules>
 
     <properties>
-        <revision>1.3.0</revision>
+        <revision>1.4.0-SNAPSHOT</revision>
     </properties>
 
 </project>

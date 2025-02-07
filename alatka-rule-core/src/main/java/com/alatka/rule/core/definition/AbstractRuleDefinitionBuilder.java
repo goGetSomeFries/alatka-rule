@@ -366,14 +366,17 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         return ruleUnitDefinition;
     }
 
+    @SuppressWarnings("unchecked")
     protected <S> S getValueWithMap(Map<String, Object> map, String key) {
         return (S) map.get(key);
     }
 
+    @SuppressWarnings("unchecked")
     protected <S> S getValueWithMap(Map<String, Object> map, String key, S defaultValue) {
         return (S) map.getOrDefault(key, defaultValue);
     }
 
+    @SuppressWarnings("unchecked")
     protected <S> S getValueWithMapOrThrow(Map<String, Object> map, String key) {
         if (!map.containsKey(key)) {
             throw new IllegalArgumentException("No such key: " + key);

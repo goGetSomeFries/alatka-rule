@@ -3,7 +3,7 @@
 基于AviatorScript实现的规则引擎包，只包括核心逻辑，小巧灵活，无过多依赖，能够快速与应用集成；可在线部署，支持蓝绿发布；零代码开发，支持多种规则配置方式；支持多种外部数据源配置，适用于风控等场景。
 
 > [AviatorScript](https://github.com/killme2008/aviatorscript) 是一种高性能、轻量级的Java语言实现的表达式计算引擎，它允许在运行时动态执行字符串形式的表达式。
- 
+
 ### 功能概述
 
 - **规则配置方式多样**：支持Yaml、Xml、数据库三种配置方式
@@ -16,12 +16,30 @@
 - 风控类欺诈风险识别
 - 营销类客户评分
 - 合规管理审计风险评估
- 
-### [访问wiki查看更多教程](https://gitee.com/asuka2001/alatka-rule/wikis)
+
+### 版本对应关系
+
+| alatka-rule | alatka-dependencies | alatka        |
+|-------------|---------------------|---------------|
+| 1.3.0       | 1.21.0-1.31.0       | 1.21.0-1.31.0 |
+| 1.2.0       | 1.14.0-1.20.0       | 1.14.0-1.20.0 |
+| 1.1.0       | 1.9.0-1.13.0        | 1.9.0-1.13.0  |
+| 1.0.0       | 1.8.0               | 1.8.0         |
+| 0.7.0       | 1.6.0-1.7.0         | 1.6.0-1.7.0   |
+| 0.6.0       | 1.5.0               | 1.5.0         |
+| 0.5.0       | 1.4.0               | 1.4.0         |
+| 0.4.0       | 1.3.0               | 1.3.0         |
+| 0.3.0       | 1.2.0               | 1.2.0         |
+| 0.2.0       | 1.1.0               | 1.1.0         |
+| 0.1.0       | 1.0.8               | 1.0.8         |
+
+`alatka-rule`、`alatka-dependencies`、`alatka`相关制品已上传至阿里云仓库，如需下载可进行如下配置：:point_right: [maven引入相关依赖](https://gitee.com/asuka2001/alatka-rule/wikis/%E4%B8%89%E3%80%81%E5%9F%BA%E7%A1%80%E4%BB%8B%E7%BB%8D/1%E3%80%81maven%E5%9D%90%E6%A0%87%E5%BC%95%E5%85%A5)
+
+### [ :point_right: 访问wiki查看更多教程](https://gitee.com/asuka2001/alatka-rule/wikis)
 
 ### github地址
 
-项目同步更新在github；如有需要，[点击我访问](https://github.com/goGetSomeFries/alatka-rule)
+项目同步更新在github；如有需要， :point_right: [点击我访问](https://github.com/goGetSomeFries/alatka-rule)
 
 ### 感谢支持
 

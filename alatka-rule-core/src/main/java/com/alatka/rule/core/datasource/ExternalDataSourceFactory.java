@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class ExternalDataSourceFactory {
 
-    private Map<RuleDataSourceDefinition.Type, ExternalDataSource> externalDataSourceMap = new HashMap<>();
+    private final Map<RuleDataSourceDefinition.Type, ExternalDataSource> externalDataSourceMap = new HashMap<>();
 
     private ExternalDataSourceFactory() {
         this.init(new DefaultExternalDataSource());

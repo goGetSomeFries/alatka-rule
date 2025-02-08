@@ -6,10 +6,7 @@ import com.googlecode.aviator.AviatorEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -97,6 +94,8 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                     context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
                 });
         this.postProcess();
+
+        this.mapping.clear();
         this.mapping = null;
 
         RuleGroupDefinitionContext.toggle();
@@ -266,6 +265,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             List<RuleDefinition> result = rules.stream()
                     .map(this::buildRuleDefinition)
                     .filter(RuleDefinition::isEnabled)
+                    .sorted(Comparator.comparingInt(RuleDefinition::getPriority))
                     .collect(Collectors.toList());
 
             result.stream().collect(Collectors.toMap(Function.identity(), Function.identity(), (e1, e2) -> {
@@ -366,14 +366,17 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         return ruleUnitDefinition;
     }
 
+    @SuppressWarnings("unchecked")
     protected <S> S getValueWithMap(Map<String, Object> map, String key) {
         return (S) map.get(key);
     }
 
+    @SuppressWarnings("unchecked")
     protected <S> S getValueWithMap(Map<String, Object> map, String key, S defaultValue) {
         return (S) map.getOrDefault(key, defaultValue);
     }
 
+    @SuppressWarnings("unchecked")
     protected <S> S getValueWithMapOrThrow(Map<String, Object> map, String key) {
         if (!map.containsKey(key)) {
             throw new IllegalArgumentException("No such key: " + key);

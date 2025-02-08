@@ -21,7 +21,7 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
 
     private static final String SUFFIX = ".rule";
 
-    private String classpath;
+    private final String classpath;
 
     protected Map<String, Object> rootModel;
 
@@ -65,6 +65,7 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     @Override
     protected void postProcess() {
         // 释放对象
+        this.rootModel.clear();
         this.rootModel = null;
     }
 

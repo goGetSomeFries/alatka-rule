@@ -19,9 +19,9 @@ public class RuleGroupDefinitionContext {
      */
     private static volatile boolean SWITCH_FLAG = true;
 
-    private Map<RuleGroupDefinition, List<RuleDefinition>> ruleDefinitionsMap = new HashMap<>();
+    private final Map<RuleGroupDefinition, List<RuleDefinition>> ruleDefinitionsMap = new HashMap<>();
 
-    private Map<RuleGroupDefinition, List<RuleParamDefinition>> ruleParamDefinitionsMap = new HashMap<>();
+    private final Map<RuleGroupDefinition, List<RuleParamDefinition>> ruleParamDefinitionsMap = new HashMap<>();
 
     private final AviatorEvaluatorInstance aviatorEvaluatorInstance;
 

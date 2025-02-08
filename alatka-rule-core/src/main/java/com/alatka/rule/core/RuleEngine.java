@@ -3,6 +3,7 @@ package com.alatka.rule.core;
 import com.alatka.rule.core.context.*;
 import com.alatka.rule.core.datasource.ExternalDataSource;
 import com.alatka.rule.core.datasource.ExternalDataSourceFactory;
+import com.alatka.rule.core.support.InnerConstant;
 import com.alatka.rule.core.util.JsonUtil;
 import com.googlecode.aviator.AviatorEvaluatorInstance;
 import com.googlecode.aviator.Expression;
@@ -47,6 +48,9 @@ public class RuleEngine {
         if (this.listFilter(aviatorEvaluatorInstance, paramContext, ruleGroupDefinition.getRuleListDefinition())) {
             return result;
         }
+
+        // 初始化元数据
+        paramContext.put(InnerConstant.META_HIT_RESULT, result);
 
         List<RuleDefinition> ruleDefinitions = definitionContext.getRuleDefinitions(ruleGroupName);
         RuleDefinition theOne = null;
@@ -101,6 +105,7 @@ public class RuleEngine {
      * @param list                     {@link RuleParamDefinition}集合
      * @return 处理后入参
      */
+    @SuppressWarnings("unchecked")
     private Map<String, Object> initParamContext(AviatorEvaluatorInstance aviatorEvaluatorInstance,
                                                  Object param, List<RuleParamDefinition> list) {
         Map<String, Object> paramContext =
@@ -206,6 +211,7 @@ public class RuleEngine {
      * @param <T>                      返回值类型
      * @return 表达式执行结果
      */
+    @SuppressWarnings("unchecked")
     private <T> T calculateExpression(AviatorEvaluatorInstance aviatorEvaluatorInstance, String expression, Map<String, Object> env) {
         Expression exp = aviatorEvaluatorInstance.compile(Utils.md5sum(expression), expression, true);
         return (T) exp.execute(env);

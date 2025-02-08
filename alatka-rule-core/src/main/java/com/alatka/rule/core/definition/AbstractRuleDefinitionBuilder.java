@@ -6,10 +6,7 @@ import com.googlecode.aviator.AviatorEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -268,6 +265,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
             List<RuleDefinition> result = rules.stream()
                     .map(this::buildRuleDefinition)
                     .filter(RuleDefinition::isEnabled)
+                    .sorted(Comparator.comparingInt(RuleDefinition::getPriority))
                     .collect(Collectors.toList());
 
             result.stream().collect(Collectors.toMap(Function.identity(), Function.identity(), (e1, e2) -> {

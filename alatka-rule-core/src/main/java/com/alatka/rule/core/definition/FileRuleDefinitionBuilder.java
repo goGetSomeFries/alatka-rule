@@ -21,7 +21,7 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
 
     private static final String SUFFIX = ".rule";
 
-    private String classpath;
+    private final String classpath;
 
     protected Map<String, Object> rootModel;
 

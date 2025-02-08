@@ -29,11 +29,11 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     @Override
     protected Map<String, Object> initRootModel(Path source) {
         Map<String, Object> map = XmlUtil.getMap(source.toFile(), Object.class);
-        Map<String, Object> rootModel = this.getValueWithMap(map, "alatka-rule");
-        return rootModel;
+        return this.getValueWithMap(map, "alatka-rule");
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         Map<String, Object> dataSource = this.getValueWithMap(this.rootModel, "dataSource");
         if (dataSource == null) {
@@ -49,6 +49,7 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
         return databaseList;
     }
 
+    @SuppressWarnings("unchecked")
     private List<Map<String, Object>> doBuildRuleDataSourceItems(Map<String, Object> dataSource,
                                                                  RuleDataSourceDefinition.Type type,
                                                                  String... keys) {
@@ -65,6 +66,7 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> doBuildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         Map<String, Object> params = this.getValueWithMap(this.rootModel, "params", Collections.EMPTY_MAP);
         Object param = this.getValueWithMap(params, "param", Collections.emptyList());
@@ -72,11 +74,13 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Map<String, Object> doBuildRuleListDefinition(RuleGroupDefinition ruleGroupDefinition) {
         return this.getValueWithMap(this.rootModel, "filterList", Collections.EMPTY_MAP);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         Map<String, Object> ruleSet = this.getValueWithMap(this.rootModel, "ruleSet", Collections.EMPTY_MAP);
         Object rule = this.getValueWithMap(ruleSet, "rule", Collections.emptyList());
@@ -84,6 +88,7 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Map<String, Object> buildRuleExtendedProperties(Map<String, Object> map) {
         Object object = this.getValueWithMap(map, "extended", Collections.emptyList());
         List<Map<String, Object>> list =
@@ -94,6 +99,7 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> map) {
         Object object = this.getValueWithMap(map, "unit", Collections.emptyList());
         return (List<Map<String, Object>>) (object instanceof List ? object : Collections.singletonList(object));
@@ -105,18 +111,21 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected <S> S getValueWithMap(Map<String, Object> map, String key) {
         Object object = map.get(key);
         return (S) convert(object);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected <S> S getValueWithMap(Map<String, Object> map, String key, S defaultValue) {
         Object object = map.getOrDefault(key, defaultValue);
         return (S) convert(object);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected <S> S getValueWithMapOrThrow(Map<String, Object> map, String key) {
         if (!map.containsKey(key)) {
             throw new IllegalArgumentException("No such key: " + key);

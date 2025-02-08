@@ -30,31 +30,37 @@ public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         return this.getValueWithMap(this.rootModel, "dataSource", Collections.EMPTY_LIST);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> doBuildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         return this.getValueWithMap(this.rootModel, "params", Collections.EMPTY_LIST);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Map<String, Object> doBuildRuleListDefinition(RuleGroupDefinition ruleGroupDefinition) {
         return this.getValueWithMap(this.rootModel, "filterList", Collections.EMPTY_MAP);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         return this.getValueWithMap(this.rootModel, "ruleSet", Collections.EMPTY_LIST);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Map<String, Object> buildRuleExtendedProperties(Map<String, Object> map) {
         return this.getValueWithMap(map, "extended", Collections.EMPTY_MAP);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> doBuildRuleUnitDefinitions(Map<String, Object> map) {
         return this.getValueWithMap(map, "units", Collections.EMPTY_LIST);
     }

@@ -17,7 +17,7 @@ public class RedisExternalDataSource extends AbstractExternalDataSource {
     private static final String KEY_HASH_KEY = "hashKey";
     private static final String KEY_SET_VALUE = "setValue";
 
-    private RedisTemplate<Object, Object> redisTemplate;
+    private final RedisTemplate<Object, Object> redisTemplate;
 
     public RedisExternalDataSource(RedisTemplate<Object, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;

@@ -84,10 +84,10 @@ CREATE TABLE `ALK_RULE_DATASOURCE_DEFINITION`
 CREATE TABLE `ALK_RULE_PARAM_DEFINITION`
 (
     `P_ID`         int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `P_KEY`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci    NOT NULL COMMENT '关键字',
-    `P_NAME`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci   NOT NULL COMMENT '名称',
-    `P_EXPRESSION` varchar(10000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '表达式',
+    `P_KEY`        varchar(50) NOT NULL COMMENT '关键字',
+    `P_NAME`       varchar(100)  NOT NULL COMMENT '名称',
+    `P_EXPRESSION` varchar(10000) NOT NULL COMMENT '表达式',
     `P_ENABLED`    tinyint(1) NOT NULL COMMENT '是否可用',
-    `G_KEY`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci    NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
+    `G_KEY`        varchar(50) NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
     PRIMARY KEY (`P_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规则入参处理表';

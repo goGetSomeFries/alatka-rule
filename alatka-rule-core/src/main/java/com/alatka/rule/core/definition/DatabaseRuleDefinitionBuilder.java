@@ -263,6 +263,8 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected void postProcess() {
         // 释放对象
+        this.ruleUnitList.clear();
+        this.ruleExtendedList.clear();
         this.ruleUnitList = null;
         this.ruleExtendedList = null;
     }

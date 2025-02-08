@@ -97,6 +97,8 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                     context.initRuleDefinitions(ruleGroupDefinition, ruleDefinitions);
                 });
         this.postProcess();
+
+        this.mapping.clear();
         this.mapping = null;
 
         RuleGroupDefinitionContext.toggle();

@@ -20,7 +20,7 @@ public class DatabaseExternalDataSource extends AbstractExternalDataSource {
 
     private static final String KEY_RESULT_CLASS = "resultClass";
 
-    private NamedParameterJdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public DatabaseExternalDataSource(DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);

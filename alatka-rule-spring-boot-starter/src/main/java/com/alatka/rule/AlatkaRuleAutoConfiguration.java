@@ -61,7 +61,7 @@ public class AlatkaRuleAutoConfiguration {
     public ExternalDataSourceFactory externalDataSourceFactory(ApplicationContext context) {
         ExternalDataSourceFactory factory = ExternalDataSourceFactory.getInstance();
         Map<String, ExternalDataSource> map = context.getBeansOfType(ExternalDataSource.class);
-        map.values().stream().forEach(factory::init);
+        map.values().forEach(factory::init);
         return factory;
     }
 

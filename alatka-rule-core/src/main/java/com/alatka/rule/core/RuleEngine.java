@@ -5,6 +5,7 @@ import com.alatka.rule.core.datasource.ExternalDataSource;
 import com.alatka.rule.core.datasource.ExternalDataSourceFactory;
 import com.alatka.rule.core.support.InnerConstant;
 import com.alatka.rule.core.util.JsonUtil;
+import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.AviatorEvaluatorInstance;
 import com.googlecode.aviator.Expression;
 import com.googlecode.aviator.utils.Utils;
@@ -24,6 +25,15 @@ import java.util.Map;
 public class RuleEngine {
 
     private final Logger logger = LoggerFactory.getLogger(RuleEngine.class);
+
+    /**
+     * 验证表达式是否合法
+     *
+     * @param expression 验证表达式
+     */
+    public void validate(String expression) {
+        AviatorEvaluator.validate(expression);
+    }
 
     /**
      * 执行规则，得到命中规则集合

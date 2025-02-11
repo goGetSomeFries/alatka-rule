@@ -27,6 +27,16 @@ public class RuleEngine {
     private final Logger logger = LoggerFactory.getLogger(RuleEngine.class);
 
     /**
+     * 获取{@link AviatorEvaluatorInstance}
+     *
+     * @return {@link AviatorEvaluatorInstance}
+     */
+    public AviatorEvaluatorInstance getAviatorEvaluatorInstance() {
+        RuleGroupDefinitionContext definitionContext = RuleGroupDefinitionContext.getInstance(true);
+        return definitionContext.getAviatorEvaluatorInstance();
+    }
+
+    /**
      * 验证表达式是否合法
      *
      * @param expression 验证表达式

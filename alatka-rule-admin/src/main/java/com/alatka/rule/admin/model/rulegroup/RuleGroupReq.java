@@ -1,26 +1,30 @@
-package com.alatka.rule.admin.entity;
+package com.alatka.rule.admin.model.rulegroup;
 
-import javax.persistence.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@Entity
-@Table(name = "ALK_RULE_GROUP_DEFINITION")
-public class RuleGroupDefinition {
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "G_ID")
+@Schema(description = "规则组请求")
+public class RuleGroupReq {
+
+    @Schema(description = "主键")
     private Long id;
 
-    @Column(name = "G_KEY")
+    @Schema(description = "关键字", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty
     private String key;
 
-    @Column(name = "G_NAME")
+    @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty
     private String name;
 
-    @Column(name = "G_TYPE")
+    @Schema(description = "类型", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty
     private String type;
 
-    @Column(name = "G_ENABLED")
+    @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull
     private Boolean enabled;
 
     public Long getId() {

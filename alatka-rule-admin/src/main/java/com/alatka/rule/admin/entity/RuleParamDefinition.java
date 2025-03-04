@@ -3,25 +3,28 @@ package com.alatka.rule.admin.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ALK_RULE_GROUP_DEFINITION")
-public class RuleGroupDefinition {
+@Table(name = "ALK_RULE_PARAM_DEFINITION")
+public class RuleParamDefinition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "G_ID")
+    @Column(name = "P_ID")
     private Long id;
 
-    @Column(name = "G_KEY")
+    @Column(name = "P_KEY")
     private String key;
 
-    @Column(name = "G_NAME")
+    @Column(name = "P_NAME")
     private String name;
 
-    @Column(name = "G_TYPE")
-    private String type;
+    @Column(name = "P_EXPRESSION")
+    private String expression;
 
-    @Column(name = "G_ENABLED")
+    @Column(name = "P_ENABLED")
     private Boolean enabled;
+
+    @Column(name = "G_KEY")
+    private String groupKey;
 
     public Long getId() {
         return id;
@@ -47,12 +50,12 @@ public class RuleGroupDefinition {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
+    public String getExpression() {
+        return expression;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 
     public Boolean getEnabled() {
@@ -61,5 +64,13 @@ public class RuleGroupDefinition {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getGroupKey() {
+        return groupKey;
+    }
+
+    public void setGroupKey(String groupKey) {
+        this.groupKey = groupKey;
     }
 }

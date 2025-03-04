@@ -1,35 +1,22 @@
-package com.alatka.rule.admin.entity;
+package com.alatka.rule.admin.model.rulegroup;
 
-import javax.persistence.*;
+import com.alatka.rule.admin.model.PageReqMessage;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@Entity
-@Table(name = "ALK_RULE_GROUP_DEFINITION")
-public class RuleGroupDefinition {
+@Schema(description = "规则组请求")
+public class RuleGroupPageReq extends PageReqMessage {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "G_ID")
-    private Long id;
-
-    @Column(name = "G_KEY")
+    @Schema(description = "关键字")
     private String key;
 
-    @Column(name = "G_NAME")
+    @Schema(description = "名称")
     private String name;
 
-    @Column(name = "G_TYPE")
+    @Schema(description = "类型")
     private String type;
 
-    @Column(name = "G_ENABLED")
+    @Schema(description = "是否可用")
     private Boolean enabled;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getKey() {
         return key;

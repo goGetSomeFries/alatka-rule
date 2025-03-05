@@ -1,4 +1,4 @@
-package com.alatka.rule.admin.model.ruledatasource;
+package com.alatka.rule.admin.model.rule;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,23 +6,29 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.HashMap;
 import java.util.Map;
 
-@Schema(description = "规则外部数据源响应")
-public class RuleDatasourceRes {
+@Schema(description = "规则应答")
+public class RuleRes {
 
     @Schema(description = "主键", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
 
-    @Schema(description = "关键字", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String key;
+    @Schema(description = "类型", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String type;
 
     @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
-    @Schema(description = "类型", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String type;
+    @Schema(description = "描述", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String desc;
 
-    @Schema(description = "数据范围", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String scope;
+    @Schema(description = "优先级", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Integer priority;
+
+    @Schema(description = "评分", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Integer score;
+
+    @Schema(description = "顺序", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Integer order;
 
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     private Boolean enabled;
@@ -41,12 +47,12 @@ public class RuleDatasourceRes {
         this.id = id;
     }
 
-    public String getKey() {
-        return key;
+    public String getType() {
+        return type;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getName() {
@@ -57,20 +63,36 @@ public class RuleDatasourceRes {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
-    public String getScope() {
-        return scope;
+    public Integer getPriority() {
+        return priority;
     }
 
-    public void setScope(String scope) {
-        this.scope = scope;
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 
     public Boolean getEnabled() {

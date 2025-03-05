@@ -2,9 +2,6 @@ package com.alatka.rule.admin.model.rulegroup;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 @Schema(description = "规则组响应")
 public class RuleGroupRes {
 
@@ -12,19 +9,15 @@ public class RuleGroupRes {
     private Long id;
 
     @Schema(description = "关键字", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
     private String key;
 
     @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
     private String name;
 
     @Schema(description = "类型", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
     private String type;
 
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
     private Boolean enabled;
 
     public Long getId() {

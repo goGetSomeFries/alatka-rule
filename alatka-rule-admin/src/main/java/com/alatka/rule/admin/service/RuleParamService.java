@@ -23,7 +23,7 @@ public class RuleParamService {
 
     private RuleParamRepository ruleParamRepository;
 
-    public Long save(RuleParamReq req) {
+    public Long create(RuleParamReq req) {
         RuleParamDefinition entity = new RuleParamDefinition();
         BeanUtils.copyProperties(req, entity);
 
@@ -55,7 +55,7 @@ public class RuleParamService {
         ruleParamRepository.delete(entity);
     }
 
-    public Page<RuleParamRes> findAll(RuleParamPageReq pageReq) {
+    public Page<RuleParamRes> queryPage(RuleParamPageReq pageReq) {
         RuleParamDefinition condition = new RuleParamDefinition();
         BeanUtils.copyProperties(pageReq, condition);
 
@@ -77,7 +77,7 @@ public class RuleParamService {
                 list.add(criteriaBuilder.equal(root.get("key").as(String.class), condition.getKey()));
             }
             if (condition.getName() != null) {
-                list.add(criteriaBuilder.like(root.get("name").as(String.class), condition.getName() + "%"));
+                list.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + condition.getName() + "%"));
             }
             if (condition.getEnabled() != null) {
                 list.add(criteriaBuilder.equal(root.get("enabled").as(Boolean.class), condition.getEnabled()));

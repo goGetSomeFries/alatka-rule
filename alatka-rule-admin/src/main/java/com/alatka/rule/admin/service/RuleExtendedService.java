@@ -1,21 +1,13 @@
 package com.alatka.rule.admin.service;
 
 
-import com.alatka.rule.admin.entity.RuleDatasourceDefinition;
 import com.alatka.rule.admin.entity.RuleExtendedDefinition;
-import com.alatka.rule.admin.model.ruledatasource.RuleDatasourcePageReq;
-import com.alatka.rule.admin.model.ruledatasource.RuleDatasourceReq;
-import com.alatka.rule.admin.model.ruledatasource.RuleDatasourceRes;
 import com.alatka.rule.admin.repository.RuleExtendedRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,10 +24,22 @@ public class RuleExtendedService {
             entity.setRuleId(ruleId);
             entity.setGroupKey(groupKey);
             entity.setKey(entry.getKey());
-//            entity.setValue(entry.getValue());
+            entity.setValue(entry.getValue() == null ? null : entry.getValue().toString());
             return entity;
         }).collect(Collectors.toList());
         ruleExtendedRepository.saveAll(extendedList);
+    }
+
+    public void deleteByRuleId(Long ruleId) {
+        List<RuleExtendedDefinition> list = this.queryByRuleId(ruleId);
+        List<Long> ids = list.stream().map(RuleExtendedDefinition::getId).collect(Collectors.toList());
+        ruleExtendedRepository.deleteAllById(ids);
+    }
+
+    public List<RuleExtendedDefinition> queryByRuleId(Long ruleId) {
+        RuleExtendedDefinition entity = new RuleExtendedDefinition();
+        entity.setRuleId(ruleId);
+        return ruleExtendedRepository.findAll(Example.of(entity));
     }
 
     @Autowired

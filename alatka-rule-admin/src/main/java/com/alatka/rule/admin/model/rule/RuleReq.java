@@ -47,7 +47,7 @@ public class RuleReq {
     private String groupKey;
 
     @Schema(description = "扩展属性")
-    private Map<String, Object> extended = new HashMap<String, Object>();
+    private Map<String, Object> extended = new HashMap<>();
 
     public Long getId() {
         return id;

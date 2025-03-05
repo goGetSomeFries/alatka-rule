@@ -43,7 +43,7 @@ public class RuleDatasourceController {
     @Operation(summary = "分页查询规则外部数据源")
     @GetMapping("/page")
     public PageResMessage<RuleDatasourceRes> queryPage(@Valid RuleDatasourcePageReq ruleDatasourcePageReq) {
-        return PageResMessage.success(ruleDatasourceService.findAll(ruleDatasourcePageReq));
+        return PageResMessage.success(ruleDatasourceService.queryPage(ruleDatasourcePageReq));
     }
 
     @Autowired

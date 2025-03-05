@@ -1,9 +1,12 @@
 package com.alatka.rule.admin.model.ruledatasource;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 
 @Schema(description = "规则外部数据源请求")
 public class RuleDatasourceReq {
@@ -34,6 +37,9 @@ public class RuleDatasourceReq {
     @Schema(description = "规则组关键字", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty
     private String groupKey;
+
+    @Schema(description = "自定义属性")
+    private Map<String, Object> extended = new HashMap<>();
 
     public Long getId() {
         return id;
@@ -89,5 +95,14 @@ public class RuleDatasourceReq {
 
     public void setGroupKey(String groupKey) {
         this.groupKey = groupKey;
+    }
+
+    public Map<String, Object> getExtended() {
+        return extended;
+    }
+
+    @JsonAnySetter
+    public void setExtended(String key, Object value) {
+        this.extended.put(key, value);
     }
 }

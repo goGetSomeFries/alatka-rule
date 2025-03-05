@@ -24,26 +24,26 @@ public class RuleParamController {
     @Operation(summary = "创建规则入参")
     @PostMapping("/create")
     public ResMessage<Long> create(@Valid @RequestBody RuleParamReq ruleParamReq) {
-        return ResMessage.success(ruleParamService.save(ruleParamReq));
+        return ResMessage.success(ruleParamService.create(ruleParamReq));
     }
 
-    @Operation(summary = "删除规则组")
+    @Operation(summary = "删除规则入参")
     @Parameter(name = "id", description = "编号", required = true)
     @DeleteMapping("/delete")
     public ResMessage<Void> delete(@RequestParam Long id) {
         return ResMessage.success(() -> ruleParamService.delete(id));
     }
 
-    @Operation(summary = "修改规则组")
+    @Operation(summary = "修改规则入参")
     @PutMapping("/update")
     public ResMessage<Void> update(@Valid @RequestBody RuleParamReq ruleParamReq) {
         return ResMessage.success(() -> ruleParamService.update(ruleParamReq));
     }
 
-    @Operation(summary = "分页查询规则组")
+    @Operation(summary = "分页查询规则入参")
     @GetMapping("/page")
     public PageResMessage<RuleParamRes> queryPage(@Valid RuleParamPageReq ruleParamPageReq) {
-        return PageResMessage.success(ruleParamService.findAll(ruleParamPageReq));
+        return PageResMessage.success(ruleParamService.queryPage(ruleParamPageReq));
     }
 
     @Autowired

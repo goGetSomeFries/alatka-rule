@@ -23,6 +23,8 @@ public class RuleDatasourceService {
 
     private RuleDatasourceRepository ruleDatasourceRepository;
 
+    private RuleDatasourceExtService ruleDatasourceExtService;
+
     public Long save(RuleDatasourceReq req) {
         RuleDatasourceDefinition entity = new RuleDatasourceDefinition();
         BeanUtils.copyProperties(req, entity);
@@ -35,7 +37,9 @@ public class RuleDatasourceService {
             throw new IllegalArgumentException("key : <" + condition.getKey() + "> is present already");
         }
 
-        return ruleDatasourceRepository.save(entity).getId();
+        Long id = ruleDatasourceRepository.save(entity).getId();
+        ruleDatasourceExtService.save(req.getExtended(), id, entity.getGroupKey());
+        return id;
     }
 
     public void update(RuleDatasourceReq req) {
@@ -53,9 +57,10 @@ public class RuleDatasourceService {
         RuleDatasourceDefinition entity = ruleDatasourceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("id: <" + id + "> not found"));
         ruleDatasourceRepository.delete(entity);
+        ruleDatasourceExtService.deleteByDatasourceId(id);
     }
 
-    public Page<RuleDatasourceRes> findAll(RuleDatasourcePageReq pageReq) {
+    public Page<RuleDatasourceRes> queryPage(RuleDatasourcePageReq pageReq) {
         RuleDatasourceDefinition condition = new RuleDatasourceDefinition();
         BeanUtils.copyProperties(pageReq, condition);
 
@@ -63,6 +68,8 @@ public class RuleDatasourceService {
                 .map(entity -> {
                     RuleDatasourceRes res = new RuleDatasourceRes();
                     BeanUtils.copyProperties(entity, res);
+                    ruleDatasourceExtService.queryByDatasourceId(entity.getId())
+                            .forEach(extended -> res.setExtended(extended.getKey(), extended.getValue()));
                     return res;
                 });
     }
@@ -77,7 +84,7 @@ public class RuleDatasourceService {
                 list.add(criteriaBuilder.equal(root.get("key").as(String.class), condition.getKey()));
             }
             if (condition.getName() != null) {
-                list.add(criteriaBuilder.like(root.get("name").as(String.class), condition.getName() + "%"));
+                list.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + condition.getName() + "%"));
             }
             if (condition.getType() != null) {
                 list.add(criteriaBuilder.equal(root.get("type").as(String.class), condition.getType()));
@@ -99,5 +106,10 @@ public class RuleDatasourceService {
     @Autowired
     public void setRuleDatasourceRepository(RuleDatasourceRepository ruleDatasourceRepository) {
         this.ruleDatasourceRepository = ruleDatasourceRepository;
+    }
+
+    @Autowired
+    public void setRuleDatasourceExtService(RuleDatasourceExtService ruleDatasourceExtService) {
+        this.ruleDatasourceExtService = ruleDatasourceExtService;
     }
 }

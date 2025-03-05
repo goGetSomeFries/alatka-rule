@@ -25,7 +25,7 @@ public class RuleGroupService {
 
     private RuleGroupRepository ruleGroupRepository;
 
-    public Long save(RuleGroupReq req) {
+    public Long create(RuleGroupReq req) {
         RuleGroupDefinition entity = new RuleGroupDefinition();
         BeanUtils.copyProperties(req, entity);
 
@@ -60,7 +60,7 @@ public class RuleGroupService {
         entity.setEnabled(false);
     }
 
-    public Page<RuleGroupRes> findAll(RuleGroupPageReq pageReq) {
+    public Page<RuleGroupRes> queryPage(RuleGroupPageReq pageReq) {
         RuleGroupDefinition condition = new RuleGroupDefinition();
         BeanUtils.copyProperties(pageReq, condition);
 
@@ -89,7 +89,7 @@ public class RuleGroupService {
                 list.add(criteriaBuilder.equal(root.get("key").as(String.class), condition.getKey()));
             }
             if (condition.getName() != null) {
-                list.add(criteriaBuilder.like(root.get("name").as(String.class), condition.getName() + "%"));
+                list.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + condition.getName() + "%"));
             }
             if (condition.getType() != null) {
                 list.add(criteriaBuilder.equal(root.get("type").as(String.class), condition.getType()));

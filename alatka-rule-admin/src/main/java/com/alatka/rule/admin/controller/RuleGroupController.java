@@ -25,7 +25,7 @@ public class RuleGroupController {
     @Operation(summary = "创建规则组")
     @PostMapping("/create")
     public ResMessage<Long> create(@Valid @RequestBody RuleGroupReq ruleGroupReq) {
-        return ResMessage.success(ruleGroupService.save(ruleGroupReq));
+        return ResMessage.success(ruleGroupService.create(ruleGroupReq));
     }
 
     @Operation(summary = "删除规则组")
@@ -44,7 +44,7 @@ public class RuleGroupController {
     @Operation(summary = "分页查询规则组")
     @GetMapping("/page")
     public PageResMessage<RuleGroupRes> queryPage(@Valid RuleGroupPageReq pageReqMessage) {
-        return PageResMessage.success(ruleGroupService.findAll(pageReqMessage));
+        return PageResMessage.success(ruleGroupService.queryPage(pageReqMessage));
     }
 
     @Operation(summary = "规则组kv")

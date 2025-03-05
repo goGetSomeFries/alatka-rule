@@ -1,4 +1,4 @@
-package com.alatka.rule.admin.controller;
+package com.alatka.rule.admin.support;
 
 import com.alatka.rule.admin.model.ResMessage;
 import org.slf4j.Logger;

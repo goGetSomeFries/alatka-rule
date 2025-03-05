@@ -67,16 +67,6 @@ CREATE TABLE `ALK_RULE_DATASOURCE_DEFINITION`
     `D_SCOPE`    varchar(50)  NOT NULL COMMENT '数据范围',
     `D_ENABLED`  tinyint(1) NOT NULL COMMENT '是否可用',
     `G_KEY`      varchar(50)  NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
-    `D_PARAM_K1` varchar(50)    DEFAULT NULL COMMENT '自定义参数key1',
-    `D_PARAM_V1` varchar(10000) DEFAULT NULL COMMENT '自定义参数value1',
-    `D_PARAM_K2` varchar(50)    DEFAULT NULL COMMENT '自定义参数key2',
-    `D_PARAM_V2` varchar(1000)  DEFAULT NULL COMMENT '自定义参数value2',
-    `D_PARAM_K3` varchar(50)    DEFAULT NULL COMMENT '自定义参数key3',
-    `D_PARAM_V3` varchar(1000)  DEFAULT NULL COMMENT '自定义参数value3',
-    `D_PARAM_K4` varchar(50)    DEFAULT NULL COMMENT '自定义参数key4',
-    `D_PARAM_V4` varchar(1000)  DEFAULT NULL COMMENT '自定义参数value4',
-    `D_PARAM_K5` varchar(50)    DEFAULT NULL COMMENT '自定义参数key5',
-    `D_PARAM_V5` varchar(1000)  DEFAULT NULL COMMENT '自定义参数value5',
     PRIMARY KEY (`D_ID`),
     UNIQUE KEY `ALK_RULE_DATASOURCE_DEFINITION_UNIQUE` (`G_KEY`, `D_KEY`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规则外部数据源表';
@@ -87,7 +77,7 @@ CREATE TABLE `ALK_RULE_DATASOURCE_EXT_DEFINITION`
 (
     `S_ID`    int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
     `S_KEY`   varchar(100) NOT NULL COMMENT '属性key',
-    `S_VALUE` varchar(100) NOT NULL COMMENT '属性值',
+    `S_VALUE` varchar(10000) NOT NULL COMMENT '属性值',
     `D_ID`    int unsigned NOT NULL COMMENT 'ALK_RULE_DATASOURCE_DEFINITION->D_ID',
     `G_KEY`   varchar(50)  NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
     PRIMARY KEY (`S_ID`),

@@ -72,7 +72,7 @@ public class RuleController {
         this.ruleService = ruleService;
     }
 
-    @Autowired
+    @Autowired(required = false)
     public void setRuleDefinitionBuilder(RuleDefinitionBuilder ruleDefinitionBuilder) {
         this.ruleDefinitionBuilder = ruleDefinitionBuilder;
     }

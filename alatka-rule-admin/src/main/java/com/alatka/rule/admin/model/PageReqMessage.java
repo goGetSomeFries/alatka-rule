@@ -24,7 +24,7 @@ public class PageReqMessage {
     private Integer pageSize;
 
     @Schema(description = "正序/倒序")
-    @Pattern(regexp = "(ASC|DESC)", message = "[direction] must be 'ASC|DESC'")
+    @Pattern(regexp = "(asc|desc)", message = "[direction] must be 'asc|desc'")
     private String direction;
 
     @Schema(description = "排序字段", requiredMode = Schema.RequiredMode.REQUIRED)

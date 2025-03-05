@@ -25,7 +25,7 @@ public class RuleDatasourceService {
 
     private RuleDatasourceExtService ruleDatasourceExtService;
 
-    public Long save(RuleDatasourceReq req) {
+    public Long create(RuleDatasourceReq req) {
         RuleDatasourceDefinition entity = new RuleDatasourceDefinition();
         BeanUtils.copyProperties(req, entity);
 
@@ -43,14 +43,16 @@ public class RuleDatasourceService {
     }
 
     public void update(RuleDatasourceReq req) {
+        boolean exists = ruleDatasourceRepository.existsById(req.getId());
+        if (!exists) {
+            throw new IllegalArgumentException("id : <" + req.getId() + "> not found");
+        }
+
         RuleDatasourceDefinition entity = new RuleDatasourceDefinition();
         BeanUtils.copyProperties(req, entity);
-
-        boolean exists = ruleDatasourceRepository.existsById(entity.getId());
-        if (!exists) {
-            throw new IllegalArgumentException("id : <" + entity.getId() + "> not found");
-        }
         ruleDatasourceRepository.save(entity);
+        ruleDatasourceExtService.deleteByDatasourceId(entity.getId());
+        ruleDatasourceExtService.save(req.getExtended(), entity.getId(), entity.getGroupKey());
     }
 
     public void delete(Long id) {

@@ -24,7 +24,7 @@ public class RuleDatasourceController {
     @Operation(summary = "创建规则外部数据源")
     @PostMapping("/create")
     public ResMessage<Long> create(@Valid @RequestBody RuleDatasourceReq ruleDatasourceReq) {
-        return ResMessage.success(ruleDatasourceService.save(ruleDatasourceReq));
+        return ResMessage.success(ruleDatasourceService.create(ruleDatasourceReq));
     }
 
     @Operation(summary = "删除规则外部数据源")

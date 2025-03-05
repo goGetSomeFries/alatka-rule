@@ -39,7 +39,7 @@ public class RuleService {
     public void update(RuleReq req) {
         boolean exists = ruleRepository.existsById(req.getId());
         if (!exists) {
-            throw new IllegalArgumentException("Rule does not exist");
+            throw new IllegalArgumentException("id : <" + req.getId() + "> not found");
         }
 
         RuleDefinition entity = new RuleDefinition();

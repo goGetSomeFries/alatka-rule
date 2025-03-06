@@ -32,7 +32,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected List<Map<String, Object>> getSources() {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_GROUP_DEFINITION";
+        String sql = "SELECT * FROM ALK_RULE_GROUP_DEFINITION";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -60,7 +60,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
 
     private List<Map<String, Object>> getRuleUnitList(Map<String, Object> source) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_UNIT_DEFINITION WHERE G_KEY = ?";
+        String sql = "SELECT * FROM ALK_RULE_UNIT_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -84,7 +84,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
 
     private List<Map<String, Object>> getRuleExtendedList(Map<String, Object> source) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_EXTENDED_DEFINITION WHERE G_KEY = ?";
+        String sql = "SELECT * FROM ALK_RULE_EXT_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -112,7 +112,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_DATASOURCE_DEFINITION WHERE G_KEY = ?";
+        String sql = "SELECT * FROM ALK_RULE_DATASOURCE_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -158,7 +158,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected List<Map<String, Object>> doBuildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_PARAM_DEFINITION WHERE G_KEY = ?";
+        String sql = "SELECT * FROM ALK_RULE_PARAM_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -182,7 +182,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected Map<String, Object> doBuildRuleListDefinition(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_DEFINITION WHERE G_KEY = ? AND R_TYPE IN ('2', '3') ORDER BY R_ORDER";
+        String sql = "SELECT * FROM ALK_RULE_DEFINITION WHERE G_KEY = ? AND R_TYPE IN ('2', '3') ORDER BY R_ORDER";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -209,7 +209,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_DEFINITION WHERE G_KEY = ? AND R_TYPE = '1'";
+        String sql = "SELECT * FROM ALK_RULE_DEFINITION WHERE G_KEY = ? AND R_TYPE = '1'";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {

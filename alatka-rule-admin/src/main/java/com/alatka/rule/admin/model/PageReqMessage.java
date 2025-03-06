@@ -14,12 +14,12 @@ import javax.validation.constraints.Pattern;
 public class PageReqMessage {
 
     @Schema(description = "当前页数", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "pageNo不能为空")
     @Min(value = 1)
     private Integer pageNo;
 
     @Schema(description = "每页记录数", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "pageSize不能为空")
     @Min(value = 1)
     private Integer pageSize;
 
@@ -28,7 +28,7 @@ public class PageReqMessage {
     private String direction;
 
     @Schema(description = "排序字段", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "orderBy不能为空")
     private String orderBy;
 
     public Pageable build() {

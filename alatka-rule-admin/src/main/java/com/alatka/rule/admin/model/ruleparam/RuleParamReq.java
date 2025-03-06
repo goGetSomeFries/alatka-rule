@@ -12,23 +12,23 @@ public class RuleParamReq {
     private Long id;
 
     @Schema(description = "关键字", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "key 不能为空")
     private String key;
 
     @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "name 不能为空")
     private String name;
 
     @Schema(description = "表达式", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "expression 不能为空")
     private String expression;
 
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "enabled 不能为空")
     private Boolean enabled;
 
     @Schema(description = "规则组关键字", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "groupKey 不能为空")
     private String groupKey;
 
     public Long getId() {

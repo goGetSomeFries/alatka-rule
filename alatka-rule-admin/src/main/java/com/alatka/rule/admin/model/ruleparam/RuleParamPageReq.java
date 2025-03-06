@@ -21,7 +21,7 @@ public class RuleParamPageReq extends PageReqMessage {
     private Boolean enabled;
 
     @Schema(description = "规则组关键字", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "groupKey 不能为空")
     private String groupKey;
 
     public String getKey() {

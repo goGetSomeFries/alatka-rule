@@ -1,6 +1,5 @@
 package com.alatka.rule.admin.model.rule;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.HashMap;
@@ -111,12 +110,13 @@ public class RuleRes {
         this.groupKey = groupKey;
     }
 
-    @JsonAnyGetter
+    // @JsonAnyGetter
+    // 按需配置
     public Map<String, Object> getExtended() {
         return extended;
     }
 
-    public void setExtended(String key, Object value) {
-        this.extended.put(key, value);
+    public void setExtended(Map<String, Object> extended) {
+        this.extended = extended;
     }
 }

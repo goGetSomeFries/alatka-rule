@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -23,7 +25,7 @@ public class RuleService {
 
     private RuleRepository ruleRepository;
 
-    private RuleExtendedService ruleExtendedService;
+    private RuleExtService ruleExtService;
 
     private RuleUnitService ruleUnitService;
 
@@ -32,7 +34,7 @@ public class RuleService {
         BeanUtils.copyProperties(req, entity);
 
         Long ruleId = ruleRepository.save(entity).getId();
-        ruleExtendedService.save(req.getExtended(), ruleId, entity.getGroupKey());
+        ruleExtService.save(req.getExtended(), ruleId, entity.getGroupKey());
         return ruleId;
     }
 
@@ -45,8 +47,8 @@ public class RuleService {
         RuleDefinition entity = new RuleDefinition();
         BeanUtils.copyProperties(req, entity);
         ruleRepository.save(entity);
-        ruleExtendedService.deleteByRuleId(entity.getId());
-        ruleExtendedService.save(req.getExtended(), entity.getId(), entity.getGroupKey());
+        ruleExtService.deleteByRuleId(entity.getId());
+        ruleExtService.save(req.getExtended(), entity.getId(), entity.getGroupKey());
     }
 
     public void delete(Long id) {
@@ -54,7 +56,7 @@ public class RuleService {
                 .orElseThrow(() -> new IllegalArgumentException("rule id: " + id + " not found"));
         ruleRepository.delete(entity);
 
-        ruleExtendedService.deleteByRuleId(id);
+        ruleExtService.deleteByRuleId(id);
 
         ruleUnitService.deleteByRuleId(id);
     }
@@ -67,8 +69,9 @@ public class RuleService {
                 .map(entity -> {
                     RuleRes res = new RuleRes();
                     BeanUtils.copyProperties(entity, res);
-                    ruleExtendedService.queryByRuleId(entity.getId())
-                            .forEach(extended -> res.setExtended(extended.getKey(), extended.getValue()));
+                    Map<String, Object> extended = ruleExtService.queryByRuleId(entity.getId()).stream()
+                            .collect(HashMap::new, (k, v) -> k.put(v.getKey(), v.getValue()), HashMap::putAll);
+                    res.setExtended(extended);
                     return res;
                 });
     }
@@ -102,8 +105,8 @@ public class RuleService {
     }
 
     @Autowired
-    public void setRuleExtendedService(RuleExtendedService ruleExtendedService) {
-        this.ruleExtendedService = ruleExtendedService;
+    public void setRuleExtService(RuleExtService ruleExtService) {
+        this.ruleExtService = ruleExtService;
     }
 
     @Autowired

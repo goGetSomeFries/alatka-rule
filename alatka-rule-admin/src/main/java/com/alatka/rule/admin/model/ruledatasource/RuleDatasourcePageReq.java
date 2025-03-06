@@ -3,6 +3,8 @@ package com.alatka.rule.admin.model.ruledatasource;
 import com.alatka.rule.admin.model.PageReqMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.validation.constraints.NotEmpty;
+
 @Schema(description = "规则外部数据源请求")
 public class RuleDatasourcePageReq extends PageReqMessage {
     @Schema(description = "关键字")
@@ -20,7 +22,8 @@ public class RuleDatasourcePageReq extends PageReqMessage {
     @Schema(description = "是否可用")
     private Boolean enabled;
 
-    @Schema(description = "规则组关键字")
+    @Schema(description = "规则组关键字", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty(message = "groupKey 不能为空")
     private String groupKey;
 
     public String getKey() {

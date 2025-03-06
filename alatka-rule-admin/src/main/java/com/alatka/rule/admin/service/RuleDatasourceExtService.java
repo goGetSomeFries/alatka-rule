@@ -32,8 +32,7 @@ public class RuleDatasourceExtService {
 
     public void deleteByDatasourceId(Long datasourceId) {
         List<RuleDatasourceExtDefinition> list = this.queryByDatasourceId(datasourceId);
-        List<Long> ids = list.stream().map(RuleDatasourceExtDefinition::getId).collect(Collectors.toList());
-        ruleDatasourceExtRepository.deleteAllById(ids);
+        ruleDatasourceExtRepository.deleteAllInBatch(list);
     }
 
     public List<RuleDatasourceExtDefinition> queryByDatasourceId(Long datasourceId) {

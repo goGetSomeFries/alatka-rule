@@ -15,35 +15,35 @@ public class RuleReq {
     private Long id;
 
     @Schema(description = "类型", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "type 不能为空")
     private String type;
 
     @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "name 不能为空")
     private String name;
 
     @Schema(description = "描述", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "desc 不能为空")
     private String desc;
 
     @Schema(description = "优先级", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "priority 不能为空")
     private Integer priority;
 
     @Schema(description = "评分", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "score 不能为空")
     private Integer score;
 
     @Schema(description = "顺序", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "order 不能为空")
     private Integer order;
 
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "enabled 不能为空")
     private Boolean enabled;
 
     @Schema(description = "规则组关键字", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "groupKey 不能为空")
     private String groupKey;
 
     @Schema(description = "扩展属性")

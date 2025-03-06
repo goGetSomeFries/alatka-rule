@@ -12,19 +12,19 @@ public class RuleGroupReq {
     private Long id;
 
     @Schema(description = "关键字", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "key 不能为空")
     private String key;
 
     @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "name 不能为空")
     private String name;
 
     @Schema(description = "类型", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "type 不能为空")
     private String type;
 
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "enabled 不能为空")
     private Boolean enabled;
 
     public Long getId() {

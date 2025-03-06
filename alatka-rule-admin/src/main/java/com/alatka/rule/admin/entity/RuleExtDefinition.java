@@ -3,8 +3,8 @@ package com.alatka.rule.admin.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ALK_RULE_EXTENDED_DEFINITION")
-public class RuleExtendedDefinition {
+@Table(name = "ALK_RULE_EXT_DEFINITION")
+public class RuleExtDefinition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -70,8 +72,9 @@ public class RuleDatasourceService {
                 .map(entity -> {
                     RuleDatasourceRes res = new RuleDatasourceRes();
                     BeanUtils.copyProperties(entity, res);
-                    ruleDatasourceExtService.queryByDatasourceId(entity.getId())
-                            .forEach(extended -> res.setExtended(extended.getKey(), extended.getValue()));
+                    Map<String, Object> extended = ruleDatasourceExtService.queryByDatasourceId(entity.getId()).stream()
+                            .collect(HashMap::new, (k, v) -> k.put(v.getKey(), v.getValue()), HashMap::putAll);
+                    res.setExtended(extended);
                     return res;
                 });
     }

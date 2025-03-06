@@ -12,26 +12,26 @@ public class RuleUnitReq {
     private Long id;
 
     @Schema(description = "表达式", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "expression 不能为空")
     private String expression;
 
     @Schema(description = "顺序", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "order 不能为空")
     private Integer order;
 
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "enabled 不能为空")
     private Boolean enabled;
 
     @Schema(description = "外部数据源标识")
     private String datasourceKey;
 
     @Schema(description = "规则主键", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @NotNull(message = "ruleId 不能为空")
     private Long ruleId;
 
     @Schema(description = "规则组标识", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty
+    @NotEmpty(message = "groupKey 不能为空")
     private String groupKey;
 
     public Long getId() {

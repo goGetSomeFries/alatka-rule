@@ -30,7 +30,7 @@ public class RuleDatasourceRes {
     private String groupKey;
 
     @Schema(description = "扩展属性")
-    private Map<String, Object> extended = new HashMap<>();
+    private Map<String, String> extended = new HashMap<>();
 
     public Long getId() {
         return id;
@@ -90,11 +90,11 @@ public class RuleDatasourceRes {
 
     // @JsonAnyGetter
     // 按需配置
-    public Map<String, Object> getExtended() {
+    public Map<String, String> getExtended() {
         return extended;
     }
 
-    public void setExtended(Map<String, Object> extended) {
+    public void setExtended(Map<String, String> extended) {
         this.extended = extended;
     }
 }

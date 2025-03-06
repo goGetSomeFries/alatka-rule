@@ -39,7 +39,7 @@ public class RuleDatasourceReq {
     private String groupKey;
 
     @Schema(description = "自定义属性")
-    private Map<String, Object> extended = new HashMap<>();
+    private Map<String, String> extended = new HashMap<>();
 
     public Long getId() {
         return id;
@@ -97,12 +97,12 @@ public class RuleDatasourceReq {
         this.groupKey = groupKey;
     }
 
-    public Map<String, Object> getExtended() {
+    public Map<String, String> getExtended() {
         return extended;
     }
 
     @JsonAnySetter
-    public void setExtended(String key, Object value) {
+    public void setExtended(String key, String value) {
         this.extended.put(key, value);
     }
 }

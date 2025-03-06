@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * 数据库规则构建器
@@ -120,21 +119,12 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
+                    result.put("identity", resultSet.getLong("D_ID"));
                     result.put("id", resultSet.getString("D_KEY"));
                     result.put("name", resultSet.getString("D_NAME"));
                     result.put("type", resultSet.getString("D_TYPE"));
                     result.put("enabled", resultSet.getBoolean("D_ENABLED"));
                     result.put("scope", resultSet.getString("D_SCOPE"));
-                    result.put("key1", resultSet.getString("D_PARAM_K1"));
-                    result.put("value1", resultSet.getString("D_PARAM_V1"));
-                    result.put("key2", resultSet.getString("D_PARAM_K2"));
-                    result.put("value2", resultSet.getString("D_PARAM_V2"));
-                    result.put("key3", resultSet.getString("D_PARAM_K3"));
-                    result.put("value3", resultSet.getString("D_PARAM_V3"));
-                    result.put("key4", resultSet.getString("D_PARAM_K4"));
-                    result.put("value4", resultSet.getString("D_PARAM_V4"));
-                    result.put("key5", resultSet.getString("D_PARAM_K5"));
-                    result.put("value5", resultSet.getString("D_PARAM_V5"));
                     list.add(result);
                 }
             }
@@ -142,17 +132,36 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
             throw new RuntimeException("查询ALK_RULE_DATASOURCE_DEFINITION失败", e);
         }
 
-        list.stream().forEach(map -> {
-            Map<String, Object> config = new HashMap<>();
-            IntStream.range(1, 6).forEach(i -> {
-                String key = this.getValueWithMap(map, "key" + i);
-                if (key != null) {
-                    config.put(key, this.getValueWithMap(map, "value" + i));
-                }
-            });
-            map.put("config", config);
+        Map<Long, Map<String, String>> mapping = this.buildDataSourceExt(ruleGroupDefinition.getId());
+        list.forEach(map -> {
+            Long identity = getValueWithMap(map, "identity");
+            map.put("config", mapping.get(identity));
         });
         return list;
+    }
+
+    private Map<Long, Map<String, String>> buildDataSourceExt(String groupKey) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String sql = "SELECT * FROM ALK_RULE_DATASOURCE_EXT_DEFINITION WHERE G_KEY = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, groupKey);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("dataSourceId", resultSet.getLong("D_ID"));
+                    result.put("key", resultSet.getString("S_KEY"));
+                    result.put("value", resultSet.getString("S_VALUE"));
+                    list.add(result);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("查询ALK_RULE_DATASOURCE_DEFINITION失败", e);
+        }
+        return list.stream()
+                .collect(Collectors.groupingBy(map -> getValueWithMap(map, "dataSourceId"),
+                        Collectors.toMap(map -> getValueWithMap(map, "key"), map -> getValueWithMap(map, "value"))));
     }
 
     @Override

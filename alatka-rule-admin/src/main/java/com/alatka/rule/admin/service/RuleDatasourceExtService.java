@@ -18,13 +18,13 @@ public class RuleDatasourceExtService {
 
     private RuleDatasourceExtRepository ruleDatasourceExtRepository;
 
-    public void save(Map<String, Object> extended, Long datasourceId, String groupKey) {
+    public void save(Map<String, String> extended, Long datasourceId, String groupKey) {
         List<RuleDatasourceExtDefinition> extendedList = extended.entrySet().stream().map(entry -> {
             RuleDatasourceExtDefinition entity = new RuleDatasourceExtDefinition();
             entity.setDatasourceId(datasourceId);
             entity.setGroupKey(groupKey);
             entity.setKey(entry.getKey());
-            entity.setValue(entry.getValue() == null ? null : entry.getValue().toString());
+            entity.setValue(entry.getValue() == null ? null : entry.getValue());
             return entity;
         }).collect(Collectors.toList());
         ruleDatasourceExtRepository.saveAll(extendedList);

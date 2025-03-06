@@ -72,7 +72,7 @@ public class RuleDatasourceService {
                 .map(entity -> {
                     RuleDatasourceRes res = new RuleDatasourceRes();
                     BeanUtils.copyProperties(entity, res);
-                    Map<String, Object> extended = ruleDatasourceExtService.queryByDatasourceId(entity.getId()).stream()
+                    Map<String, String> extended = ruleDatasourceExtService.queryByDatasourceId(entity.getId()).stream()
                             .collect(HashMap::new, (k, v) -> k.put(v.getKey(), v.getValue()), HashMap::putAll);
                     res.setExtended(extended);
                     return res;

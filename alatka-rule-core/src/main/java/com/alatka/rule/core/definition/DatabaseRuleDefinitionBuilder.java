@@ -98,7 +98,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("查询ALK_RULE_EXTENDED_DEFINITION失败", e);
+            throw new RuntimeException("查询ALK_RULE_EXT_DEFINITION失败", e);
         }
         return list;
     }
@@ -157,7 +157,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("查询ALK_RULE_DATASOURCE_DEFINITION失败", e);
+            throw new RuntimeException("查询ALK_RULE_DATASOURCE_EXT_DEFINITION失败", e);
         }
         return list.stream()
                 .collect(Collectors.groupingBy(map -> getValueWithMap(map, "dataSourceId"),

@@ -132,7 +132,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
             throw new RuntimeException("查询ALK_RULE_DATASOURCE_DEFINITION失败", e);
         }
 
-        Map<Long, Map<String, String>> mapping = this.buildDataSourceExt(ruleGroupDefinition.getId());
+        Map<Long, Map<String, String>> mapping = this.buildDataSourceExtDefinition(ruleGroupDefinition.getId());
         list.forEach(map -> {
             Long identity = getValueWithMap(map, "identity");
             map.put("config", mapping.get(identity));
@@ -140,7 +140,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
         return list;
     }
 
-    private Map<Long, Map<String, String>> buildDataSourceExt(String groupKey) {
+    private Map<Long, Map<String, String>> buildDataSourceExtDefinition(String groupKey) {
         List<Map<String, Object>> list = new ArrayList<>();
         String sql = "SELECT * FROM ALK_RULE_DATASOURCE_EXT_DEFINITION WHERE G_KEY = ?";
 
@@ -150,7 +150,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
-                    result.put("dataSourceId", resultSet.getLong("D_ID"));
+                    result.put("datasourceId", resultSet.getLong("D_ID"));
                     result.put("key", resultSet.getString("S_KEY"));
                     result.put("value", resultSet.getString("S_VALUE"));
                     list.add(result);
@@ -159,9 +159,11 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
         } catch (SQLException e) {
             throw new RuntimeException("查询ALK_RULE_DATASOURCE_EXT_DEFINITION失败", e);
         }
+        // 解决Map value为null转化失败问题
         return list.stream()
-                .collect(Collectors.groupingBy(map -> getValueWithMap(map, "dataSourceId"),
-                        Collectors.toMap(map -> getValueWithMap(map, "key"), map -> getValueWithMap(map, "value"))));
+                .collect(Collectors.groupingBy(map -> getValueWithMap(map, "datasourceId"),
+                        Collectors.collectingAndThen(Collectors.toList(),
+                                l -> l.stream().collect(HashMap::new, (m, k) -> m.put(getValueWithMap(k, "key"), getValueWithMap(k, "value")), HashMap::putAll))));
     }
 
     @Override

@@ -332,7 +332,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 .map(this::doBuildRuleUnitDefinition)
                 .peek(ruleUnitDefinition -> ruleUnitDefinition.setIndex(counter.getAndDecrement()))
                 .filter(RuleUnitDefinition::isEnabled)
-                .peek(ruleUnitDefinition -> AviatorEvaluator.getInstance().validate(ruleUnitDefinition.getExpression()))
+                .peek(ruleUnitDefinition -> AviatorEvaluator.validate(ruleUnitDefinition.getExpression()))
                 .peek(ruleUnitDefinition -> ruleUnitDefinition.setNext(reference.get()))
                 .forEach(reference::set);
         return reference.get();

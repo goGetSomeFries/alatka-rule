@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * 数据库规则构建器
@@ -32,7 +31,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected List<Map<String, Object>> getSources() {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_GROUP_DEFINITION";
+        String sql = "SELECT * FROM ALK_RULE_GROUP_DEFINITION";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -60,7 +59,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
 
     private List<Map<String, Object>> getRuleUnitList(Map<String, Object> source) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_UNIT_DEFINITION WHERE G_KEY = ?";
+        String sql = "SELECT * FROM ALK_RULE_UNIT_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -84,7 +83,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
 
     private List<Map<String, Object>> getRuleExtendedList(Map<String, Object> source) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_EXTENDED_DEFINITION WHERE G_KEY = ?";
+        String sql = "SELECT * FROM ALK_RULE_EXT_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -99,7 +98,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("查询ALK_RULE_EXTENDED_DEFINITION失败", e);
+            throw new RuntimeException("查询ALK_RULE_EXT_DEFINITION失败", e);
         }
         return list;
     }
@@ -112,7 +111,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected List<Map<String, Object>> doBuildRuleDataSourceDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_DATASOURCE_DEFINITION WHERE G_KEY = ?";
+        String sql = "SELECT * FROM ALK_RULE_DATASOURCE_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -120,21 +119,12 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
+                    result.put("identity", resultSet.getLong("D_ID"));
                     result.put("id", resultSet.getString("D_KEY"));
                     result.put("name", resultSet.getString("D_NAME"));
                     result.put("type", resultSet.getString("D_TYPE"));
                     result.put("enabled", resultSet.getBoolean("D_ENABLED"));
                     result.put("scope", resultSet.getString("D_SCOPE"));
-                    result.put("key1", resultSet.getString("D_PARAM_K1"));
-                    result.put("value1", resultSet.getString("D_PARAM_V1"));
-                    result.put("key2", resultSet.getString("D_PARAM_K2"));
-                    result.put("value2", resultSet.getString("D_PARAM_V2"));
-                    result.put("key3", resultSet.getString("D_PARAM_K3"));
-                    result.put("value3", resultSet.getString("D_PARAM_V3"));
-                    result.put("key4", resultSet.getString("D_PARAM_K4"));
-                    result.put("value4", resultSet.getString("D_PARAM_V4"));
-                    result.put("key5", resultSet.getString("D_PARAM_K5"));
-                    result.put("value5", resultSet.getString("D_PARAM_V5"));
                     list.add(result);
                 }
             }
@@ -142,23 +132,44 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
             throw new RuntimeException("查询ALK_RULE_DATASOURCE_DEFINITION失败", e);
         }
 
-        list.stream().forEach(map -> {
-            Map<String, Object> config = new HashMap<>();
-            IntStream.range(1, 6).forEach(i -> {
-                String key = this.getValueWithMap(map, "key" + i);
-                if (key != null) {
-                    config.put(key, this.getValueWithMap(map, "value" + i));
-                }
-            });
-            map.put("config", config);
+        Map<Long, Map<String, String>> mapping = this.buildDataSourceExtDefinition(ruleGroupDefinition.getId());
+        list.forEach(map -> {
+            Long identity = getValueWithMap(map, "identity");
+            map.put("config", mapping.get(identity));
         });
         return list;
+    }
+
+    private Map<Long, Map<String, String>> buildDataSourceExtDefinition(String groupKey) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String sql = "SELECT * FROM ALK_RULE_DATASOURCE_EXT_DEFINITION WHERE G_KEY = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, groupKey);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("datasourceId", resultSet.getLong("D_ID"));
+                    result.put("key", resultSet.getString("S_KEY"));
+                    result.put("value", resultSet.getString("S_VALUE"));
+                    list.add(result);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("查询ALK_RULE_DATASOURCE_EXT_DEFINITION失败", e);
+        }
+        // 解决Map value为null转化失败问题
+        return list.stream()
+                .collect(Collectors.groupingBy(map -> getValueWithMap(map, "datasourceId"),
+                        Collectors.collectingAndThen(Collectors.toList(),
+                                l -> l.stream().collect(HashMap::new, (m, k) -> m.put(getValueWithMap(k, "key"), getValueWithMap(k, "value")), HashMap::putAll))));
     }
 
     @Override
     protected List<Map<String, Object>> doBuildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_PARAM_DEFINITION WHERE G_KEY = ?";
+        String sql = "SELECT * FROM ALK_RULE_PARAM_DEFINITION WHERE G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -182,7 +193,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected Map<String, Object> doBuildRuleListDefinition(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_DEFINITION WHERE G_KEY = ? AND R_TYPE IN ('2', '3') ORDER BY R_ORDER";
+        String sql = "SELECT * FROM ALK_RULE_DEFINITION WHERE G_KEY = ? AND R_TYPE IN ('2', '3') ORDER BY R_ORDER";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -209,7 +220,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected List<Map<String, Object>> doBuildRuleDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "select * from ALK_RULE_DEFINITION WHERE G_KEY = ? AND R_TYPE = '1'";
+        String sql = "SELECT * FROM ALK_RULE_DEFINITION WHERE G_KEY = ? AND R_TYPE = '1'";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {

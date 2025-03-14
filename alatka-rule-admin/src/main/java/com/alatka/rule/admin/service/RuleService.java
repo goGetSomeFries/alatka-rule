@@ -1,6 +1,7 @@
 package com.alatka.rule.admin.service;
 
 
+import com.alatka.rule.admin.AutoConfiguration;
 import com.alatka.rule.admin.entity.RuleDefinition;
 import com.alatka.rule.admin.model.rule.RuleBuildReq;
 import com.alatka.rule.admin.model.rule.RulePageReq;
@@ -10,6 +11,7 @@ import com.alatka.rule.admin.repository.RuleRepository;
 import com.alatka.rule.core.RuleEngine;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -150,11 +152,13 @@ public class RuleService {
     }
 
     @Autowired
+    @Qualifier(AutoConfiguration.REST_TEMPLATE_NAME)
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     @Autowired
+    @Qualifier(AutoConfiguration.TASK_EXECUTOR_NAME)
     public void setTaskExecutor(TaskExecutor taskExecutor) {
         this.taskExecutor = taskExecutor;
     }

@@ -25,7 +25,9 @@ public class AutoConfiguration {
     @Value("${alatka.rule.admin.rest.readTimeout:5000}")
     private int readTimeout;
 
-    @Bean
+    public static final String REST_TEMPLATE_NAME = "ruleRestTemplate";
+
+    @Bean(REST_TEMPLATE_NAME)
     public RestTemplate restTemplate() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(connectionTimeout);
@@ -51,7 +53,9 @@ public class AutoConfiguration {
     @Value("${alatka.rule.admin.threadPool.threadNamePrefix:alatka-rule-admin-thread-}")
     private String threadNamePrefix;
 
-    @Bean
+    public static final String TASK_EXECUTOR_NAME = "ruleTaskExecutor";
+
+    @Bean(TASK_EXECUTOR_NAME)
     public TaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(corePoolSize);

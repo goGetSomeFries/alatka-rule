@@ -46,7 +46,7 @@ public class RuleService {
     }
 
     public Map<String, String> build(RuleBuildReq ruleBuildReq) {
-        List<String> uriList = ruleBuildReq.getUri();
+        List<String> uriList = ruleBuildReq.getUris();
         Map<String, String> resultMap = new HashMap<>(uriList.size());
 
         CompletableFuture<Void> completableFuture = uriList.stream()

@@ -10,18 +10,18 @@ public class RuleBuildReq {
 
     @Schema(description = "uri集合", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty
-    private List<String> uri;
+    private List<String> uris;
 
     @Schema(description = "路径", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty
     private String path;
 
-    public List<String> getUri() {
-        return uri;
+    public List<String> getUris() {
+        return uris;
     }
 
-    public void setUri(List<String> uri) {
-        this.uri = uri;
+    public void setUris(List<String> uris) {
+        this.uris = uris;
     }
 
     public String getPath() {

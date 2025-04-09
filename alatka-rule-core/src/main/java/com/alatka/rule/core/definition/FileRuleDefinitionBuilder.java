@@ -1,9 +1,9 @@
 package com.alatka.rule.core.definition;
 
 import com.alatka.rule.core.context.RuleGroupDefinition;
+import com.alatka.rule.core.support.FileWrapper;
 import com.alatka.rule.core.util.FileUtil;
 
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @see XmlRuleDefinitionBuilder
  * @see YamlRuleDefinitionBuilder
  */
-public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder<Path> {
+public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder<FileWrapper> {
 
     private static final String SUFFIX = ".rule";
 
@@ -34,20 +34,20 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
     }
 
     @Override
-    protected List<Path> getSources() {
+    protected List<FileWrapper> getSources() {
         return Arrays.stream(suffix())
-                .flatMap(suffix -> FileUtil.getClasspathFiles(this.classpath, "*" + SUFFIX + suffix).stream())
+                .flatMap(suffix -> FileUtil.getFilesContent(this.classpath, SUFFIX + suffix).stream())
                 .collect(Collectors.toList());
     }
 
     @Override
-    protected void doPreProcess(Path source) {
+    protected void doPreProcess(FileWrapper source) {
         this.rootModel = this.initRootModel(source);
     }
 
     @Override
-    protected Map<String, Object> doBuildRuleGroupDefinition(Path source) {
-        String fileName = source.toFile().getName();
+    protected Map<String, Object> doBuildRuleGroupDefinition(FileWrapper source) {
+        String fileName = source.getName();
 
         String id = fileName.substring(0, fileName.lastIndexOf(SUFFIX));
         String name = this.getValueWithMap(this.rootModel, "name");
@@ -75,7 +75,7 @@ public abstract class FileRuleDefinitionBuilder extends AbstractRuleDefinitionBu
      * @param source 配置源
      * @return 配置Map对象
      */
-    protected abstract Map<String, Object> initRootModel(Path source);
+    protected abstract Map<String, Object> initRootModel(FileWrapper source);
 
     /**
      * 文件后缀

@@ -2,9 +2,9 @@ package com.alatka.rule.core.definition;
 
 import com.alatka.rule.core.context.RuleDataSourceDefinition;
 import com.alatka.rule.core.context.RuleGroupDefinition;
+import com.alatka.rule.core.support.FileWrapper;
 import com.alatka.rule.core.util.XmlUtil;
 
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +27,8 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
-    protected Map<String, Object> initRootModel(Path source) {
-        Map<String, Object> map = XmlUtil.getMap(source.toFile(), Object.class);
+    protected Map<String, Object> initRootModel(FileWrapper source) {
+        Map<String, Object> map = XmlUtil.getMap(source, Object.class);
         return this.getValueWithMap(map, "alatka-rule");
     }
 

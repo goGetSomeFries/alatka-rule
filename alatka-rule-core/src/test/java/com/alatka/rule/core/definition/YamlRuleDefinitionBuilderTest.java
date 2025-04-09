@@ -1,5 +1,6 @@
 package com.alatka.rule.core.definition;
 
+import com.alatka.rule.core.support.FileWrapper;
 import com.alatka.rule.core.util.YamlUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -8,8 +9,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.ReflectionMemberAccessor;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -108,8 +107,8 @@ public class YamlRuleDefinitionBuilderTest {
         HashMap<String, Object> result = new HashMap<>(0);
         mockedStatic.when(() -> YamlUtil.getMap(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(result);
 
-        Path path = Mockito.mock(Path.class);
-        Mockito.when(path.toFile()).thenReturn(Mockito.mock(File.class));
+        FileWrapper path = Mockito.mock(FileWrapper.class);
+//        Mockito.when(path.toFile()).thenReturn(Mockito.mock(File.class));
         YamlRuleDefinitionBuilder builder = new YamlRuleDefinitionBuilder();
         Assertions.assertSame(result, builder.initRootModel(path));
         mockedStatic.close();

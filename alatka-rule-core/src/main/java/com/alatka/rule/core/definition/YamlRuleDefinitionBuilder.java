@@ -1,9 +1,9 @@
 package com.alatka.rule.core.definition;
 
 import com.alatka.rule.core.context.RuleGroupDefinition;
+import com.alatka.rule.core.support.FileWrapper;
 import com.alatka.rule.core.util.YamlUtil;
 
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +25,8 @@ public class YamlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
     }
 
     @Override
-    protected Map<String, Object> initRootModel(Path source) {
-        return YamlUtil.getMap(source.toFile(), YAML_ROOT_NAME, Object.class);
+    protected Map<String, Object> initRootModel(FileWrapper source) {
+        return YamlUtil.getMap(source, YAML_ROOT_NAME, Object.class);
     }
 
     @Override

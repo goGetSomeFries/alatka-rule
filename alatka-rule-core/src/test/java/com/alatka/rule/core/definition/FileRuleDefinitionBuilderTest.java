@@ -1,5 +1,6 @@
 package com.alatka.rule.core.definition;
 
+import com.alatka.rule.core.support.FileWrapper;
 import com.alatka.rule.core.util.FileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -8,9 +9,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.ReflectionMemberAccessor;
 
-import java.io.File;
 import java.lang.reflect.Field;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,8 +48,8 @@ public class FileRuleDefinitionBuilderTest {
     @Test
     @DisplayName("doBuildRuleGroupDefinition()")
     void test03() throws NoSuchFieldException, IllegalAccessException {
-        Path path = Mockito.mock(Path.class);
-        Mockito.when(path.toFile()).thenReturn(new File("test.rule.yml"));
+        FileWrapper path = Mockito.mock(FileWrapper.class);
+        Mockito.when(path.getName()).thenReturn("test.rule.yml");
 
         FileRuleDefinitionBuilder builder = Mockito.spy(FileRuleDefinitionBuilder.class);
         Map<String, Object> map = Mockito.mock(Map.class);
@@ -76,12 +75,12 @@ public class FileRuleDefinitionBuilderTest {
         FileRuleDefinitionBuilder builder = Mockito.spy(FileRuleDefinitionBuilder.class);
         Mockito.when(builder.suffix()).thenReturn(new String[]{"yaml", "yml"});
 
-        Path path1 = Mockito.mock(Path.class);
-        Path path2 = Mockito.mock(Path.class);
-        List<Path> list = Stream.of(path1, path2).collect(Collectors.toList());
+        FileWrapper path1 = Mockito.mock(FileWrapper.class);
+        FileWrapper path2 = Mockito.mock(FileWrapper.class);
+        List<FileWrapper> list = Stream.of(path1, path2).collect(Collectors.toList());
 
         MockedStatic<FileUtil> mockedStatic = Mockito.mockStatic(FileUtil.class);
-        mockedStatic.when(() -> FileUtil.getClasspathFiles(Mockito.anyString(), Mockito.anyString())).thenReturn(list);
+        mockedStatic.when(() -> FileUtil.getFilesContent(Mockito.anyString(), Mockito.anyString())).thenReturn(list);
 
         Assertions.assertEquals(4, builder.getSources().size());
         mockedStatic.close();

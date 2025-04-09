@@ -1,5 +1,6 @@
 package com.alatka.rule.core.definition;
 
+import com.alatka.rule.core.support.FileWrapper;
 import com.alatka.rule.core.util.XmlUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -8,8 +9,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.ReflectionMemberAccessor;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,8 +74,8 @@ public class XmlRuleDefinitionBuilderTest {
         Map<String, Object> result = Collections.singletonMap("alatka-rule", rootModel);
         mockedStatic.when(() -> XmlUtil.getMap(Mockito.any(), Mockito.any())).thenReturn(result);
 
-        Path path = Mockito.mock(Path.class);
-        Mockito.when(path.toFile()).thenReturn(Mockito.mock(File.class));
+        FileWrapper path = Mockito.mock(FileWrapper.class);
+//        Mockito.when(path.toFile()).thenReturn(Mockito.mock(File.class));
         XmlRuleDefinitionBuilder builder = new XmlRuleDefinitionBuilder();
         Assertions.assertSame(rootModel, builder.initRootModel(path));
         mockedStatic.close();

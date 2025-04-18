@@ -71,6 +71,7 @@ public class RuleEngine {
 
         // 初始化元数据
         paramContext.put(InnerConstant.META_HIT_RESULT, result);
+        paramContext.put(InnerConstant.META_EXIT_FLAG, false);
 
         List<RuleDefinition> ruleDefinitions = definitionContext.getRuleDefinitions(ruleGroupName);
         RuleDefinition theOne = null;
@@ -98,6 +99,11 @@ public class RuleEngine {
                     // 同一优先级内部规则命中即停止；不同优先级全部执行
                     if (theOne != null && theOne.getPriority() == ruleDefinition.getPriority()) {
                         continue;
+                    }
+                    break;
+                case customize:
+                    if ((boolean) paramContext.get(InnerConstant.META_EXIT_FLAG)) {
+                        break outerLoop;
                     }
                     break;
                 default:

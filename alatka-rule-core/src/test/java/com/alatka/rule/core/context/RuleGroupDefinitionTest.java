@@ -71,12 +71,14 @@ public class RuleGroupDefinitionTest {
         RuleGroupDefinition.Type type2 = RuleGroupDefinition.Type.valueOf(RuleGroupDefinition.Type.once.name());
         RuleGroupDefinition.Type type3 = RuleGroupDefinition.Type.valueOf(RuleGroupDefinition.Type.priority_all.name());
         RuleGroupDefinition.Type type4 = RuleGroupDefinition.Type.valueOf(RuleGroupDefinition.Type.priority_once.name());
+        RuleGroupDefinition.Type type5 = RuleGroupDefinition.Type.valueOf(RuleGroupDefinition.Type.customize.name());
 
         Assertions.assertEquals(type1, RuleGroupDefinition.Type.values()[0]);
         Assertions.assertEquals(type2, RuleGroupDefinition.Type.values()[1]);
         Assertions.assertEquals(type3, RuleGroupDefinition.Type.values()[2]);
         Assertions.assertEquals(type4, RuleGroupDefinition.Type.values()[3]);
-        Assertions.assertEquals(4, RuleGroupDefinition.Type.values().length);
+        Assertions.assertEquals(type5, RuleGroupDefinition.Type.values()[4]);
+        Assertions.assertEquals(5, RuleGroupDefinition.Type.values().length);
     }
 
     @Test

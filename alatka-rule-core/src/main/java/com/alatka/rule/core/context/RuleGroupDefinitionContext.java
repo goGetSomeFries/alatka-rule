@@ -1,5 +1,6 @@
 package com.alatka.rule.core.context;
 
+import com.alatka.rule.core.support.aviator.function.ExitFunction;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.AviatorEvaluatorInstance;
 
@@ -26,7 +27,9 @@ public class RuleGroupDefinitionContext {
     private final AviatorEvaluatorInstance aviatorEvaluatorInstance;
 
     private RuleGroupDefinitionContext() {
-        this.aviatorEvaluatorInstance = AviatorEvaluator.newInstance();
+        AviatorEvaluatorInstance instance = AviatorEvaluator.newInstance();
+        instance.addFunction(new ExitFunction());
+        this.aviatorEvaluatorInstance = instance;
     }
 
     public AviatorEvaluatorInstance getAviatorEvaluatorInstance() {

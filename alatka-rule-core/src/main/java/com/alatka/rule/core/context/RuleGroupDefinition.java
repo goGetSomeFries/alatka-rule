@@ -51,7 +51,11 @@ public class RuleGroupDefinition extends AbstractDefinition {
          * 同一优先级内部规则命中即停止；不同优先级全部执行<br><br>
          * (A, B), (C_, D, E_), (F_, G) --> C_, F_
          */
-        priority_once
+        priority_once,
+        /**
+         * 根据{@link com.alatka.rule.core.support.InnerConstant#META_EXIT_FLAG}标识判断是否执行停止
+         */
+        customize
     }
 
     public Type getType() {

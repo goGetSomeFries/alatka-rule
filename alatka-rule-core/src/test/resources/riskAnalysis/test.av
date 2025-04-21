@@ -1,2 +1,3 @@
 println("hello, AviatorScript!");
+alatka.exit(test == "1");
 test == "1"

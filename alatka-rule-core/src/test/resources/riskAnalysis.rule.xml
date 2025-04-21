@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root xmlns="http://rule.alatka.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://rule.alatka.com alatka-rule.xsd">
-    <alatka-rule enabled="true" name="欺诈规则组" type="all">
+    <alatka-rule enabled="true" name="欺诈规则组" type="customize">
         <ruleSet>
             <rule id="1" name="风险账户10星" desc="testing...." enabled="true">
                 <extended key="color" value="#000FFF"/>
                 <extended key="autoAction" value="true"/>
                 <unit path="riskAnalysis/test.av"/>
-                <unit path="riskAnalysis/test.av" dataSource="tradeDetail"/>
+<!--                <unit path="riskAnalysis/test.av" dataSource="tradeDetail"/>-->
             </rule>
             <rule id="2" name="风险账户9星" desc="testing...." enabled="true">
                 <unit path="riskAnalysis/test.av"/>
@@ -17,9 +17,9 @@
             <param id="v_amount" name="金额1" path="riskAnalysis/test1.av"/>
             <param id="v_card_1" name="卡号1" expression="v_card == nil ? nil : string.length(v_card)"/>
         </params>
-        <filterList name="黑名单" type="blackList">
-            <unit path="riskAnalysis/test.av"/>
-        </filterList>
+<!--        <filterList name="黑名单" type="blackList">-->
+<!--            <unit path="riskAnalysis/test.av"/>-->
+<!--        </filterList>-->
         <dataSource>
             <database id="tradeDetail" scope="request" name="" resultType="list" sql="select * from trdetail where xxxxxx"/>
             <database id="vipDetail" scope="request" name="" resultType="single" sql="select * from trdetail where xxxxxx"/>

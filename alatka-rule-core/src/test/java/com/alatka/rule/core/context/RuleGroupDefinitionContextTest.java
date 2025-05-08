@@ -4,10 +4,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.util.reflection.ReflectionMemberAccessor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class RuleGroupDefinitionContextTest {
 
@@ -83,16 +85,32 @@ public class RuleGroupDefinitionContextTest {
     }
 
     @Test
+    @DisplayName("getGlobalScopeData()")
+    void test07() throws NoSuchFieldException, IllegalAccessException {
+        RuleGroupDefinitionContext definitionContext = RuleGroupDefinitionContext.getInstance(true);
+        ReflectionMemberAccessor reflectionMemberAccessor = new ReflectionMemberAccessor();
+        Map<String, Object> map1 = (Map<String, Object>) reflectionMemberAccessor.get(RuleGroupDefinitionContext.class.getDeclaredField("globalScopeData"), definitionContext);
+        Assertions.assertEquals(0, map1.size());
+
+        definitionContext.getGlobalScopeData("3");
+
+        Map<String, Object> map2 = (Map<String, Object>) reflectionMemberAccessor.get(RuleGroupDefinitionContext.class.getDeclaredField("globalScopeData"), definitionContext);
+        Assertions.assertEquals(1, map2.size());
+    }
+
+    @Test
     @DisplayName("reset()")
-    void test07() {
+    void test08() {
         RuleGroupDefinitionContext definitionContext = RuleGroupDefinitionContext.getInstance(true);
         definitionContext.initRuleDefinitions(new RuleGroupDefinition("3"), Collections.EMPTY_LIST);
         definitionContext.initRuleParamDefinitions(new RuleGroupDefinition("3"), Collections.EMPTY_LIST);
 
         Assertions.assertEquals(0, definitionContext.getRuleParamDefinitions("3").size());
         Assertions.assertEquals(0, definitionContext.getRuleDefinitions("3").size());
+        Assertions.assertEquals(0, definitionContext.getGlobalScopeData("3").size());
         definitionContext.reset();
         Assertions.assertThrows(IllegalArgumentException.class, () -> definitionContext.getRuleParamDefinitions("3"), "3 not exists");
         Assertions.assertThrows(IllegalArgumentException.class, () -> definitionContext.getRuleDefinitions("3"), "3 not exists");
+        Assertions.assertEquals(0, definitionContext.getGlobalScopeData("3").size());
     }
 }

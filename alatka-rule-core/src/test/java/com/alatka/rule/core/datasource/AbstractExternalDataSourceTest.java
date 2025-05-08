@@ -44,5 +44,14 @@ public class AbstractExternalDataSourceTest {
         paramContext.put("tradeDetail", "cares");
         Map<String, Object> result4 = externalDataSource.buildContext(definition, paramContext, Collections.EMPTY_MAP);
         Assertions.assertEquals("cares", result4.get("tradeDetail"));
+
+        definition.setScope(RuleDataSourceDefinition.Scope.global);
+        definition.setId("what");
+
+        Map<String, Object> globalScopeData = new HashMap<>();
+        Map<String, Object> result5 = externalDataSource.buildContext(definition, paramContext, globalScopeData);
+        Assertions.assertSame(result5, paramContext);
+        Assertions.assertEquals("who", result5.get("what"));
+        Assertions.assertEquals("who", globalScopeData.get("what"));
     }
 }

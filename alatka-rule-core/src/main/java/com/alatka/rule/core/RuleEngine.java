@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 规则引擎
@@ -64,8 +65,11 @@ public class RuleEngine {
         List<RuleParamDefinition> ruleParamDefinitions = definitionContext.getRuleParamDefinitions(ruleGroupName);
         Map<String, Object> paramContext = this.initParamContext(aviatorEvaluatorInstance, param, ruleParamDefinitions);
 
+        // global范围外部数据存储
+        ConcurrentHashMap<String, Object> globalScopeData = definitionContext.getGlobalScopeData(ruleGroupName);
+
         // 黑白名单过滤
-        if (this.listFilter(aviatorEvaluatorInstance, paramContext, ruleGroupDefinition.getRuleListDefinition())) {
+        if (this.listFilter(aviatorEvaluatorInstance, paramContext, globalScopeData, ruleGroupDefinition.getRuleListDefinition())) {
             return result;
         }
 
@@ -111,7 +115,7 @@ public class RuleEngine {
             }
 
             // 规则判断
-            boolean hit = this.doExecute(aviatorEvaluatorInstance, ruleDefinition.getRuleUnitDefinition(), paramContext);
+            boolean hit = this.doExecute(aviatorEvaluatorInstance, ruleDefinition.getRuleUnitDefinition(), paramContext, globalScopeData);
 
             if (hit) {
                 result.add(ruleDefinition);
@@ -155,9 +159,9 @@ public class RuleEngine {
      * @return true:过滤/false:不过滤
      */
     private boolean listFilter(AviatorEvaluatorInstance aviatorEvaluatorInstance, Map<String, Object> paramContext,
-                               RuleListDefinition ruleListDefinition) {
+                               Map<String, Object> globalScopeData, RuleListDefinition ruleListDefinition) {
         if (ruleListDefinition != null && ruleListDefinition.isEnabled()) {
-            boolean hit = this.doListFilter(aviatorEvaluatorInstance, ruleListDefinition.getRuleUnitDefinition(), paramContext);
+            boolean hit = this.doListFilter(aviatorEvaluatorInstance, ruleListDefinition.getRuleUnitDefinition(), paramContext, globalScopeData);
             return (RuleListDefinition.Type.blackList == ruleListDefinition.getType()) == hit;
         }
         return false;
@@ -171,9 +175,9 @@ public class RuleEngine {
      * @param paramContext             规则入参
      * @return 是否命中黑白名单
      */
-    private boolean doListFilter(AviatorEvaluatorInstance aviatorEvaluatorInstance,
-                                 RuleUnitDefinition ruleUnitDefinition, Map<String, Object> paramContext) {
-        Map<String, Object> env = this.extendParamContext(ruleUnitDefinition.getDataSourceRef(), paramContext);
+    private boolean doListFilter(AviatorEvaluatorInstance aviatorEvaluatorInstance, RuleUnitDefinition ruleUnitDefinition,
+                                 Map<String, Object> paramContext, Map<String, Object> globalScopeData) {
+        Map<String, Object> env = this.extendParamContext(ruleUnitDefinition.getDataSourceRef(), paramContext, globalScopeData);
         boolean hit = this.calculateExpression(aviatorEvaluatorInstance, ruleUnitDefinition.getExpression(), env);
 
         if (hit) {
@@ -185,7 +189,7 @@ public class RuleEngine {
             return false;
         }
         // 未命中规则单元，有后续规则单元，则继续执行后续规则单元
-        return this.doListFilter(aviatorEvaluatorInstance, ruleUnitDefinition.getNext(), env);
+        return this.doListFilter(aviatorEvaluatorInstance, ruleUnitDefinition.getNext(), env, globalScopeData);
     }
 
     /**
@@ -196,9 +200,9 @@ public class RuleEngine {
      * @param paramContext             规则入参
      * @return 是否命中
      */
-    private boolean doExecute(AviatorEvaluatorInstance aviatorEvaluatorInstance,
-                              RuleUnitDefinition ruleUnitDefinition, Map<String, Object> paramContext) {
-        Map<String, Object> env = this.extendParamContext(ruleUnitDefinition.getDataSourceRef(), paramContext);
+    private boolean doExecute(AviatorEvaluatorInstance aviatorEvaluatorInstance, RuleUnitDefinition ruleUnitDefinition,
+                              Map<String, Object> paramContext, Map<String, Object> globalScopeData) {
+        Map<String, Object> env = this.extendParamContext(ruleUnitDefinition.getDataSourceRef(), paramContext, globalScopeData);
         boolean hit = this.calculateExpression(aviatorEvaluatorInstance, ruleUnitDefinition.getExpression(), env);
 
         if (!hit) {
@@ -210,7 +214,7 @@ public class RuleEngine {
             return true;
         } else {
             // 命中规则单元，有后续规则单元，则继续执行后续规则单元
-            return this.doExecute(aviatorEvaluatorInstance, ruleUnitDefinition.getNext(), env);
+            return this.doExecute(aviatorEvaluatorInstance, ruleUnitDefinition.getNext(), env, globalScopeData);
         }
     }
 
@@ -222,10 +226,10 @@ public class RuleEngine {
      * @return 结果上下文
      */
     private Map<String, Object> extendParamContext(RuleDataSourceDefinition ruleDataSourceDefinition,
-                                                   Map<String, Object> paramContext) {
+                                                   Map<String, Object> paramContext, Map<String, Object> globalScopeData) {
         ExternalDataSourceFactory factory = ExternalDataSourceFactory.getInstance();
         ExternalDataSource externalDataSource = factory.getExternalDataSource(ruleDataSourceDefinition.getType());
-        return externalDataSource.buildContext(ruleDataSourceDefinition, paramContext);
+        return externalDataSource.buildContext(ruleDataSourceDefinition, paramContext, globalScopeData);
     }
 
     /**

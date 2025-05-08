@@ -46,7 +46,7 @@ public class RuleEngineTest {
     void test02() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Map<String, Object> result = new HashMap<>(0);
         ExternalDataSource externalDataSource = Mockito.mock(ExternalDataSource.class);
-        Mockito.when(externalDataSource.buildContext(Mockito.any(), Mockito.any())).thenReturn(result);
+        Mockito.when(externalDataSource.buildContext(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(result);
 
         ExternalDataSourceFactory factory = Mockito.mock(ExternalDataSourceFactory.class);
         Mockito.when(factory.getExternalDataSource(Mockito.any())).thenReturn(externalDataSource);
@@ -56,7 +56,7 @@ public class RuleEngineTest {
 
         RuleEngine ruleEngine = new RuleEngine();
         ReflectionMemberAccessor reflectionMemberAccessor = new ReflectionMemberAccessor();
-        Assertions.assertSame(result, reflectionMemberAccessor.invoke(RuleEngine.class.getDeclaredMethod("extendParamContext", RuleDataSourceDefinition.class, Map.class), ruleEngine, new RuleDataSourceDefinition(), Collections.EMPTY_MAP));
+        Assertions.assertSame(result, reflectionMemberAccessor.invoke(RuleEngine.class.getDeclaredMethod("extendParamContext", RuleDataSourceDefinition.class, Map.class, Map.class), ruleEngine, new RuleDataSourceDefinition(), Collections.EMPTY_MAP, Collections.EMPTY_MAP));
 
         mockedStatic.close();
     }

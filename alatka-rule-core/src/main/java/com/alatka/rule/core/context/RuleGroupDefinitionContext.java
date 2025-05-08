@@ -7,6 +7,7 @@ import com.googlecode.aviator.AviatorEvaluatorInstance;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 规则组Context，维护{@link RuleGroupDefinition} -> {@link RuleDefinition}/{@link RuleParamDefinition}集合
@@ -23,6 +24,8 @@ public class RuleGroupDefinitionContext {
     private final Map<RuleGroupDefinition, List<RuleDefinition>> ruleDefinitionsMap = new HashMap<>();
 
     private final Map<RuleGroupDefinition, List<RuleParamDefinition>> ruleParamDefinitionsMap = new HashMap<>();
+
+    private final ConcurrentHashMap<RuleGroupDefinition, ConcurrentHashMap<String, Object>> globalScopeData = new ConcurrentHashMap<>();
 
     private final AviatorEvaluatorInstance aviatorEvaluatorInstance;
 
@@ -75,6 +78,11 @@ public class RuleGroupDefinitionContext {
         return ruleParamDefinitions;
     }
 
+    public ConcurrentHashMap<String, Object> getGlobalScopeData(String ruleGroupName) {
+        RuleGroupDefinition ruleGroupDefinition = new RuleGroupDefinition(ruleGroupName);
+        return this.globalScopeData.computeIfAbsent(ruleGroupDefinition, key -> new ConcurrentHashMap<>());
+    }
+
     /**
      * 初始化规则组和规则集合映射
      *
@@ -108,6 +116,7 @@ public class RuleGroupDefinitionContext {
         this.ruleDefinitionsMap.clear();
         this.ruleParamDefinitionsMap.clear();
         this.aviatorEvaluatorInstance.clearExpressionCache();
+        this.globalScopeData.clear();
     }
 
     /**

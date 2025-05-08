@@ -21,9 +21,11 @@ public interface ExternalDataSource {
     /**
      * 使用外部数据源构建请求数据Context
      *
-     * @param definition   {@link RuleDataSourceDefinition}
-     * @param paramContext 请求数据
+     * @param definition      {@link RuleDataSourceDefinition}
+     * @param paramContext    请求数据
+     * @param globalScopeData {@link RuleDataSourceDefinition#getScope()}全局范围数据
      * @return 整合后的请求数据
      */
-    Map<String, Object> buildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext);
+    Map<String, Object> buildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext,
+                                     Map<String, Object> globalScopeData);
 }

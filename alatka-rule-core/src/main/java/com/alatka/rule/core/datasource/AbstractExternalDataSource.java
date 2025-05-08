@@ -13,12 +13,16 @@ import java.util.Map;
 public abstract class AbstractExternalDataSource implements ExternalDataSource {
 
     @Override
-    public Map<String, Object> buildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext) {
+    public Map<String, Object> buildContext(RuleDataSourceDefinition definition, Map<String, Object> paramContext,
+                                            Map<String, Object> globalScopeData) {
         // 外部数据源数据范围判定
         Map<String, Object> context = definition.getScope() == RuleDataSourceDefinition.Scope.rule ?
                 new HashMap<>(paramContext) : paramContext;
 
-        context.computeIfAbsent(definition.getId(), k -> this.doBuildContext(definition.getConfig(), context));
+        context.computeIfAbsent(definition.getId(),
+                key -> definition.getScope() == RuleDataSourceDefinition.Scope.global ?
+                        globalScopeData.computeIfAbsent(key, k -> this.doBuildContext(definition.getConfig(), context)) :
+                        this.doBuildContext(definition.getConfig(), context));
         return context;
     }
 

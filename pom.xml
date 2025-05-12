@@ -18,6 +18,7 @@
         <module>alatka-rule-core</module>
         <module>alatka-rule-admin</module>
         <module>alatka-rule-spring-boot-starter</module>
+        <module>alatka-rule-aviator-extended</module>
     </modules>
 
     <properties>

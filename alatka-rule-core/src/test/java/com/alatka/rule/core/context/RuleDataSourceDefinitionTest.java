@@ -102,6 +102,8 @@ public class RuleDataSourceDefinitionTest {
         Assertions.assertEquals(definition1, definition1);
         Assertions.assertEquals(definition1, definition2);
         Assertions.assertNotEquals(definition1, definition3);
+        Assertions.assertNotEquals(definition1, null);
+        Assertions.assertNotEquals(definition1, new Object());
     }
 
     @Test

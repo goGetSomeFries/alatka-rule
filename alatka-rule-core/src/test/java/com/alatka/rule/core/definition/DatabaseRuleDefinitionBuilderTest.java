@@ -337,4 +337,10 @@ public class DatabaseRuleDefinitionBuilderTest {
         Map<String, Object> config = (Map<String, Object>) sources.get(0).get("config");
         Assertions.assertEquals("select * from trade_detail where date = :date", config.get("sql"));
     }
+
+    @Test
+    @DisplayName("buildRuleExtendedProperties()")
+    void test13() {
+
+    }
 }

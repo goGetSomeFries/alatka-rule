@@ -6,7 +6,7 @@ package com.alatka.rule.core.context;
  *
  * @author whocares
  */
-public class RuleListDefinition extends AbstractDefinition {
+public class RuleListDefinition extends AbstractRuleDefinition {
 
     /**
      * @see Type#blackList

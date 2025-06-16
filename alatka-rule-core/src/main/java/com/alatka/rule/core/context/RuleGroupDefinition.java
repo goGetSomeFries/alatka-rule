@@ -5,7 +5,7 @@ package com.alatka.rule.core.context;
  *
  * @author whocares
  */
-public class RuleGroupDefinition extends AbstractDefinition {
+public class RuleGroupDefinition extends AbstractRuleDefinition {
 
     public RuleGroupDefinition() {
         super(null);

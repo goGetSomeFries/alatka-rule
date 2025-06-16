@@ -7,7 +7,7 @@ import java.util.Map;
  *
  * @author whocares
  */
-public class RuleDataSourceDefinition extends AbstractDefinition {
+public class RuleDataSourceDefinition extends AbstractRuleDefinition {
 
     public static RuleDataSourceDefinition DEFAULT_INSTANCE;
 

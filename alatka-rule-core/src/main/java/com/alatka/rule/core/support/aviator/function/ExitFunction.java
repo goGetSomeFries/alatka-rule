@@ -8,6 +8,11 @@ import com.googlecode.aviator.runtime.type.AviatorObject;
 
 import java.util.Map;
 
+/**
+ * aviatorScript 结束规则判断函数
+ *
+ * @author whocares
+ */
 public class ExitFunction extends AbstractFunction {
 
     @Override

@@ -2,7 +2,12 @@ package com.alatka.rule.core.context;
 
 import java.util.Objects;
 
-public abstract class AbstractDefinition {
+/**
+ * 规则抽象类
+ *
+ * @author whocares
+ */
+public abstract class AbstractRuleDefinition {
 
     /**
      * 唯一标识
@@ -19,7 +24,7 @@ public abstract class AbstractDefinition {
      */
     private boolean enabled = true;
 
-    public AbstractDefinition(String id) {
+    public AbstractRuleDefinition(String id) {
         this.id = id;
     }
 
@@ -55,7 +60,7 @@ public abstract class AbstractDefinition {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        AbstractDefinition that = (AbstractDefinition) object;
+        AbstractRuleDefinition that = (AbstractRuleDefinition) object;
         return Objects.equals(id, that.id);
     }
 

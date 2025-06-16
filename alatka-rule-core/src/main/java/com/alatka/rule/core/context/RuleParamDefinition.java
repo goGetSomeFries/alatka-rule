@@ -5,7 +5,7 @@ package com.alatka.rule.core.context;
  *
  * @author whocares
  */
-public class RuleParamDefinition extends AbstractDefinition {
+public class RuleParamDefinition extends AbstractRuleDefinition {
 
     /**
      * 入参处理表达式

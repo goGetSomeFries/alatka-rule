@@ -7,7 +7,7 @@ import java.util.Map;
  *
  * @author whocares
  */
-public class RuleDefinition extends AbstractDefinition {
+public class RuleDefinition extends AbstractRuleDefinition {
 
     public RuleDefinition() {
         super(null);

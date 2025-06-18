@@ -5,10 +5,7 @@ import com.alatka.rule.core.context.RuleGroupDefinition;
 import com.alatka.rule.core.support.FileWrapper;
 import com.alatka.rule.core.util.XmlUtil;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,8 +42,10 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
         List<Map<String, Object>> redisList =
                 doBuildRuleDataSourceItems(dataSource, RuleDataSourceDefinition.Type.redis, "type", "key", "hashKey", "setKey");
 
-        databaseList.addAll(redisList);
-        return databaseList;
+        List<Map<String, Object>> result = new ArrayList<>();
+        result.addAll(databaseList);
+        result.addAll(redisList);
+        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -56,12 +55,12 @@ public class XmlRuleDefinitionBuilder extends FileRuleDefinitionBuilder {
         Object item = this.getValueWithMap(dataSource, type.name(), Collections.EMPTY_LIST);
         List<Map<String, Object>> list = (List<Map<String, Object>>) (item instanceof List ? item : Collections.singletonList(item));
         list.stream()
-                .peek(map -> map.put("type", type.name()))
-                .forEach(map -> {
+                .peek(map -> {
                     Map<String, Object> config = new HashMap<>();
                     Stream.of(keys).forEach(key -> config.put(key, map.remove(key)));
                     map.put("config", config);
-                });
+                })
+                .forEach(map -> map.put("type", type.name()));
         return list;
     }
 

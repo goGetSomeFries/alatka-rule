@@ -165,7 +165,50 @@ public class XmlRuleDefinitionBuilderTest {
         reflectionMemberAccessor.set(FileRuleDefinitionBuilder.class.getDeclaredField("rootModel"), builder, Collections.EMPTY_MAP);
         Assertions.assertEquals(0, builder.doBuildRuleDataSourceDefinitions(null).size());
 
-        // TODO
+        Map<String, Object> database1 = new HashMap<>();
+        database1.put("sql", "select * from dual");
+        database1.put("resultClass", "com.test.Foo");
+        database1.put("resultType", "single");
+        Map<String, Object> database2 = new HashMap<>();
+        database2.put("sql", "select * from dual");
+        database2.put("resultClass", "com.test.Bar");
+        database2.put("resultType", "list");
+        List<Map<String, Object>> databases = new ArrayList<>();
+        databases.add(database1);
+        databases.add(database2);
+        Map<String, Object> redis = new HashMap<>();
+        redis.put("type", "hash");
+        redis.put("key", "test:test");
+        redis.put("hashKey", "test1");
+        redis.put("setKey", "test2");
+        Map<String, Object> dataSource = new HashMap<>();
+        dataSource.put("database", databases);
+        dataSource.put("redis", redis);
+
+        Map<String, Object> rootModel = new HashMap<>();
+        rootModel.put("dataSource", dataSource);
+        reflectionMemberAccessor.set(FileRuleDefinitionBuilder.class.getDeclaredField("rootModel"), builder, rootModel);
+        List<Map<String, Object>> result = builder.doBuildRuleDataSourceDefinitions(null);
+
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals("database", result.get(0).get("type"));
+        Map<String, Object> config0 = (Map<String, Object>) result.get(0).get("config");
+        Assertions.assertEquals("select * from dual", config0.get("sql"));
+        Assertions.assertEquals("com.test.Foo", config0.get("resultClass"));
+        Assertions.assertEquals("single", config0.get("resultType"));
+
+        Assertions.assertEquals("database", result.get(1).get("type"));
+        Map<String, Object> config1 = (Map<String, Object>) result.get(1).get("config");
+        Assertions.assertEquals("select * from dual", config1.get("sql"));
+        Assertions.assertEquals("com.test.Bar", config1.get("resultClass"));
+        Assertions.assertEquals("list", config1.get("resultType"));
+
+        Assertions.assertEquals("redis", result.get(2).get("type"));
+        Map<String, Object> config2 = (Map<String, Object>) result.get(2).get("config");
+        Assertions.assertEquals("hash", config2.get("type"));
+        Assertions.assertEquals("test:test", config2.get("key"));
+        Assertions.assertEquals("test2", config2.get("setKey"));
+        Assertions.assertEquals("test1", config2.get("hashKey"));
     }
 
     @Test

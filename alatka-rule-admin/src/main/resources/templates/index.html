@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>alatka-rule-admin</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.css}"/>
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="#" th:text="#{app.name}">MyApp</a>
+        <div class="navbar-nav">
+            <a class="nav-link active" href="#">首页</a>
+            <a class="nav-link" href="#">关于</a>
+            <a class="nav-link" href="#">联系我们</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <!-- 条件查询工具栏 -->
+    <div id="toolbar">
+        <form class="form-inline">
+            <div class="input-group mb-3">
+                <input type="text" id="searchName" class="form-control" placeholder="输入用户名搜索">
+                <button class="btn btn-primary" type="button" onclick="refreshTable()">搜索</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 数据表格 -->
+    <table id="userTable"
+           data-striped = true
+           data-method = "get"
+           data-url="/rule/group/page"
+           data-pagination="true"
+           data-side-pagination="server"
+           data-query-params="queryParams"
+           data-response-handler="responseHandler">
+        <thead>
+        <tr>
+            <th data-field="id">ID</th>
+            <th data-field="key" data-sortable="true">关键字</th>
+            <th data-field="name" data-sortable="true">名称</th>
+            <th data-field="type">类型</th>
+            <th data-field="enabled">是否可用</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<!-- 页脚 -->
+<footer class="mt-5 py-3 bg-light">
+    <div class="container text-center">
+        <p th:text="#{footer.copyright}">© 2023 我的公司. 版权所有.</p>
+    </div>
+</footer>
+
+<script th:src="@{/webjars/jquery/jquery.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js}"></script>
+<script>
+    function queryParams(params) {
+        return {
+            pageNo: params.offset,
+            pageSize: params.limit,
+            orderBy:
+        }
+    }
+</script>
+</body>
+</html>

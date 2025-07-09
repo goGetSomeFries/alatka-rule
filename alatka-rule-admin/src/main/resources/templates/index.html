@@ -31,15 +31,20 @@
         </form>
     </div>
 
-    <!-- 数据表格 -->
-    <table id="userTable"
-           data-striped = true
-           data-method = "get"
+    <table id="dataTable"
+           data-toggle="table"
+           data-method="get"
            data-url="/rule/group/page"
+           data-sort-name="id"
+           data-sort-order="desc"
+           data-striped=true
            data-pagination="true"
+           data-pagination-loop="false"
            data-side-pagination="server"
-           data-query-params="queryParams"
-           data-response-handler="responseHandler">
+           data-click-to-select=true
+           data-maintain-selected=true
+           data-query-params="queryParams">
+        <!--           data-response-handler="responseHandler">-->
         <thead>
         <tr>
             <th data-field="id">ID</th>
@@ -62,14 +67,20 @@
 <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js}"></script>
+<script th:src="@{/js/global.js}"></script>
 <script>
     function queryParams(params) {
         return {
-            pageNo: params.offset,
+            pageNo: params.offset / params.limit + 1,
             pageSize: params.limit,
-            orderBy:
+            orderBy: params.sort,
+            direction: params.order
         }
     }
+
+    // function responseHandler(res) {
+    //     console.log("==================222 " + res)
+    // }
 </script>
 </body>
 </html>

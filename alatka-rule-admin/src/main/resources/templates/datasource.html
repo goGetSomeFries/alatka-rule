@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>alatka-rule-admin</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.css}"/>
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="#" th:text="#{app.name}">MyApp</a>
+        <div class="navbar-nav">
+            <a class="nav-link active" href="#">首页</a>
+            <a class="nav-link" href="#">关于</a>
+            <a class="nav-link" href="#">联系我们</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="card mb-3">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">规则外部数据源查询</h5>
+        </div>
+        <div class="card-body">
+            <form id="searchForm" class="row g-3">
+                <div class="col-md-3">
+                    <label for="key" class="form-label">关键字</label>
+                    <input type="text" class="form-control" id="key" name="key" placeholder="输入关键字">
+                </div>
+                <div class="col-md-3">
+                    <label for="name" class="form-label">名称</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="输入名称">
+                </div>
+                <div class="col-md-3">
+                    <label for="type" class="form-label">类型</label>
+                    <select class="form-select" id="type" name="type">
+                        <option value="">全部</option>
+                        <option value="database">database</option>
+                        <option value="redis">redis</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="scope" class="form-label">数据范围</label>
+                    <select class="form-select" id="scope" name="scope">
+                        <option value="">全部</option>
+                        <option value="global">global</option>
+                        <option value="request">request</option>
+                        <option value="rule">rule</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="enabled" class="form-label">是否可用</label>
+                    <select class="form-select" id="enabled" name="enabled">
+                        <option value="">全部</option>
+                        <option value="true" selected>正常</option>
+                        <option value="false">禁用</option>
+                    </select>
+                </div>
+                <div class="col-12 text-center">
+                    <button type="button" class="btn btn-secondary me-2" id="resetButton">
+                        <i class="bi bi-arrow-counterclockwise"></i> 重置
+                    </button>
+                    <button type="button" class="btn btn-primary" id="searchButton">
+                        <i class="bi bi-search"></i> 查询
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-12 text-end">
+        <button type="button" class="btn btn-primary" id="addButton"
+                onclick="showAddModal('rule/datasource/create')">
+            <i class="bi bi-search"></i> 新增
+        </button>
+        <button type="button" class="btn btn-outline-warning" id="editButton"
+                onclick="showEditModal('rule/datasource/update')">
+            <i class="bi bi-search"></i> 更新
+        </button>
+        <button type="button" class="btn btn-danger" id="deleteButton"
+                onclick="showDeleteModal('/rule/datasource/delete')">
+            <i class="bi bi-search"></i> 删除
+        </button>
+    </div>
+
+    <table id="dataTable"
+           data-toggle="table"
+           data-method="get"
+           data-url="/rule/datasource/page"
+           data-sort-name="id"
+           data-sort-order="desc"
+           data-striped=true
+           data-pagination="true"
+           data-pagination-loop="false"
+           data-side-pagination="server"
+           data-click-to-select="true"
+           data-maintain-selected="true">
+        <thead>
+        <tr>
+            <th data-radio="true"></th>
+            <th data-field="id">ID</th>
+            <th data-field="key" data-sortable="true">关键字</th>
+            <th data-field="name" data-sortable="true">名称</th>
+            <th data-field="type">类型</th>
+            <th data-field="scope">数据范围</th>
+            <th data-field="groupKey">规则组关键字</th>
+            <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">新增规则组</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addForm">
+                    <div class="mb-3">
+                        <label for="addKey" class="form-label">关键字</label>
+                        <input type="text" class="form-control" id="addKey" name="key" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addName" class="form-label">名称</label>
+                        <input type="text" class="form-control" id="addName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addType" class="form-label">类型</label>
+                        <select class="form-select" id="addType" name="type" required>
+                            <option value="all">all</option>
+                            <option value="once">once</option>
+                            <option value="priority_all">priority_all</option>
+                            <option value="priority_once">priority_once</option>
+                            <option value="customize">customize</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addEnabled" class="form-label">是否可用</label>
+                        <select class="form-select" id="addEnabled" name="enabled" required>
+                            <option value="true" selected>正常</option>
+                            <option value="false">禁用</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="saveAddBtn">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">编辑规则组</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="editId" name="id">
+                    <div class="mb-3">
+                        <label for="editKey" class="form-label">关键字</label>
+                        <input type="text" class="form-control" id="editKey" name="key" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editName" class="form-label">名称</label>
+                        <input type="text" class="form-control" id="editName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editType" class="form-label">类型</label>
+                        <select class="form-select" id="editType" name="type" required>
+                            <option value="all">all</option>
+                            <option value="once">once</option>
+                            <option value="priority_all">priority_all</option>
+                            <option value="priority_once">priority_once</option>
+                            <option value="customize">customize</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEnabled" class="form-label">是否可用</label>
+                        <select class="form-select" id="editEnabled" name="enabled" required>
+                            <option value="true">正常</option>
+                            <option value="false">禁用</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="saveEditBtn">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">删除规则组</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除选中的记录？</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-danger" id="saveDeleteBtn">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/jquery.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js}"></script>
+<script th:src="@{/js/table.js}"></script>
+</body>
+</html>

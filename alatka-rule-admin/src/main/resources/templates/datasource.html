@@ -53,6 +53,12 @@
                     </select>
                 </div>
                 <div class="col-md-3">
+                    <label for="groupKey" class="form-label">规则组关键字</label>
+                    <select class="form-select" id="groupKey" name="groupKey">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <label for="enabled" class="form-label">是否可用</label>
                     <select class="form-select" id="enabled" name="enabled">
                         <option value="">全部</option>
@@ -92,7 +98,7 @@
            data-url="/rule/datasource/page"
            data-sort-name="id"
            data-sort-order="desc"
-           data-striped=true
+           data-striped="true"
            data-pagination="true"
            data-pagination-loop="false"
            data-side-pagination="server"

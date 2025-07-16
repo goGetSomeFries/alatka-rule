@@ -162,6 +162,32 @@ function showToast(message, bgClass) {
     }, 3000);
 }
 
+function initRuleGroupSelect() {
+    $.ajax({
+        url: '/rule/group/map',
+        type: 'GET',
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.code === "0000") {
+                const map = new Map(Object.entries(response.data));
+                $('#groupKey').empty();
+                map.forEach((value, key) => {
+                    $('#groupKey').append($('<option>', {
+                        value: key,
+                        text: value
+                    }))
+                });
+
+            } else {
+                showErrorToast("失败: " + response.msg);
+            }
+        },
+        error: function (xhr) {
+            showErrorToast("请求失败: " + xhr.responseJSON?.message || "未知错误");
+        }
+    });
+}
+
 function enabledFormatter(arg) {
     if (arg === true) {
         return "正常";

@@ -55,7 +55,7 @@
                 <div class="col-md-3">
                     <label for="groupKey" class="form-label">规则组关键字</label>
                     <select class="form-select" id="groupKey" name="groupKey">
-                        <option value="">全部</option>
+                        <option value="default_" selected>默认</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -100,6 +100,9 @@
            data-sort-order="desc"
            data-striped="true"
            data-pagination="true"
+           data-detail-view="true"
+           data-detail-view-by-click="true"
+           data-detail-formatter="detailFormatter"
            data-pagination-loop="false"
            data-side-pagination="server"
            data-click-to-select="true"
@@ -229,5 +232,17 @@
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js}"></script>
 <script th:src="@{/js/table.js}"></script>
+<script>
+    initRuleGroupSelect();
+
+    function detailFormatter(index, row) {
+        const map = new Map(Object.entries(row.extended));
+        const html = [];
+        map.forEach((value, key) => {
+            html.push('<div>' + key + ' : ' + value + '</div>');
+        })
+        return html.join('');
+    }
+</script>
 </body>
 </html>

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -77,6 +78,12 @@ public class RuleGroupService {
         condition.setEnabled(true);
         List<RuleGroupDefinition> list = ruleGroupRepository.findAll(this.condition(condition));
         return list.stream().collect(Collectors.toMap(RuleGroupDefinition::getKey, RuleGroupDefinition::getName));
+    }
+
+    public List<String> getType() {
+        return Arrays.stream(com.alatka.rule.core.context.RuleGroupDefinition.Type.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
     }
 
     private Specification<RuleGroupDefinition> condition(RuleGroupDefinition condition) {

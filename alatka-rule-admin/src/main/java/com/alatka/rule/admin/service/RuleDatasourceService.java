@@ -6,6 +6,7 @@ import com.alatka.rule.admin.model.ruledatasource.RuleDatasourcePageReq;
 import com.alatka.rule.admin.model.ruledatasource.RuleDatasourceReq;
 import com.alatka.rule.admin.model.ruledatasource.RuleDatasourceRes;
 import com.alatka.rule.admin.repository.RuleDatasourceRepository;
+import com.alatka.rule.core.context.RuleDataSourceDefinition;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,10 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -77,6 +76,19 @@ public class RuleDatasourceService {
                     res.setExtended(extended);
                     return res;
                 });
+    }
+
+    public List<String> getType() {
+        return Arrays.stream(RuleDataSourceDefinition.Type.values())
+                .filter(type -> type != RuleDataSourceDefinition.Type.current)
+                .map(Enum::name)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getScope() {
+        return Arrays.stream(RuleDataSourceDefinition.Scope.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
     }
 
     private Specification<RuleDatasourceDefinition> condition(RuleDatasourceDefinition condition) {

@@ -39,17 +39,12 @@
                     <label for="type" class="form-label">类型</label>
                     <select class="form-select" id="type" name="type">
                         <option value="">全部</option>
-                        <option value="database">database</option>
-                        <option value="redis">redis</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="scope" class="form-label">数据范围</label>
                     <select class="form-select" id="scope" name="scope">
                         <option value="">全部</option>
-                        <option value="global">global</option>
-                        <option value="request">request</option>
-                        <option value="rule">rule</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -79,11 +74,11 @@
     </div>
     <div class="col-12 text-end">
         <button type="button" class="btn btn-primary" id="addButton"
-                onclick="showAddModal('rule/datasource/create')">
+                onclick="showAddModal('/rule/datasource/create')">
             <i class="bi bi-search"></i> 新增
         </button>
         <button type="button" class="btn btn-outline-warning" id="editButton"
-                onclick="showEditModal('rule/datasource/update')">
+                onclick="showEditModal('/rule/datasource/update')">
             <i class="bi bi-search"></i> 更新
         </button>
         <button type="button" class="btn btn-danger" id="deleteButton"
@@ -126,35 +121,75 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">新增规则组</h5>
+                <h5 class="modal-title">新增规则外部数据源</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addForm">
-                    <div class="mb-3">
-                        <label for="addKey" class="form-label">关键字</label>
-                        <input type="text" class="form-control" id="addKey" name="key" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="addKey" class="form-label">关键字</label>
+                            <input type="text" class="form-control" id="addKey" name="key" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="addName" class="form-label">名称</label>
+                            <input type="text" class="form-control" id="addName" name="name" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="addType" class="form-label">类型</label>
+                            <select class="form-select" id="addType" name="type" required>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="addScope" class="form-label">数据范围</label>
+                            <select class="form-select" id="addScope" name="scope" required>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="addGroupKey" class="form-label">规则组关键字</label>
+                            <select class="form-select" id="addGroupKey" name="groupKey" required>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="addEnabled" class="form-label">是否可用</label>
+                            <select class="form-select" id="addEnabled" name="enabled" required>
+                                <option value="true" selected>正常</option>
+                                <option value="false">禁用</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="addName" class="form-label">名称</label>
-                        <input type="text" class="form-control" id="addName" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="addType" class="form-label">类型</label>
-                        <select class="form-select" id="addType" name="type" required>
-                            <option value="all">all</option>
-                            <option value="once">once</option>
-                            <option value="priority_all">priority_all</option>
-                            <option value="priority_once">priority_once</option>
-                            <option value="customize">customize</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="addEnabled" class="form-label">是否可用</label>
-                        <select class="form-select" id="addEnabled" name="enabled" required>
-                            <option value="true" selected>正常</option>
-                            <option value="false">禁用</option>
-                        </select>
+                        <label class="form-label d-flex justify-content-between align-items-center">
+                            扩展属性
+                            <button type="button" class="btn btn-sm btn-success" id="addExtendedBtn">
+                                <i class="bi bi-plus"></i> 添加
+                            </button>
+                        </label>
+                        <div id="extendedPropertiesContainer">
+                            <div class="extended-property row g-2 mb-2">
+                                <div class="col-md-4">
+                                    <label>
+                                        <input type="text" class="form-control" name="extendedKey[]" placeholder="键"
+                                               required>
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>
+                                        <input type="text" class="form-control" name="extendedValue[]" placeholder="值"
+                                               required>
+                                    </label>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button type="button" class="btn btn-sm btn-danger remove-extended">
+                                        <i class="bi bi-trash"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -186,11 +221,6 @@
                     <div class="mb-3">
                         <label for="editType" class="form-label">类型</label>
                         <select class="form-select" id="editType" name="type" required>
-                            <option value="all">all</option>
-                            <option value="once">once</option>
-                            <option value="priority_all">priority_all</option>
-                            <option value="priority_once">priority_once</option>
-                            <option value="customize">customize</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -213,7 +243,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">删除规则组</h5>
+                <h5 class="modal-title">删除规则外部数据源</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -234,14 +264,107 @@
 <script th:src="@{/js/table.js}"></script>
 <script>
     initRuleGroupSelect();
+    initTypeSelect();
+    initScopeSelect();
+
+    $('#addExtendedBtn').click(function () {
+        const property =
+            `
+         <div class="extended-property row g-2 mb-2">
+             <div class="col-md-4">
+                 <label>
+                     <input type="text" class="form-control" name="extendedKey[]" placeholder="键"
+                            required>
+                 </label>
+             </div>
+             <div class="col-md-6">
+                 <label>
+                     <input type="text" class="form-control" name="extendedValue[]" placeholder="值"
+                            required>
+                 </label>
+             </div>
+             <div class="col-md-2 text-end">
+                 <button type="button" class="btn btn-sm btn-danger remove-extended">
+                     <i class="bi bi-trash"></i> 删除
+                 </button>
+             </div>
+         </div>
+       `;
+        $('#extendedPropertiesContainer').append(property);
+    });
+
+    $('#extendedPropertiesContainer').on('click', '.remove-extended', function () {
+        $(this).closest('.extended-property').remove();
+    });
 
     function detailFormatter(index, row) {
         const map = new Map(Object.entries(row.extended));
         const html = [];
+        html.push('<dl class="row">');
         map.forEach((value, key) => {
-            html.push('<div>' + key + ' : ' + value + '</div>');
+            html.push('<dt class="col-sm-2 text-end">' + key + ': </dt><dd class="col-sm-10">' + value + '</dd>');
         })
+        html.push('</dl>');
         return html.join('');
+    }
+
+
+    function initScopeSelect() {
+        $.ajax({
+            url: '/rule/datasource/scope',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                if (response.code === "0000") {
+                    response.data.forEach((value) => {
+                        $('#scope').append($('<option>', {value: value, text: value}));
+                        $('#addScope').append($('<option>', {value: value, text: value}));
+                        $('#editScope').append($('<option>', {value: value, text: value}));
+                    });
+                } else {
+                    showErrorToast("失败: " + response.msg);
+                }
+            },
+            error: function (xhr) {
+                showErrorToast("请求失败: " + xhr.responseJSON?.message || "未知错误");
+            }
+        });
+    }
+
+    function initTypeSelect() {
+        $.ajax({
+            url: '/rule/datasource/type',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                if (response.code === "0000") {
+                    response.data.forEach((value) => {
+                        $('#type').append($('<option>', {value: value, text: value}));
+                        $('#addType').append($('<option>', {value: value, text: value}));
+                        $('#editType').append($('<option>', {value: value, text: value}));
+                    });
+                } else {
+                    showErrorToast("失败: " + response.msg);
+                }
+            },
+            error: function (xhr) {
+                showErrorToast("请求失败: " + xhr.responseJSON?.message || "未知错误");
+            }
+        });
+    }
+
+    function showAddModal(url) {
+        $('#addForm')[0]?.reset();
+        $('#addModal').modal('show');
+
+        $('#saveAddBtn').off('click').on('click', function () {
+            const formData = {};
+            $('#addForm').serializeArray().forEach(item => {
+                formData[item.name] = item.value;
+            });
+            submitFunction(url, 'POST', formData, '新增');
+            $('#addModal').modal('hide');
+        });
     }
 </script>
 </body>

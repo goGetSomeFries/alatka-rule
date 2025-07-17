@@ -39,11 +39,6 @@
                     <label for="type" class="form-label">类型</label>
                     <select class="form-select" id="type" name="type">
                         <option value="">全部</option>
-                        <option value="all">all</option>
-                        <option value="once">once</option>
-                        <option value="priority_all">priority_all</option>
-                        <option value="priority_once">priority_once</option>
-                        <option value="customize">customize</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -125,11 +120,6 @@
                     <div class="mb-3">
                         <label for="addType" class="form-label">类型</label>
                         <select class="form-select" id="addType" name="type" required>
-                            <option value="all">all</option>
-                            <option value="once">once</option>
-                            <option value="priority_all">priority_all</option>
-                            <option value="priority_once">priority_once</option>
-                            <option value="customize">customize</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -169,11 +159,6 @@
                     <div class="mb-3">
                         <label for="editType" class="form-label">类型</label>
                         <select class="form-select" id="editType" name="type" required>
-                            <option value="all">all</option>
-                            <option value="once">once</option>
-                            <option value="priority_all">priority_all</option>
-                            <option value="priority_once">priority_once</option>
-                            <option value="customize">customize</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -215,5 +200,30 @@
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js}"></script>
 <script th:src="@{/js/table.js}"></script>
+<script>
+    initTypeSelect();
+
+    function initTypeSelect() {
+        $.ajax({
+            url: '/rule/group/type',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                if (response.code === "0000") {
+                    response.data.forEach((value) => {
+                        $('#type').append($('<option>', {value: value, text: value}));
+                        $('#addType').append($('<option>', {value: value, text: value}));
+                        $('#editType').append($('<option>', {value: value, text: value}));
+                    });
+                } else {
+                    showErrorToast("失败: " + response.msg);
+                }
+            },
+            error: function (xhr) {
+                showErrorToast("请求失败: " + xhr.responseJSON?.message || "未知错误");
+            }
+        });
+    }
+</script>
 </body>
 </html>

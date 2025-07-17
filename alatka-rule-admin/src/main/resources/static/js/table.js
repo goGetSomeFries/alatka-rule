@@ -170,12 +170,10 @@ function initRuleGroupSelect() {
         success: function (response) {
             if (response.code === "0000") {
                 const map = new Map(Object.entries(response.data));
-                $('#groupKey').empty();
                 map.forEach((value, key) => {
-                    $('#groupKey').append($('<option>', {
-                        value: key,
-                        text: value
-                    }))
+                    $('#groupKey').append($('<option>', {value: key, text: value}))
+                    $('#addGroupKey').append($('<option>', {value: key, text: value}))
+                    $('#editGroupKey').append($('<option>', {value: key, text: value}))
                 });
 
             } else {

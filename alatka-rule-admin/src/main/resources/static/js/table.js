@@ -47,42 +47,36 @@ $("#searchButton").click(function () {
     refresh();
 })
 
-function showAddModal(url) {
-    $('#addForm')[0]?.reset();
-    $('#addModal').modal('show');
+function showEditModal(url, created) {
+    if (created) {
+        $('#editForm')[0]?.reset();
+    } else {
+        const selection = $('#dataTable').bootstrapTable('getSelections');
+        if (selection.length !== 1) {
+            showWarningToast("请选择一条记录进行编辑");
+            return;
+        }
 
-    $('#saveAddBtn').off('click').on('click', function () {
-        const formData = {};
-        $('#addForm').serializeArray().forEach(item => {
-            formData[item.name] = item.value;
+        const row = selection[0];
+        Object.keys(row).forEach(field => {
+            const $input = $(`#editForm [name="${field}"], #editForm #${field}`);
+            if ($input.length) {
+                let value = row[field];
+                if (typeof value === 'boolean') {
+                    value = value ? 'true' : 'false';
+                }
+                $input.val(value);
+            }
         });
-        submitFunction(url, 'POST', formData, '新增');
-        $('#addModal').modal('hide');
-    });
-}
-
-function showEditModal(url) {
-    const selection = $('#dataTable').bootstrapTable('getSelections');
-    if (selection.length !== 1) {
-        showWarningToast("请选择一条记录进行编辑");
-        return;
     }
 
-    const row = selection[0];
-    $('#editId').val(row.id);
-    $('#editKey').val(row.key);
-    $('#editName').val(row.name);
-    $('#editType').val(row.type);
-    $('#editEnabled').val(row.enabled ? 'true' : 'false');
-
     $('#editModal').modal('show');
-
     $('#saveEditBtn').off('click').on('click', function () {
         const formData = {};
         $('#editForm').serializeArray().forEach(item => {
             formData[item.name] = item.value;
         });
-        submitFunction(url, 'PUT', formData, '更新');
+        submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
         $('#editModal').modal('hide');
     });
 }
@@ -172,7 +166,6 @@ function initRuleGroupSelect() {
                 const map = new Map(Object.entries(response.data));
                 map.forEach((value, key) => {
                     $('#groupKey').append($('<option>', {value: key, text: value}))
-                    $('#addGroupKey').append($('<option>', {value: key, text: value}))
                     $('#editGroupKey').append($('<option>', {value: key, text: value}))
                 });
 
@@ -184,6 +177,14 @@ function initRuleGroupSelect() {
             showErrorToast("请求失败: " + xhr.responseJSON?.message || "未知错误");
         }
     });
+}
+
+function groupKeyFormatter(arg) {
+    const keyValuePairs = {};
+    $('select#groupKey option').each(function () {
+        keyValuePairs[$(this).val()] = $(this).text();
+    });
+    return keyValuePairs[arg];
 }
 
 function enabledFormatter(arg) {

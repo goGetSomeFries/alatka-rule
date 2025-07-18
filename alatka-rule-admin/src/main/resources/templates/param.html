@@ -23,7 +23,7 @@
 <div class="container mt-4">
     <div class="card mb-3">
         <div class="card-header bg-light">
-            <h5 class="mb-0">规则组查询</h5>
+            <h5 class="mb-0">规则入参查询</h5>
         </div>
         <div class="card-body">
             <form id="searchForm" class="row g-3">
@@ -36,9 +36,9 @@
                     <input type="text" class="form-control" id="name" name="name" placeholder="输入名称">
                 </div>
                 <div class="col-md-3">
-                    <label for="type" class="form-label">类型</label>
-                    <select class="form-select" id="type" name="type">
-                        <option value="">全部</option>
+                    <label for="groupKey" class="form-label">规则组名称</label>
+                    <select class="form-select" id="groupKey" name="groupKey">
+                        <option value="default_" selected>默认</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -62,15 +62,15 @@
     </div>
     <div class="col-12 text-end">
         <button type="button" class="btn btn-primary" id="addButton"
-                onclick="showEditModal('/rule/group/create', true)">
+                onclick="showEditModal('/rule/param/create', true)">
             <i class="bi bi-search"></i> 新增
         </button>
         <button type="button" class="btn btn-outline-warning" id="editButton"
-                onclick="showEditModal('/rule/group/update', false)">
+                onclick="showEditModal('/rule/param/update', false)">
             <i class="bi bi-search"></i> 更新
         </button>
         <button type="button" class="btn btn-danger" id="deleteButton"
-                onclick="showDeleteModal('/rule/group/delete')">
+                onclick="showDeleteModal('/rule/param/delete')">
             <i class="bi bi-search"></i> 删除
         </button>
     </div>
@@ -78,7 +78,7 @@
     <table id="dataTable"
            data-toggle="table"
            data-method="get"
-           data-url="/rule/group/page"
+           data-url="/rule/param/page"
            data-sort-name="id"
            data-sort-order="desc"
            data-striped="true"
@@ -93,7 +93,8 @@
             <th data-field="id">ID</th>
             <th data-field="key" data-sortable="true">关键字</th>
             <th data-field="name" data-sortable="true">名称</th>
-            <th data-field="type">类型</th>
+            <th data-field="expression">表达式</th>
+            <th data-field="groupKey" data-formatter="groupKeyFormatter">规则组名称</th>
             <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
         </tr>
         </thead>
@@ -104,7 +105,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">编辑规则组</h5>
+                <h5 class="modal-title">编辑规则入参</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -119,8 +120,13 @@
                         <input type="text" class="form-control" id="editName" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editType" class="form-label">类型</label>
-                        <select class="form-select" id="editType" name="type" required>
+                        <label for="editExpression" class="form-label">表达式</label>
+                        <textarea class="form-control" rows="5" id="editExpression" name="expression"
+                                  required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editGroupKey" class="form-label">规则组名称</label>
+                        <select class="form-select" id="editGroupKey" name="groupKey" required>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -143,7 +149,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">删除规则组</h5>
+                <h5 class="modal-title">删除规则入参</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -163,28 +169,7 @@
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js}"></script>
 <script th:src="@{/js/table.js}"></script>
 <script>
-    initTypeSelect();
-
-    function initTypeSelect() {
-        $.ajax({
-            url: '/rule/group/type',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                if (response.code === "0000") {
-                    response.data.forEach((value) => {
-                        $('#type').append($('<option>', {value: value, text: value}));
-                        $('#editType').append($('<option>', {value: value, text: value}));
-                    });
-                } else {
-                    showErrorToast("失败: " + response.msg);
-                }
-            },
-            error: function (xhr) {
-                showErrorToast("请求失败: " + xhr.responseJSON?.message || "未知错误");
-            }
-        });
-    }
+    initRuleGroupSelect();
 </script>
 </body>
 </html>

@@ -48,7 +48,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="groupKey" class="form-label">规则组关键字</label>
+                    <label for="groupKey" class="form-label">规则组名称</label>
                     <select class="form-select" id="groupKey" name="groupKey">
                         <option value="default_" selected>默认</option>
                     </select>
@@ -74,11 +74,11 @@
     </div>
     <div class="col-12 text-end">
         <button type="button" class="btn btn-primary" id="addButton"
-                onclick="showAddModal('/rule/datasource/create')">
+                onclick="showEditModal('/rule/datasource/create', true)">
             <i class="bi bi-search"></i> 新增
         </button>
         <button type="button" class="btn btn-outline-warning" id="editButton"
-                onclick="showEditModal('/rule/datasource/update')">
+                onclick="showEditModal('/rule/datasource/update', false)">
             <i class="bi bi-search"></i> 更新
         </button>
         <button type="button" class="btn btn-danger" id="deleteButton"
@@ -110,53 +110,54 @@
             <th data-field="name" data-sortable="true">名称</th>
             <th data-field="type">类型</th>
             <th data-field="scope">数据范围</th>
-            <th data-field="groupKey">规则组关键字</th>
+            <th data-field="groupKey" data-formatter="groupKeyFormatter">规则组名称</th>
             <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
         </tr>
         </thead>
     </table>
 </div>
 
-<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">新增规则外部数据源</h5>
+                <h5 class="modal-title">编辑规则外部数据源</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addForm">
+                <form id="editForm">
+                    <input type="hidden" id="editId" name="id">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="addKey" class="form-label">关键字</label>
-                            <input type="text" class="form-control" id="addKey" name="key" required>
+                            <label for="editKey" class="form-label">关键字</label>
+                            <input type="text" class="form-control" id="editKey" name="key" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="addName" class="form-label">名称</label>
-                            <input type="text" class="form-control" id="addName" name="name" required>
+                            <label for="editName" class="form-label">名称</label>
+                            <input type="text" class="form-control" id="editName" name="name" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="addType" class="form-label">类型</label>
-                            <select class="form-select" id="addType" name="type" required>
+                            <label for="editType" class="form-label">类型</label>
+                            <select class="form-select" id="editType" name="type" required>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="addScope" class="form-label">数据范围</label>
-                            <select class="form-select" id="addScope" name="scope" required>
+                            <label for="editScope" class="form-label">数据范围</label>
+                            <select class="form-select" id="editScope" name="scope" required>
                             </select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="addGroupKey" class="form-label">规则组关键字</label>
-                            <select class="form-select" id="addGroupKey" name="groupKey" required>
+                            <label for="editGroupKey" class="form-label">规则组名称</label>
+                            <select class="form-select" id="editGroupKey" name="groupKey" required>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="addEnabled" class="form-label">是否可用</label>
-                            <select class="form-select" id="addEnabled" name="enabled" required>
+                            <label for="editEnabled" class="form-label">是否可用</label>
+                            <select class="form-select" id="editEnabled" name="enabled" required>
                                 <option value="true" selected>正常</option>
                                 <option value="false">禁用</option>
                             </select>
@@ -170,65 +171,7 @@
                             </button>
                         </label>
                         <div id="extendedPropertiesContainer">
-                            <div class="extended-property row g-2 mb-2">
-                                <div class="col-md-4">
-                                    <label>
-                                        <input type="text" class="form-control" name="extendedKey[]" placeholder="键"
-                                               required>
-                                    </label>
-                                </div>
-                                <div class="col-md-6">
-                                    <label>
-                                        <input type="text" class="form-control" name="extendedValue[]" placeholder="值"
-                                               required>
-                                    </label>
-                                </div>
-                                <div class="col-md-2 text-end">
-                                    <button type="button" class="btn btn-sm btn-danger remove-extended">
-                                        <i class="bi bi-trash"></i> 删除
-                                    </button>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="saveAddBtn">确认</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">编辑规则组</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editForm">
-                    <input type="hidden" id="editId" name="id">
-                    <div class="mb-3">
-                        <label for="editKey" class="form-label">关键字</label>
-                        <input type="text" class="form-control" id="editKey" name="key" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editName" class="form-label">名称</label>
-                        <input type="text" class="form-control" id="editName" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editType" class="form-label">类型</label>
-                        <select class="form-select" id="editType" name="type" required>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editEnabled" class="form-label">是否可用</label>
-                        <select class="form-select" id="editEnabled" name="enabled" required>
-                            <option value="true">正常</option>
-                            <option value="false">禁用</option>
-                        </select>
                     </div>
                 </form>
             </div>
@@ -273,13 +216,13 @@
          <div class="extended-property row g-2 mb-2">
              <div class="col-md-4">
                  <label>
-                     <input type="text" class="form-control" name="extendedKey[]" placeholder="键"
+                     <input type="text" class="form-control" name="extendedKey" placeholder="键"
                             required>
                  </label>
              </div>
              <div class="col-md-6">
                  <label>
-                     <input type="text" class="form-control" name="extendedValue[]" placeholder="值"
+                     <input type="text" class="form-control" name="extendedValue" placeholder="值"
                             required>
                  </label>
              </div>
@@ -318,7 +261,6 @@
                 if (response.code === "0000") {
                     response.data.forEach((value) => {
                         $('#scope').append($('<option>', {value: value, text: value}));
-                        $('#addScope').append($('<option>', {value: value, text: value}));
                         $('#editScope').append($('<option>', {value: value, text: value}));
                     });
                 } else {
@@ -340,7 +282,6 @@
                 if (response.code === "0000") {
                     response.data.forEach((value) => {
                         $('#type').append($('<option>', {value: value, text: value}));
-                        $('#addType').append($('<option>', {value: value, text: value}));
                         $('#editType').append($('<option>', {value: value, text: value}));
                     });
                 } else {
@@ -353,17 +294,84 @@
         });
     }
 
-    function showAddModal(url) {
-        $('#addForm')[0]?.reset();
-        $('#addModal').modal('show');
+    function showEditModal(url, created) {
+        if (created) {
+            $('#editForm')[0]?.reset();
+        } else {
+            const selection = $('#dataTable').bootstrapTable('getSelections');
+            if (selection.length !== 1) {
+                showWarningToast("请选择一条记录进行编辑");
+                return;
+            }
 
-        $('#saveAddBtn').off('click').on('click', function () {
+            const row = selection[0];
+            Object.keys(row).forEach(field => {
+                const $input = $(`#editForm [name="${field}"], #editForm #${field}`);
+                if ($input.length) {
+                    let value = row[field];
+                    if (typeof value === 'boolean') {
+                        value = value ? 'true' : 'false';
+                    }
+                    $input.val(value);
+                }
+            });
+
+            const map = new Map(Object.entries(row.extended));
+            map.forEach((value, key) => {
+                const property =
+                    `
+                    <div class="extended-property row g-2 mb-2">
+                        <div class="col-md-4">
+                            <label>
+                                <input type="text" class="form-control" name="extendedKey" placeholder="键" value="${key}"
+                                       required>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label>
+                                <input type="text" class="form-control" name="extendedValue" placeholder="值" value="${value}"
+                                       required>
+                            </label>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button type="button" class="btn btn-sm btn-danger remove-extended">
+                                <i class="bi bi-trash"></i> 删除
+                            </button>
+                        </div>
+                    </div>
+                  `;
+                $('#extendedPropertiesContainer').append(property);
+            });
+        }
+
+        $('#editModal').modal('show');
+
+        $('#saveEditBtn').off('click').on('click', function () {
             const formData = {};
-            $('#addForm').serializeArray().forEach(item => {
+            $('#editForm').serializeArray()
+                .filter(item => {
+                    return item.name !== 'extendedKey'
+                        && item.name !== 'extendedValue';
+                }).forEach(item => {
                 formData[item.name] = item.value;
             });
-            submitFunction(url, 'POST', formData, '新增');
-            $('#addModal').modal('hide');
+            const keys = $('#extendedPropertiesContainer input[name="extendedKey"]').map(function () {
+                return $(this).val();
+            }).get();
+            const values = $('#extendedPropertiesContainer input[name="extendedValue"]').map(function () {
+                return $(this).val();
+            }).get();
+
+            const extended = {};
+            keys.forEach((key, index) => {
+                if (key && index < values.length) {
+                    extended[key] = values[index];
+                }
+            });
+            formData['extended'] = extended;
+
+            submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
+            $('#editModal').modal('hide');
         });
     }
 </script>

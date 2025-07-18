@@ -253,45 +253,21 @@
 
 
     function initScopeSelect() {
-        $.ajax({
-            url: '/rule/datasource/scope',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                if (response.code === "0000") {
-                    response.data.forEach((value) => {
-                        $('#scope').append($('<option>', {value: value, text: value}));
-                        $('#editScope').append($('<option>', {value: value, text: value}));
-                    });
-                } else {
-                    showErrorToast("失败: " + response.msg);
-                }
-            },
-            error: function (xhr) {
-                showErrorToast("请求失败: " + xhr.responseJSON?.message || "未知错误");
-            }
-        });
+        httpClient('/rule/datasource/scope', 'GET', null, function (data) {
+            data.forEach((value) => {
+                $('#scope').append($('<option>', {value: value, text: value}));
+                $('#editScope').append($('<option>', {value: value, text: value}));
+            });
+        }, null);
     }
 
     function initTypeSelect() {
-        $.ajax({
-            url: '/rule/datasource/type',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                if (response.code === "0000") {
-                    response.data.forEach((value) => {
-                        $('#type').append($('<option>', {value: value, text: value}));
-                        $('#editType').append($('<option>', {value: value, text: value}));
-                    });
-                } else {
-                    showErrorToast("失败: " + response.msg);
-                }
-            },
-            error: function (xhr) {
-                showErrorToast("请求失败: " + xhr.responseJSON?.message || "未知错误");
-            }
-        });
+        httpClient('/rule/datasource/type', 'GET', null, function (data) {
+            data.forEach((value) => {
+                $('#type').append($('<option>', {value: value, text: value}));
+                $('#editType').append($('<option>', {value: value, text: value}));
+            });
+        }, null);
     }
 
     function showEditModal(url, created) {

@@ -97,6 +97,13 @@ function showDeleteModal(url) {
 }
 
 function submitFunction(url, methodType, data, actionName) {
+    httpClient(url, methodType, data, function (data) {
+        showSuccessToast(actionName + "成功");
+        refresh();
+    }, null);
+}
+
+function httpClient(url, methodType, data, success, error) {
     $.ajax({
         url: url,
         type: methodType,
@@ -104,14 +111,14 @@ function submitFunction(url, methodType, data, actionName) {
         data: data && JSON.stringify(data),
         success: function (response) {
             if (response.code === "0000") {
-                showSuccessToast(actionName + "成功");
-                refresh();
+                success(response.data);
             } else {
-                showErrorToast(actionName + "失败: " + response.msg);
+                showErrorToast("接口响应失败: " + response.msg);
+                error();
             }
         },
         error: function (xhr) {
-            showErrorToast(actionName + "请求失败: " + xhr.responseJSON?.message || "未知错误");
+            showErrorToast("接口请求失败: " + xhr.responseJSON?.message || "未知错误");
         }
     });
 }
@@ -157,26 +164,13 @@ function showToast(message, bgClass) {
 }
 
 function initRuleGroupSelect() {
-    $.ajax({
-        url: '/rule/group/map',
-        type: 'GET',
-        contentType: 'application/json',
-        success: function (response) {
-            if (response.code === "0000") {
-                const map = new Map(Object.entries(response.data));
-                map.forEach((value, key) => {
-                    $('#groupKey').append($('<option>', {value: key, text: value}))
-                    $('#editGroupKey').append($('<option>', {value: key, text: value}))
-                });
-
-            } else {
-                showErrorToast("失败: " + response.msg);
-            }
-        },
-        error: function (xhr) {
-            showErrorToast("请求失败: " + xhr.responseJSON?.message || "未知错误");
-        }
-    });
+    httpClient('/rule/group/map', 'GET', null, function (data) {
+        const map = new Map(Object.entries(data));
+        map.forEach((value, key) => {
+            $('#groupKey').append($('<option>', {value: key, text: value}))
+            $('#editGroupKey').append($('<option>', {value: key, text: value}))
+        });
+    }, null);
 }
 
 function groupKeyFormatter(arg) {

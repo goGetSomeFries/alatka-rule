@@ -61,15 +61,15 @@
         </div>
     </div>
     <div class="col-12 text-end">
-        <button type="button" class="btn btn-primary" id="addButton"
+        <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
                 onclick="showEditModal('/rule/group/create', true)">
             <i class="bi bi-search"></i> 新增
         </button>
-        <button type="button" class="btn btn-outline-warning" id="editButton"
+        <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
                 onclick="showEditModal('/rule/group/update', false)">
             <i class="bi bi-search"></i> 更新
         </button>
-        <button type="button" class="btn btn-danger" id="deleteButton"
+        <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
                 onclick="showDeleteModal('/rule/group/delete')">
             <i class="bi bi-search"></i> 删除
         </button>
@@ -166,24 +166,12 @@
     initTypeSelect();
 
     function initTypeSelect() {
-        $.ajax({
-            url: '/rule/group/type',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                if (response.code === "0000") {
-                    response.data.forEach((value) => {
-                        $('#type').append($('<option>', {value: value, text: value}));
-                        $('#editType').append($('<option>', {value: value, text: value}));
-                    });
-                } else {
-                    showErrorToast("失败: " + response.msg);
-                }
-            },
-            error: function (xhr) {
-                showErrorToast("请求失败: " + xhr.responseJSON?.message || "未知错误");
-            }
-        });
+        httpClient('/rule/group/type', 'GET', null, function (data) {
+            data.forEach((value) => {
+                $('#type').append($('<option>', {value: value, text: value}));
+                $('#editType').append($('<option>', {value: value, text: value}));
+            });
+        }, null);
     }
 </script>
 </body>

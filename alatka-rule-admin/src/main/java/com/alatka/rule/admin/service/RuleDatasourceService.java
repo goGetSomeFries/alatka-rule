@@ -78,6 +78,13 @@ public class RuleDatasourceService {
                 });
     }
 
+    public Map<String, String> getMap() {
+        RuleDatasourceDefinition condition = new RuleDatasourceDefinition();
+        condition.setEnabled(true);
+        List<RuleDatasourceDefinition> list = ruleDatasourceRepository.findAll(this.condition(condition));
+        return list.stream().collect(Collectors.toMap(RuleDatasourceDefinition::getKey, RuleDatasourceDefinition::getName));
+    }
+
     public List<String> getType() {
         return Arrays.stream(RuleDataSourceDefinition.Type.values())
                 .filter(type -> type != RuleDataSourceDefinition.Type.current)

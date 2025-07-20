@@ -163,6 +163,38 @@ function showToast(message, bgClass) {
     }, 3000);
 }
 
+function initExtended() {
+    $('#addExtendedBtn').click(function () {
+        const property =
+            `
+         <div class="extended-property row g-2 mb-2">
+             <div class="col-md-4">
+                 <label>
+                     <input type="text" class="form-control" name="extendedKey" placeholder="键"
+                            required>
+                 </label>
+             </div>
+             <div class="col-md-6">
+                 <label>
+                     <input type="text" class="form-control" name="extendedValue" placeholder="值"
+                            required>
+                 </label>
+             </div>
+             <div class="col-md-2 text-end">
+                 <button type="button" class="btn btn-sm btn-danger remove-extended">
+                     <i class="bi bi-trash"></i> 删除
+                 </button>
+             </div>
+         </div>
+       `;
+        $('#extendedPropertiesContainer').append(property);
+    });
+
+    $('#extendedPropertiesContainer').on('click', '.remove-extended', function () {
+        $(this).closest('.extended-property').remove();
+    });
+}
+
 function initRuleGroupSelect() {
     httpClient('/rule/group/map', 'GET', null, function (data) {
         const map = new Map(Object.entries(data));
@@ -179,6 +211,17 @@ function groupKeyFormatter(arg) {
         keyValuePairs[$(this).val()] = $(this).text();
     });
     return keyValuePairs[arg];
+}
+
+function detailFormatter(index, row) {
+    const map = new Map(Object.entries(row.extended));
+    const html = [];
+    html.push('<dl class="row">');
+    map.forEach((value, key) => {
+        html.push('<dt class="col-sm-2 text-end">' + key + ': </dt><dd class="col-sm-10">' + value + '</dd>');
+    })
+    html.push('</dl>');
+    return html.join('');
 }
 
 function enabledFormatter(arg) {

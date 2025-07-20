@@ -22,4 +22,9 @@ public class HtmlController {
     public String param() {
         return "param";
     }
+
+    @GetMapping("/rule")
+    public String rule() {
+        return "rule";
+    }
 }

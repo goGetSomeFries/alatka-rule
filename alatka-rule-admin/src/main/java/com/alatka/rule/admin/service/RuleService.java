@@ -47,6 +47,14 @@ public class RuleService {
         ruleEngine.validate(expression);
     }
 
+    public Map<String, String> getType() {
+        Map<String, String> map = new HashMap<>();
+        map.put("1", "规则");
+        map.put("2", "黑名单");
+        map.put("3", "白名单");
+        return map;
+    }
+
     public Map<String, String> build(RuleBuildReq ruleBuildReq) {
         List<String> uriList = ruleBuildReq.getUris();
         Map<String, String> resultMap = new HashMap<>(uriList.size());

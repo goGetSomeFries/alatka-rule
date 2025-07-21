@@ -9,18 +9,6 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.css}"/>
 </head>
 <body>
-<!-- 导航栏 -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-        <a class="navbar-brand" href="#" th:text="#{app.name}">MyApp</a>
-        <div class="navbar-nav">
-            <a class="nav-link active" href="#">首页</a>
-            <a class="nav-link" href="#">关于</a>
-            <a class="nav-link" href="#">联系我们</a>
-        </div>
-    </div>
-</nav>
-
 <div class="container mt-4">
     <div class="card mb-3">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
@@ -105,7 +93,6 @@
            data-striped="true"
            data-pagination="true"
            data-detail-view="true"
-           data-detail-view-by-click="true"
            data-detail-formatter="detailFormatter"
            data-pagination-loop="false"
            data-side-pagination="server"
@@ -241,6 +228,7 @@
     function showEditModal(url, created) {
         if (created) {
             $('#editForm')[0]?.reset();
+            $('#extendedPropertiesContainer').empty();
         } else {
             const selection = $('#dataTable').bootstrapTable('getSelections');
             if (selection.length !== 1) {

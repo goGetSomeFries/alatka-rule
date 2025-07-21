@@ -2,6 +2,7 @@ package com.alatka.rule.admin.service;
 
 
 import com.alatka.rule.admin.entity.RuleDatasourceDefinition;
+import com.alatka.rule.admin.entity.RuleDatasourceExtDefinition;
 import com.alatka.rule.admin.model.ruledatasource.RuleDatasourcePageReq;
 import com.alatka.rule.admin.model.ruledatasource.RuleDatasourceReq;
 import com.alatka.rule.admin.model.ruledatasource.RuleDatasourceRes;
@@ -72,7 +73,8 @@ public class RuleDatasourceService {
                     RuleDatasourceRes res = new RuleDatasourceRes();
                     BeanUtils.copyProperties(entity, res);
                     Map<String, String> extended = ruleDatasourceExtService.queryByDatasourceId(entity.getId()).stream()
-                            .collect(HashMap::new, (k, v) -> k.put(v.getKey(), v.getValue()), HashMap::putAll);
+                            .sorted(Comparator.comparing(RuleDatasourceExtDefinition::getKey))
+                            .collect(LinkedHashMap::new, (k, v) -> k.put(v.getKey(), v.getValue()), LinkedHashMap::putAll);
                     res.setExtended(extended);
                     return res;
                 });

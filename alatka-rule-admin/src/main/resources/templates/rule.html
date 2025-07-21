@@ -9,7 +9,8 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.css}"/>
 </head>
 <body>
-<!-- 导航栏 -->
+<!--
+&lt;!&ndash; 导航栏 &ndash;&gt;
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
         <a class="navbar-brand" href="#" th:text="#{app.name}">MyApp</a>
@@ -20,6 +21,7 @@
         </div>
     </div>
 </nav>
+-->
 
 <div class="container mt-4">
     <div class="card mb-3">
@@ -37,17 +39,17 @@
         <div class="card-body collapse show" id="cardCollapse">
             <form id="searchForm" class="row g-3">
                 <div class="col-md-3">
-                    <label for="type" class="form-label">类型</label>
-                    <select class="form-select" id="type" name="type">
-                    </select>
-                </div>
-                <div class="col-md-3">
                     <label for="name" class="form-label">名称</label>
                     <input type="text" class="form-control" id="name" name="name" placeholder="输入名称">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <label for="desc" class="form-label">描述</label>
                     <input type="text" class="form-control" id="desc" name="desc" placeholder="输入名称">
+                </div>
+                <div class="col-md-3">
+                    <label for="type" class="form-label">类型</label>
+                    <select class="form-select" id="type" name="type">
+                    </select>
                 </div>
                 <div class="col-md-3">
                     <label for="groupKey" class="form-label">规则组名称</label>
@@ -98,7 +100,6 @@
            data-striped="true"
            data-pagination="true"
            data-detail-view="true"
-           data-detail-view-by-click="true"
            data-detail-formatter="detailFormatter"
            data-pagination-loop="false"
            data-side-pagination="server"
@@ -152,15 +153,15 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="editPriority" class="form-label">优先级</label>
-                            <input type="text" class="form-control" id="editPriority" name="priority" required>
+                            <input type="number" class="form-control" id="editPriority" name="priority" value="0" required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="editScore" class="form-label">评分</label>
-                            <input type="text" class="form-control" id="editScore" name="score" required>
+                            <input type="number" class="form-control" id="editScore" name="score" value="0" required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="editOrder" class="form-label">顺序</label>
-                            <input type="text" class="form-control" id="editOrder" name="order" required>
+                            <input type="number" class="form-control" id="editOrder" name="order" value="0" required>
                         </div>
                     </div>
                     <div class="row">
@@ -245,6 +246,7 @@
     function showEditModal(url, created) {
         if (created) {
             $('#editForm')[0]?.reset();
+            $('#extendedPropertiesContainer').empty();
         } else {
             const selection = $('#dataTable').bootstrapTable('getSelections');
             if (selection.length !== 1) {

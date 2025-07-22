@@ -30,7 +30,10 @@ $("#dataTable").bootstrapTable({
     responseHandler: function (res) {
         if (res.code !== "0000") {
             console.log("接口错误, " + res.msg);
-            return;
+            return {
+                total: 0,
+                rows: []
+            };
         }
         return {
             total: res.totalRecords,
@@ -71,13 +74,20 @@ function showEditModal(url, created) {
     }
 
     $('#editModal').modal('show');
-    $('#saveEditBtn').off('click').on('click', function () {
+    $('#saveEditBtn').off('click').on('click', function (event) {
         const formData = {};
-        $('#editForm').serializeArray().forEach(item => {
-            formData[item.name] = item.value;
-        });
-        submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
-        $('#editModal').modal('hide');
+        const $editForm = $('#editForm');
+        if (!$editForm[0].checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            $editForm.addClass('was-validated');
+        } else {
+            $editForm.serializeArray().forEach(item => {
+                formData[item.name] = item.value;
+            });
+            submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
+            $('#editModal').modal('hide');
+        }
     });
 }
 
@@ -100,10 +110,11 @@ function submitFunction(url, methodType, data, actionName) {
     httpClient(url, methodType, data, function (data) {
         showSuccessToast(actionName + "成功");
         refresh();
-    }, null);
+    });
 }
 
-function httpClient(url, methodType, data, success, error) {
+function httpClient(url, methodType, data, success, error = function () {
+}) {
     $.ajax({
         url: url,
         type: methodType,
@@ -202,7 +213,7 @@ function initRuleGroupSelect() {
             $('#groupKey').append($('<option>', {value: key, text: value}))
             $('#editGroupKey').append($('<option>', {value: key, text: value}))
         });
-    }, null);
+    });
 }
 
 function groupKeyFormatter(arg) {

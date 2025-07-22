@@ -213,7 +213,7 @@
                 $('#scope').append($('<option>', {value: value, text: value}));
                 $('#editScope').append($('<option>', {value: value, text: value}));
             });
-        }, null);
+        });
     }
 
     function initTypeSelect() {
@@ -222,7 +222,7 @@
                 $('#type').append($('<option>', {value: value, text: value}));
                 $('#editType').append($('<option>', {value: value, text: value}));
             });
-        }, null);
+        });
     }
 
     function showEditModal(url, created) {
@@ -279,32 +279,39 @@
 
         $('#editModal').modal('show');
 
-        $('#saveEditBtn').off('click').on('click', function () {
+        $('#saveEditBtn').off('click').on('click', function (event) {
             const formData = {};
-            $('#editForm').serializeArray()
-                .filter(item => {
-                    return item.name !== 'extendedKey'
-                        && item.name !== 'extendedValue';
-                }).forEach(item => {
-                formData[item.name] = item.value;
-            });
-            const keys = $('#extendedPropertiesContainer input[name="extendedKey"]').map(function () {
-                return $(this).val();
-            }).get();
-            const values = $('#extendedPropertiesContainer input[name="extendedValue"]').map(function () {
-                return $(this).val();
-            }).get();
+            const $editForm = $('#editForm');
+            if (!$editForm[0].checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                $editForm.addClass('was-validated');
+            } else {
+                $editForm.serializeArray()
+                    .filter(item => {
+                        return item.name !== 'extendedKey'
+                            && item.name !== 'extendedValue';
+                    }).forEach(item => {
+                    formData[item.name] = item.value;
+                });
+                const keys = $('#extendedPropertiesContainer input[name="extendedKey"]').map(function () {
+                    return $(this).val();
+                }).get();
+                const values = $('#extendedPropertiesContainer input[name="extendedValue"]').map(function () {
+                    return $(this).val();
+                }).get();
 
-            const extended = {};
-            keys.forEach((key, index) => {
-                if (key && index < values.length) {
-                    extended[key] = values[index];
-                }
-            });
-            formData['extended'] = extended;
+                const extended = {};
+                keys.forEach((key, index) => {
+                    if (key && index < values.length) {
+                        extended[key] = values[index];
+                    }
+                });
+                formData['extended'] = extended;
 
-            submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
-            $('#editModal').modal('hide');
+                submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
+                $('#editModal').modal('hide');
+            }
         });
     }
 </script>

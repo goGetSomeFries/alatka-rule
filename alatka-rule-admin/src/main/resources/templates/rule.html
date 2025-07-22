@@ -120,6 +120,61 @@
         </tr>
         </thead>
     </table>
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h3 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                        aria-expanded="true" aria-controls="collapseOne">
+                    Accordion Item #1
+                </button>
+            </h3>
+            <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <strong>This is the first item’s accordion body.</strong> It is shown by default, until the collapse
+                    plugin adds the appropriate classes that we use to style each element. These classes control the
+                    overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of
+                    this with custom CSS or overriding our default variables. It’s also worth noting that just about any
+                    HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Accordion Item #2
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <strong>This is the second item’s accordion body.</strong> It is hidden by default, until the
+                    collapse plugin adds the appropriate classes that we use to style each element. These classes
+                    control the overall appearance, as well as the showing and hiding via CSS transitions. You can
+                    modify any of this with custom CSS or overriding our default variables. It’s also worth noting that
+                    just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit
+                    overflow.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Accordion Item #3
+                </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <strong>This is the third item’s accordion body.</strong> It is hidden by default, until the
+                    collapse plugin adds the appropriate classes that we use to style each element. These classes
+                    control the overall appearance, as well as the showing and hiding via CSS transitions. You can
+                    modify any of this with custom CSS or overriding our default variables. It’s also worth noting that
+                    just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit
+                    overflow.
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
@@ -133,15 +188,15 @@
                 <form id="editForm">
                     <input type="hidden" id="editId" name="id">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="editType" class="form-label">类型</label>
                             <select class="form-select" id="editType" name="type" required>
                             </select>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div风险账户9星 class="col-md-8 mb-3">
                             <label for="editName" class="form-label">名称</label>
                             <input type="text" class="form-control" id="editName" name="name" required>
-                        </div>
+                        </div风险账户9星>
                     </div>
                     <div class="row">
                         <div class="col-md-12 mb-3">
@@ -153,7 +208,8 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="editPriority" class="form-label">优先级</label>
-                            <input type="number" class="form-control" id="editPriority" name="priority" value="0" required>
+                            <input type="number" class="form-control" id="editPriority" name="priority" value="0"
+                                   required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="editScore" class="form-label">评分</label>
@@ -232,7 +288,7 @@
                 $('#type').append($('<option>', {value: key, text: value}))
                 $('#editType').append($('<option>', {value: key, text: value}))
             });
-        }, null);
+        });
     }
 
     function typeFormatter(arg) {
@@ -297,32 +353,39 @@
 
         $('#editModal').modal('show');
 
-        $('#saveEditBtn').off('click').on('click', function () {
+        $('#saveEditBtn').off('click').on('click', function (event) {
             const formData = {};
-            $('#editForm').serializeArray()
-                .filter(item => {
-                    return item.name !== 'extendedKey'
-                        && item.name !== 'extendedValue';
-                }).forEach(item => {
-                formData[item.name] = item.value;
-            });
-            const keys = $('#extendedPropertiesContainer input[name="extendedKey"]').map(function () {
-                return $(this).val();
-            }).get();
-            const values = $('#extendedPropertiesContainer input[name="extendedValue"]').map(function () {
-                return $(this).val();
-            }).get();
+            const $editForm = $('#editForm');
+            if (!$editForm[0].checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                $editForm.addClass('was-validated');
+            } else {
+                $editForm.serializeArray()
+                    .filter(item => {
+                        return item.name !== 'extendedKey'
+                            && item.name !== 'extendedValue';
+                    }).forEach(item => {
+                    formData[item.name] = item.value;
+                });
+                const keys = $('#extendedPropertiesContainer input[name="extendedKey"]').map(function () {
+                    return $(this).val();
+                }).get();
+                const values = $('#extendedPropertiesContainer input[name="extendedValue"]').map(function () {
+                    return $(this).val();
+                }).get();
 
-            const extended = {};
-            keys.forEach((key, index) => {
-                if (key && index < values.length) {
-                    extended[key] = values[index];
-                }
-            });
-            formData['extended'] = extended;
+                const extended = {};
+                keys.forEach((key, index) => {
+                    if (key && index < values.length) {
+                        extended[key] = values[index];
+                    }
+                });
+                formData['extended'] = extended;
 
-            submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
-            $('#editModal').modal('hide');
+                submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
+                $('#editModal').modal('hide');
+            }
         });
     }
 </script>

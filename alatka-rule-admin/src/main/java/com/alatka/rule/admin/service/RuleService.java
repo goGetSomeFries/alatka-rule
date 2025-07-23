@@ -46,7 +46,7 @@ public class RuleService {
     }
 
     public Map<String, String> getType() {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new LinkedHashMap<>();
         map.put("1", "规则");
         map.put("2", "黑名单");
         map.put("3", "白名单");

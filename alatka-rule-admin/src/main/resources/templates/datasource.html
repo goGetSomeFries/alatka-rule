@@ -47,7 +47,7 @@
                 <div class="col-md-3">
                     <label for="groupKey" class="form-label">规则组名称</label>
                     <select class="form-select" id="groupKey" name="groupKey">
-                        <option value="default_" selected>默认</option>
+                        <option value="default_">默认</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -205,6 +205,7 @@
     initRuleGroupSelect();
     initTypeSelect();
     initScopeSelect();
+    initTable();
     initExtended();
 
     function initScopeSelect() {

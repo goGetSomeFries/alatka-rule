@@ -161,6 +161,7 @@
 <script th:src="@{/js/table.js}"></script>
 <script>
     initTypeSelect();
+    initTable();
 
     function initTypeSelect() {
         httpClient('/rule/group/type', 'GET', null, function (data) {

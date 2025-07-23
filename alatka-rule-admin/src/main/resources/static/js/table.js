@@ -1,46 +1,48 @@
-$("#dataTable").bootstrapTable({
-    // 远程数据加载失败时
-    onLoadError: function (status) {
-        console.log("调用失败, http code: " + status)
-    },
+function initTable() {
+    $("#dataTable").bootstrapTable({
+        // 远程数据加载失败时
+        onLoadError: function (status) {
+            console.log("接口请求失败, http code: " + status)
+        },
 
-    queryParams: function (params) {
-        const formData = new FormData($('#searchForm')[0]);
-        const searchData = {};
-        formData.forEach((value, key) => {
-            if (searchData.hasOwnProperty(key)) {
-                if (!Array.isArray(searchData[key])) {
-                    searchData[key] = [searchData[key]];
+        queryParams: function (params) {
+            const formData = new FormData($('#searchForm')[0]);
+            const searchData = {};
+            formData.forEach((value, key) => {
+                if (searchData.hasOwnProperty(key)) {
+                    if (!Array.isArray(searchData[key])) {
+                        searchData[key] = [searchData[key]];
+                    }
+                    searchData[key].push(value);
+                } else if (value) {
+                    searchData[key] = value;
                 }
-                searchData[key].push(value);
-            } else if (value) {
-                searchData[key] = value;
-            }
-        });
+            });
 
-        return {
-            pageNo: params.offset / params.limit + 1,
-            pageSize: params.limit,
-            orderBy: params.sort,
-            direction: params.order,
-            ...searchData
-        }
-    },
-
-    responseHandler: function (res) {
-        if (res.code !== "0000") {
-            console.log("接口错误, " + res.msg);
             return {
-                total: 0,
-                rows: []
+                pageNo: params.offset / params.limit + 1,
+                pageSize: params.limit,
+                orderBy: params.sort,
+                direction: params.order,
+                ...searchData
+            }
+        },
+
+        responseHandler: function (res) {
+            if (res.code !== "0000") {
+                showErrorToast("接口响应失败: " + res.msg);
+                return {
+                    total: 0,
+                    rows: []
+                };
+            }
+            return {
+                total: res.totalRecords,
+                rows: res.data
             };
         }
-        return {
-            total: res.totalRecords,
-            rows: res.data
-        };
-    }
-})
+    })
+}
 
 $("#resetButton").click(function () {
     $("#searchForm")[0].reset();
@@ -155,6 +157,8 @@ function showWarningToast(message) {
 }
 
 function showToast(message, bgClass) {
+    $('.toast').remove();
+
     const toastHtml = `
         <div class="toast align-items-center text-white ${bgClass} border-0 position-fixed top-20 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
@@ -166,12 +170,18 @@ function showToast(message, bgClass) {
         </div>
     `;
 
-    $(toastHtml).appendTo('body').toast({autohide: true, delay: 3000}).toast('show');
+    const $toast = $(toastHtml).appendTo('body');
 
-    // 自动移除
-    setTimeout(() => {
-        $('.toast').remove();
-    }, 3000);
+    // 初始化并显示 toast
+    $toast.toast({
+        autohide: true,
+        delay: 3000
+    }).toast('show');
+
+    // 自动移除 toast 当隐藏时
+    $toast.on('hidden.bs.toast', function () {
+        $(this).remove();
+    });
 }
 
 function initExtended() {

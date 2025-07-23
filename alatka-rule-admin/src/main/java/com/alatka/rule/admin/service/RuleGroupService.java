@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,7 +74,12 @@ public class RuleGroupService {
         RuleGroupDefinition condition = new RuleGroupDefinition();
         condition.setEnabled(true);
         List<RuleGroupDefinition> list = ruleGroupRepository.findAll(this.condition(condition));
-        return list.stream().collect(Collectors.toMap(RuleGroupDefinition::getKey, RuleGroupDefinition::getName));
+        return list.stream()
+                .sorted(Comparator.comparing(RuleGroupDefinition::getId))
+                .collect(Collectors.toMap(RuleGroupDefinition::getKey,
+                        RuleGroupDefinition::getName,
+                        (o, n) -> n,
+                        LinkedHashMap::new));
     }
 
     public List<String> getType() {

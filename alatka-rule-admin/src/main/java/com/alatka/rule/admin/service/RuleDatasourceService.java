@@ -80,12 +80,12 @@ public class RuleDatasourceService {
                 });
     }
 
-    public Map<String, String> getMap(String groupKey) {
+    public Map<String, Map<String, String>> getMap() {
         RuleDatasourceDefinition condition = new RuleDatasourceDefinition();
         condition.setEnabled(true);
-        condition.setGroupKey(groupKey);
         List<RuleDatasourceDefinition> list = ruleDatasourceRepository.findAll(this.condition(condition));
-        return list.stream().collect(Collectors.toMap(RuleDatasourceDefinition::getKey, RuleDatasourceDefinition::getName));
+        return list.stream().collect(Collectors.groupingBy(RuleDatasourceDefinition::getGroupKey,
+                Collectors.toMap(RuleDatasourceDefinition::getKey, RuleDatasourceDefinition::getName)));
     }
 
     public List<String> getType() {

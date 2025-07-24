@@ -50,9 +50,8 @@ public class RuleDatasourceController {
 
     @Operation(summary = "外部数据源kv")
     @GetMapping("/map")
-    @Parameter(name = "groupKey", description = "规则组标识", required = true)
-    public ResMessage<Map<String, String>> getMap(@RequestParam String groupKey) {
-        return ResMessage.success(ruleDatasourceService.getMap(groupKey));
+    public ResMessage<Map<String, Map<String, String>>> getMap() {
+        return ResMessage.success(ruleDatasourceService.getMap());
     }
 
     @Operation(summary = "外部数据源类型")

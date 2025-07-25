@@ -1,8 +1,7 @@
 function initTable() {
     $("#dataTable").bootstrapTable({
-        // 远程数据加载失败时
         onLoadError: function (status) {
-            console.log("接口请求失败, http code: " + status)
+            showErrorToast("接口请求失败, http code: " + status)
         },
 
         queryParams: function (params) {
@@ -93,6 +92,72 @@ function showEditModal(url, created) {
     });
 }
 
+function showEditModalWithExtendedProperties(url, created) {
+    if (created) {
+        $('#editForm')[0]?.reset();
+        $('#extendedPropertiesContainer').empty();
+    } else {
+        const selections = $('#dataTable').bootstrapTable('getSelections');
+        if (selections.length !== 1) {
+            showWarningToast("请选择一条记录");
+            return;
+        }
+
+        const row = selections[0];
+        Object.keys(row).forEach(field => {
+            const $input = $(`#editForm [name="${field}"], #editForm #${field}`);
+            if ($input.length) {
+                let value = row[field];
+                if (typeof value === 'boolean') {
+                    value = value ? 'true' : 'false';
+                }
+                $input.val(value);
+            }
+        });
+
+        $('#extendedPropertiesContainer').empty();
+        const map = new Map(Object.entries(row.extended));
+        map.forEach((value, key) => buildExtendedProperties(key, value));
+    }
+
+    $('#editModal').modal('show');
+
+    $('#saveEditBtn').off('click').on('click', function (event) {
+        const formData = {};
+        const $editForm = $('#editForm');
+        if (!$editForm[0].checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            $editForm.addClass('was-validated');
+        } else {
+            $editForm.serializeArray()
+                .filter(item => {
+                    return item.name !== 'extendedKey'
+                        && item.name !== 'extendedValue';
+                }).forEach(item => {
+                formData[item.name] = item.value;
+            });
+            const keys = $('#extendedPropertiesContainer input[name="extendedKey"]').map(function () {
+                return $(this).val();
+            }).get();
+            const values = $('#extendedPropertiesContainer input[name="extendedValue"]').map(function () {
+                return $(this).val();
+            }).get();
+
+            const extended = {};
+            keys.forEach((key, index) => {
+                if (key && index < values.length) {
+                    extended[key] = values[index];
+                }
+            });
+            formData['extended'] = extended;
+
+            submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
+            $('#editModal').modal('hide');
+        }
+    });
+}
+
 function showDeleteModal(url) {
     const selections = $('#dataTable').bootstrapTable('getSelections');
     if (selections.length !== 1) {
@@ -115,7 +180,8 @@ function submitFunction(url, methodType, data, actionName) {
     });
 }
 
-function httpClient(url, methodType, data, success, error = function () {
+function httpClient(url, methodType, data, success, error = function (msg) {
+    showErrorToast("接口响应失败: " + msg);
 }) {
     $.ajax({
         url: url,
@@ -126,8 +192,7 @@ function httpClient(url, methodType, data, success, error = function () {
             if (response.code === "0000") {
                 success(response.data);
             } else {
-                showErrorToast("接口响应失败: " + response.msg);
-                error();
+                error(response.msg);
             }
         },
         error: function (xhr) {
@@ -160,7 +225,7 @@ function showToast(message, bgClass) {
     $('.toast').remove();
 
     const toastHtml = `
-        <div class="toast align-items-center text-white ${bgClass} border-0 position-fixed top-20 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast align-items-center text-white ${bgClass} border-0 position-fixed translate-middle-y end-0 top-50 m-3" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
                     ${message}
@@ -184,21 +249,28 @@ function showToast(message, bgClass) {
     });
 }
 
-function initExtended() {
+function initExtendedProperties() {
     $('#addExtendedBtn').click(function () {
-        const property =
-            `
+        buildExtendedProperties();
+    });
+
+    $('#extendedPropertiesContainer').on('click', '.remove-extended', function () {
+        $(this).closest('.extended-property').remove();
+    });
+}
+
+function buildExtendedProperties(key = '', value = '') {
+    const property =
+        `
          <div class="extended-property row g-2 mb-2">
              <div class="col-md-4">
                  <label>
-                     <input type="text" class="form-control" name="extendedKey" placeholder="键"
-                            required>
+                     <input type="text" class="form-control" name="extendedKey" placeholder="键" value="${key}" required>
                  </label>
              </div>
              <div class="col-md-6">
                  <label>
-                     <input type="text" class="form-control" name="extendedValue" placeholder="值"
-                            required>
+                     <input type="text" class="form-control" name="extendedValue" placeholder="值" value="${value}">
                  </label>
              </div>
              <div class="col-md-2 text-end">
@@ -208,20 +280,14 @@ function initExtended() {
              </div>
          </div>
        `;
-        $('#extendedPropertiesContainer').append(property);
-    });
-
-    $('#extendedPropertiesContainer').on('click', '.remove-extended', function () {
-        $(this).closest('.extended-property').remove();
-    });
+    $('#extendedPropertiesContainer').append(property);
 }
 
 function initRuleGroupSelect() {
     httpClient('/rule/group/map', 'GET', null, function (data) {
         const map = new Map(Object.entries(data));
         map.forEach((value, key) => {
-            $('#groupKey').append($('<option>', {value: key, text: value}))
-            $('#editGroupKey').append($('<option>', {value: key, text: value}))
+            $('.alk-select-groupKey').append($('<option>', {value: key, text: value}))
         });
     });
 }

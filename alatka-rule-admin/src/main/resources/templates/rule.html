@@ -14,20 +14,6 @@
     </style>
 </head>
 <body>
-<!--
-&lt;!&ndash; 导航栏 &ndash;&gt;
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-        <a class="navbar-brand" href="#" th:text="#{app.name}">MyApp</a>
-        <div class="navbar-nav">
-            <a class="nav-link active" href="#">首页</a>
-            <a class="nav-link" href="#">关于</a>
-            <a class="nav-link" href="#">联系我们</a>
-        </div>
-    </div>
-</nav>
--->
-
 <div class="container mt-4">
     <div class="card mb-3">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
@@ -53,13 +39,13 @@
                 </div>
                 <div class="col-md-3">
                     <label for="type" class="form-label">类型</label>
-                    <select class="form-select" id="type" name="type">
+                    <select class="form-select alk-select-type" id="type" name="type">
                         <option value="">全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="groupKey" class="form-label">规则组名称</label>
-                    <select class="form-select" id="groupKey" name="groupKey">
+                    <select class="form-select alk-select-groupKey" id="groupKey" name="groupKey">
                         <option value="default_">默认</option>
                     </select>
                 </div>
@@ -84,11 +70,11 @@
     </div>
     <div class="col-12 text-end mb-3">
         <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
-                onclick="showEditModal('/rule/create', true)">
+                onclick="showEditModalWithExtendedProperties('/rule/create', true)">
             <i class="bi bi-plus-lg"></i> 新增
         </button>
         <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
-                onclick="showEditModal('/rule/update', false)">
+                onclick="showEditModalWithExtendedProperties('/rule/update', false)">
             <i class="bi bi-pencil-square"></i> 更新
         </button>
         <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
@@ -126,7 +112,7 @@
         </tr>
         </thead>
     </table>
-    <div class="card">
+    <div class="card mt-1">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="mb-0">规则单元</h6>
             <div>
@@ -164,7 +150,7 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="editType" class="form-label">类型</label>
-                            <select class="form-select" id="editType" name="type" required>
+                            <select class="form-select alk-select-type" id="editType" name="type" required>
                             </select>
                         </div>
                         <div class="col-md-8 mb-3">
@@ -197,7 +183,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="editGroupKey" class="form-label">规则组名称</label>
-                            <select class="form-select" id="editGroupKey" name="groupKey" required>
+                            <select class="form-select alk-select-groupKey" id="editGroupKey" name="groupKey" required>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -258,12 +244,15 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label for="editUnitExpression" class="form-label">表达式</label>
-                            <textarea class="form-control" rows="3" id="editUnitExpression" name="expression"
-                                      required></textarea>
-                        </div>
+                    <div class="col-md-12 mb-3">
+                        <label for="editUnitExpression"
+                               class="form-label d-flex justify-content-between align-items-center">表达式
+                            <button type="button" class="btn btn-sm btn-outline-info" onclick="validateExpression()">
+                                <i class="bi bi-check-circle"></i> 校验
+                            </button>
+                        </label>
+                        <textarea class="form-control" rows="5" id="editUnitExpression" name="expression"
+                                  required></textarea>
                     </div>
                 </form>
             </div>
@@ -302,23 +291,38 @@
     initTypeSelect();
     initTable();
     initTableRowEvent();
-    initExtended();
+    initExtendedProperties();
     initDatasourceMapping();
 
     function initTypeSelect() {
         httpClient('/rule/type', 'GET', null, function (data) {
             const map = new Map(Object.entries(data));
             map.forEach((value, key) => {
-                $('#type').append($('<option>', {value: key, text: value}))
-                $('#editType').append($('<option>', {value: key, text: value}))
+                $('.alk-select-type').append($('<option>', {value: key, text: value}))
             });
+        });
+    }
+
+    function initDatasourceSelect(groupKey) {
+        const $editUnitDatasourceKey = $('#editUnitDatasourceKey');
+        $editUnitDatasourceKey.empty();
+        $editUnitDatasourceKey.append($('<option>', {value: '', text: '无'}))
+        const mapping = getDatasourceMapping(groupKey);
+        mapping.forEach((value, key) => {
+            $editUnitDatasourceKey.append($('<option>', {value: key, text: key + ' : ' + value}))
         });
     }
 
     function initDatasourceMapping() {
         httpClient('/rule/datasource/map', 'GET', null, function (data) {
-            $('#editUnitModal').data('datasource-mapping', JSON.stringify(data));
+            $('#ruleUnitList').data('datasource-mapping', JSON.stringify(data));
         });
+    }
+
+    function getDatasourceMapping(groupKey) {
+        const datasourceMapping = $('#ruleUnitList').data('datasource-mapping');
+        const mapping = new Map(Object.entries(JSON.parse(datasourceMapping))).get(groupKey);
+        return new Map(Object.entries(mapping));
     }
 
     function initTableRowEvent() {
@@ -340,107 +344,15 @@
         return keyValuePairs[arg];
     }
 
-    function showEditModal(url, created) {
-        if (created) {
-            $('#editForm')[0]?.reset();
-            $('#extendedPropertiesContainer').empty();
-        } else {
-            const selection = $('#dataTable').bootstrapTable('getSelections');
-            if (selection.length !== 1) {
-                showWarningToast("请选择一条记录进行编辑");
-                return;
-            }
-
-            const row = selection[0];
-            Object.keys(row).forEach(field => {
-                const $input = $(`#editForm [name="${field}"], #editForm #${field}`);
-                if ($input.length) {
-                    let value = row[field];
-                    if (typeof value === 'boolean') {
-                        value = value ? 'true' : 'false';
-                    }
-                    $input.val(value);
-                }
-            });
-
-            $('#extendedPropertiesContainer').empty();
-            const map = new Map(Object.entries(row.extended));
-            map.forEach((value, key) => {
-                const property =
-                    `
-                    <div class="extended-property row g-2 mb-2">
-                        <div class="col-md-4">
-                            <label>
-                                <input type="text" class="form-control" name="extendedKey" placeholder="键" value="${key}"
-                                       required>
-                            </label>
-                        </div>
-                        <div class="col-md-6">
-                            <label>
-                                <input type="text" class="form-control" name="extendedValue" placeholder="值" value="${value}"
-                                       required>
-                            </label>
-                        </div>
-                        <div class="col-md-2 text-end">
-                            <button type="button" class="btn btn-sm btn-danger remove-extended">
-                                <i class="bi bi-trash"></i> 删除
-                            </button>
-                        </div>
-                    </div>
-                  `;
-                $('#extendedPropertiesContainer').append(property);
-            });
-        }
-
-        $('#editModal').modal('show');
-
-        $('#saveEditBtn').off('click').on('click', function (event) {
-            const formData = {};
-            const $editForm = $('#editForm');
-            if (!$editForm[0].checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-                $editForm.addClass('was-validated');
-            } else {
-                $editForm.serializeArray()
-                    .filter(item => {
-                        return item.name !== 'extendedKey'
-                            && item.name !== 'extendedValue';
-                    }).forEach(item => {
-                    formData[item.name] = item.value;
-                });
-                const keys = $('#extendedPropertiesContainer input[name="extendedKey"]').map(function () {
-                    return $(this).val();
-                }).get();
-                const values = $('#extendedPropertiesContainer input[name="extendedValue"]').map(function () {
-                    return $(this).val();
-                }).get();
-
-                const extended = {};
-                keys.forEach((key, index) => {
-                    if (key && index < values.length) {
-                        extended[key] = values[index];
-                    }
-                });
-                formData['extended'] = extended;
-
-                submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
-                $('#editModal').modal('hide');
-            }
-        });
-    }
-
     function showEditUnitModal(url, created) {
-        const row = $('#dataTable').bootstrapTable('getSelections')[0];
+        const selections = $('#dataTable').bootstrapTable('getSelections');
+        if (selections.length !== 1) {
+            showWarningToast("请选择一条记录");
+            return;
+        }
+        const row = selections[0];
 
-        const datasourceMapping = $('#editUnitModal').data('datasource-mapping');
-        const mapping = new Map(Object.entries(JSON.parse(datasourceMapping))).get(row.groupKey);
-        const $editUnitDatasourceKey = $('#editUnitDatasourceKey');
-        $editUnitDatasourceKey.empty();
-        $editUnitDatasourceKey.append($('<option>', {value: '', text: '无'}))
-        new Map(Object.entries(mapping)).forEach((value, key) => {
-            $editUnitDatasourceKey.append($('<option>', {value: key, text: value}))
-        });
+        initDatasourceSelect(row.groupKey);
 
         if (created) {
             $('#editUnitForm')[0]?.reset();
@@ -450,7 +362,7 @@
         } else {
             const selection = $(".list-group-item.light-active");
             if (selection.length !== 1) {
-                showWarningToast("请选择一条记录进行编辑");
+                showWarningToast("请选择一条记录");
                 return;
             }
             $('#editUnitId').val(selection.data('id'));
@@ -500,8 +412,7 @@
     }
 
     function buildUnits(groupKey, ruleId) {
-        const datasourceMapping = $('#editUnitModal').data('datasource-mapping');
-        const mapping = new Map(Object.entries(JSON.parse(datasourceMapping))).get(groupKey);
+        const mapping = getDatasourceMapping(groupKey);
 
         $('#ruleUnitList').empty();
         httpClient('/rule/unit/list?ruleId=' + ruleId, 'GET', null, function (data) {
@@ -510,7 +421,7 @@
             } else {
                 data.forEach(field => {
                     const status = enabledFormatter(field.enabled);
-                    const datasource = field.datasourceKey ? field.datasourceKey + ' : ' + new Map(Object.entries(mapping)).get(field.datasourceKey) : '无';
+                    const datasource = field.datasourceKey ? field.datasourceKey + ' : ' + mapping.get(field.datasourceKey) : '无';
                     const property = `
                       <li class="list-group-item"
                       data-id="${field.id}"
@@ -533,6 +444,19 @@
         });
     }
 
+    function validateExpression() {
+        const value = $('#editUnitExpression').val();
+        if (!value) {
+            showWarningToast("表达式不能为空");
+        } else {
+            httpClient('/rule/validate', 'PUT', value,
+                function (data) {
+                    showSuccessToast("表达式校验通过");
+                }, function (msg) {
+                    showErrorToast("表达式校验失败: " + msg);
+                });
+        }
+    }
 </script>
 </body>
 </html>

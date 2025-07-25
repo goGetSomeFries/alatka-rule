@@ -34,7 +34,7 @@
                 </div>
                 <div class="col-md-3">
                     <label for="type" class="form-label">类型</label>
-                    <select class="form-select" id="type" name="type">
+                    <select class="form-select alk-select-type" id="type" name="type">
                         <option value="">全部</option>
                     </select>
                 </div>
@@ -117,7 +117,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="editType" class="form-label">类型</label>
-                        <select class="form-select" id="editType" name="type" required>
+                        <select class="form-select alk-select-type" id="editType" name="type" required>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -166,8 +166,7 @@
     function initTypeSelect() {
         httpClient('/rule/group/type', 'GET', null, function (data) {
             data.forEach((value) => {
-                $('#type').append($('<option>', {value: value, text: value}));
-                $('#editType').append($('<option>', {value: value, text: value}));
+                $('.alk-select-type').append($('<option>', {value: value, text: value}));
             });
         });
     }

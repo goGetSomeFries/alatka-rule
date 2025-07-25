@@ -34,19 +34,19 @@
                 </div>
                 <div class="col-md-3">
                     <label for="type" class="form-label">类型</label>
-                    <select class="form-select" id="type" name="type">
+                    <select class="form-select alk-select-type" id="type" name="type">
                         <option value="">全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="scope" class="form-label">数据范围</label>
-                    <select class="form-select" id="scope" name="scope">
+                    <select class="form-select alk-select-scope" id="scope" name="scope">
                         <option value="">全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="groupKey" class="form-label">规则组名称</label>
-                    <select class="form-select" id="groupKey" name="groupKey">
+                    <select class="form-select alk-select-groupKey" id="groupKey" name="groupKey">
                         <option value="default_">默认</option>
                     </select>
                 </div>
@@ -71,11 +71,11 @@
     </div>
     <div class="col-12 text-end mb-3">
         <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
-                onclick="showEditModal('/rule/datasource/create', true)">
+                onclick="showEditModalWithExtendedProperties('/rule/datasource/create', true)">
             <i class="bi bi-plus-lg"></i> 新增
         </button>
         <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
-                onclick="showEditModal('/rule/datasource/update', false)">
+                onclick="showEditModalWithExtendedProperties('/rule/datasource/update', false)">
             <i class="bi bi-pencil-square"></i> 更新
         </button>
         <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
@@ -136,19 +136,19 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="editType" class="form-label">类型</label>
-                            <select class="form-select" id="editType" name="type" required>
+                            <select class="form-select alk-select-type" id="editType" name="type" required>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="editScope" class="form-label">数据范围</label>
-                            <select class="form-select" id="editScope" name="scope" required>
+                            <select class="form-select alk-select-scope" id="editScope" name="scope" required>
                             </select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="editGroupKey" class="form-label">规则组名称</label>
-                            <select class="form-select" id="editGroupKey" name="groupKey" required>
+                            <select class="form-select alk-select-groupKey" id="editGroupKey" name="groupKey" required>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -206,13 +206,12 @@
     initTypeSelect();
     initScopeSelect();
     initTable();
-    initExtended();
+    initExtendedProperties();
 
     function initScopeSelect() {
         httpClient('/rule/datasource/scope', 'GET', null, function (data) {
             data.forEach((value) => {
-                $('#scope').append($('<option>', {value: value, text: value}));
-                $('#editScope').append($('<option>', {value: value, text: value}));
+                $('.alk-select-scope').append($('<option>', {value: value, text: value}));
             });
         });
     }
@@ -220,101 +219,11 @@
     function initTypeSelect() {
         httpClient('/rule/datasource/type', 'GET', null, function (data) {
             data.forEach((value) => {
-                $('#type').append($('<option>', {value: value, text: value}));
-                $('#editType').append($('<option>', {value: value, text: value}));
+                $('.alk-select-type').append($('<option>', {value: value, text: value}));
             });
         });
     }
 
-    function showEditModal(url, created) {
-        if (created) {
-            $('#editForm')[0]?.reset();
-            $('#extendedPropertiesContainer').empty();
-        } else {
-            const selection = $('#dataTable').bootstrapTable('getSelections');
-            if (selection.length !== 1) {
-                showWarningToast("请选择一条记录进行编辑");
-                return;
-            }
-
-            const row = selection[0];
-            Object.keys(row).forEach(field => {
-                const $input = $(`#editForm [name="${field}"], #editForm #${field}`);
-                if ($input.length) {
-                    let value = row[field];
-                    if (typeof value === 'boolean') {
-                        value = value ? 'true' : 'false';
-                    }
-                    $input.val(value);
-                }
-            });
-
-            $('#extendedPropertiesContainer').empty();
-            const map = new Map(Object.entries(row.extended));
-            map.forEach((value, key) => {
-                const property =
-                    `
-                    <div class="extended-property row g-2 mb-2">
-                        <div class="col-md-4">
-                            <label>
-                                <input type="text" class="form-control" name="extendedKey" placeholder="键" value="${key}"
-                                       required>
-                            </label>
-                        </div>
-                        <div class="col-md-6">
-                            <label>
-                                <input type="text" class="form-control" name="extendedValue" placeholder="值" value="${value}"
-                                       required>
-                            </label>
-                        </div>
-                        <div class="col-md-2 text-end">
-                            <button type="button" class="btn btn-sm btn-danger remove-extended">
-                                <i class="bi bi-trash"></i> 删除
-                            </button>
-                        </div>
-                    </div>
-                  `;
-                $('#extendedPropertiesContainer').append(property);
-            });
-        }
-
-        $('#editModal').modal('show');
-
-        $('#saveEditBtn').off('click').on('click', function (event) {
-            const formData = {};
-            const $editForm = $('#editForm');
-            if (!$editForm[0].checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-                $editForm.addClass('was-validated');
-            } else {
-                $editForm.serializeArray()
-                    .filter(item => {
-                        return item.name !== 'extendedKey'
-                            && item.name !== 'extendedValue';
-                    }).forEach(item => {
-                    formData[item.name] = item.value;
-                });
-                const keys = $('#extendedPropertiesContainer input[name="extendedKey"]').map(function () {
-                    return $(this).val();
-                }).get();
-                const values = $('#extendedPropertiesContainer input[name="extendedValue"]').map(function () {
-                    return $(this).val();
-                }).get();
-
-                const extended = {};
-                keys.forEach((key, index) => {
-                    if (key && index < values.length) {
-                        extended[key] = values[index];
-                    }
-                });
-                formData['extended'] = extended;
-
-                submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
-                $('#editModal').modal('hide');
-            }
-        });
-    }
 </script>
 </body>
 </html>

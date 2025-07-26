@@ -2,10 +2,12 @@ package com.alatka.rule.admin.service;
 
 
 import com.alatka.rule.admin.entity.RuleDatasourceDefinition;
+import com.alatka.rule.admin.entity.RuleDatasourceExtDefinition;
 import com.alatka.rule.admin.model.ruledatasource.RuleDatasourcePageReq;
 import com.alatka.rule.admin.model.ruledatasource.RuleDatasourceReq;
 import com.alatka.rule.admin.model.ruledatasource.RuleDatasourceRes;
 import com.alatka.rule.admin.repository.RuleDatasourceRepository;
+import com.alatka.rule.core.context.RuleDataSourceDefinition;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,10 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -73,10 +73,32 @@ public class RuleDatasourceService {
                     RuleDatasourceRes res = new RuleDatasourceRes();
                     BeanUtils.copyProperties(entity, res);
                     Map<String, String> extended = ruleDatasourceExtService.queryByDatasourceId(entity.getId()).stream()
-                            .collect(HashMap::new, (k, v) -> k.put(v.getKey(), v.getValue()), HashMap::putAll);
+                            .sorted(Comparator.comparing(RuleDatasourceExtDefinition::getKey))
+                            .collect(LinkedHashMap::new, (k, v) -> k.put(v.getKey(), v.getValue()), LinkedHashMap::putAll);
                     res.setExtended(extended);
                     return res;
                 });
+    }
+
+    public Map<String, Map<String, String>> getMap() {
+        RuleDatasourceDefinition condition = new RuleDatasourceDefinition();
+        condition.setEnabled(true);
+        List<RuleDatasourceDefinition> list = ruleDatasourceRepository.findAll(this.condition(condition));
+        return list.stream().collect(Collectors.groupingBy(RuleDatasourceDefinition::getGroupKey,
+                Collectors.toMap(RuleDatasourceDefinition::getKey, RuleDatasourceDefinition::getName)));
+    }
+
+    public List<String> getType() {
+        return Arrays.stream(RuleDataSourceDefinition.Type.values())
+                .filter(type -> type != RuleDataSourceDefinition.Type.current)
+                .map(Enum::name)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getScope() {
+        return Arrays.stream(RuleDataSourceDefinition.Scope.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
     }
 
     private Specification<RuleDatasourceDefinition> condition(RuleDatasourceDefinition condition) {

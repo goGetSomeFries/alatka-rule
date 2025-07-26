@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "规则组")
@@ -53,6 +54,11 @@ public class RuleGroupController {
         return ResMessage.success(ruleGroupService.getMap());
     }
 
+    @Operation(summary = "规则组类型")
+    @GetMapping("/type")
+    public ResMessage<List<String>> getType() {
+        return ResMessage.success(ruleGroupService.getType());
+    }
 
     @Autowired
     public void setRuleGroupService(RuleGroupService ruleGroupService) {

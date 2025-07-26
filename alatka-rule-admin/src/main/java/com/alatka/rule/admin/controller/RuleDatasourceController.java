@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @Tag(name = "规则外部数据源")
 @RestController
@@ -44,6 +46,24 @@ public class RuleDatasourceController {
     @GetMapping("/page")
     public PageResMessage<RuleDatasourceRes> queryPage(@Valid RuleDatasourcePageReq ruleDatasourcePageReq) {
         return PageResMessage.success(ruleDatasourceService.queryPage(ruleDatasourcePageReq));
+    }
+
+    @Operation(summary = "外部数据源kv")
+    @GetMapping("/map")
+    public ResMessage<Map<String, Map<String, String>>> getMap() {
+        return ResMessage.success(ruleDatasourceService.getMap());
+    }
+
+    @Operation(summary = "外部数据源类型")
+    @GetMapping("/type")
+    public ResMessage<List<String>> queryType() {
+        return ResMessage.success(ruleDatasourceService.getType());
+    }
+
+    @Operation(summary = "外部数据源数据范围")
+    @GetMapping("/scope")
+    public ResMessage<List<String>> queryScope() {
+        return ResMessage.success(ruleDatasourceService.getScope());
     }
 
     @Autowired

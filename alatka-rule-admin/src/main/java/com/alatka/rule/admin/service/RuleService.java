@@ -3,6 +3,7 @@ package com.alatka.rule.admin.service;
 
 import com.alatka.rule.admin.AutoConfiguration;
 import com.alatka.rule.admin.entity.RuleDefinition;
+import com.alatka.rule.admin.entity.RuleExtDefinition;
 import com.alatka.rule.admin.model.rule.RuleBuildReq;
 import com.alatka.rule.admin.model.rule.RulePageReq;
 import com.alatka.rule.admin.model.rule.RuleReq;
@@ -20,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -45,6 +43,14 @@ public class RuleService {
 
     public void validate(String expression) {
         ruleEngine.validate(expression);
+    }
+
+    public Map<String, String> getType() {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("1", "规则");
+        map.put("2", "黑名单");
+        map.put("3", "白名单");
+        return map;
     }
 
     public Map<String, String> build(RuleBuildReq ruleBuildReq) {
@@ -107,7 +113,8 @@ public class RuleService {
                     RuleRes res = new RuleRes();
                     BeanUtils.copyProperties(entity, res);
                     Map<String, Object> extended = ruleExtService.queryByRuleId(entity.getId()).stream()
-                            .collect(HashMap::new, (k, v) -> k.put(v.getKey(), v.getValue()), HashMap::putAll);
+                            .sorted(Comparator.comparing(RuleExtDefinition::getKey))
+                            .collect(LinkedHashMap::new, (k, v) -> k.put(v.getKey(), v.getValue()), LinkedHashMap::putAll);
                     res.setExtended(extended);
                     return res;
                 });
@@ -127,6 +134,9 @@ public class RuleService {
             }
             if (condition.getEnabled() != null) {
                 list.add(criteriaBuilder.equal(root.get("enabled").as(Boolean.class), condition.getEnabled()));
+            }
+            if (condition.getType() != null) {
+                list.add(criteriaBuilder.equal(root.get("type").as(String.class), condition.getType()));
             }
             if (condition.getGroupKey() != null) {
                 list.add(criteriaBuilder.equal(root.get("groupKey").as(String.class), condition.getGroupKey()));

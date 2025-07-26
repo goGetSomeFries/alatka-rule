@@ -11,6 +11,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,11 +57,13 @@ public class RuleUnitService {
         RuleUnitDefinition condition = new RuleUnitDefinition();
         condition.setRuleId(ruleId);
         List<RuleUnitDefinition> list = ruleUnitRepository.findAll(Example.of(condition));
-        return list.stream().map(entity -> {
-            RuleUnitRes res = new RuleUnitRes();
-            BeanUtils.copyProperties(entity, res);
-            return res;
-        }).collect(Collectors.toList());
+        return list.stream()
+                .sorted(Comparator.comparing(RuleUnitDefinition::getOrder))
+                .map(entity -> {
+                    RuleUnitRes res = new RuleUnitRes();
+                    BeanUtils.copyProperties(entity, res);
+                    return res;
+                }).collect(Collectors.toList());
     }
 
     @Autowired

@@ -61,6 +61,12 @@ public class RuleController {
         return PageResMessage.success(ruleService.queryPage(rulePageReq));
     }
 
+    @Operation(summary = "规则类型")
+    @GetMapping("/type")
+    public ResMessage<Map<String, String>> getType() {
+        return ResMessage.success(ruleService.getType());
+    }
+
     @Autowired
     public void setRuleService(RuleService ruleService) {
         this.ruleService = ruleService;

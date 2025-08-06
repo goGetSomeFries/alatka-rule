@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "前端页面跳转")
-@Controller
+@Controller("ruleHtmlController")
 @RequestMapping("/")
 public class HtmlController {
 

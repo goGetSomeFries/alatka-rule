@@ -69,6 +69,10 @@
         </div>
     </div>
     <div class="col-12 text-end mb-3">
+        <button type="button" class="btn btn-sm btn-outline-primary me-5" id="deployButton"
+                onclick="showDeployModal('/rule/build')">
+            <i class="bi bi-rocket"></i> 部署
+        </button>
         <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
                 onclick="showEditModalWithExtendedProperties('/rule/create', true)">
             <i class="bi bi-plus-lg"></i> 新增
@@ -209,6 +213,44 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                 <button type="button" class="btn btn-primary" id="saveEditBtn">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deployModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">部署规则</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="deployForm">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="deployPath" class="form-label">路径</label>
+                            <input type="text" class="form-control" id="deployPath" name="path"
+                                   aria-describedby="pathDesc" required>
+                            <div id="pathDesc" class="form-text">
+                                例如：/deploy 或 /rule/build
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="deployUris" class="form-label">uris</label>
+                            <textarea class="form-control" rows="3" id="deployUris" name="uris"
+                                      aria-describedby="deployUrisDesc" required></textarea>
+                            <div id="deployUrisDesc" class="form-text">
+                                多个用逗号分割，例如：192.x.xx.xx:8000,192.xxx.xxx.xxx:8001
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="saveDeployBtn">确认</button>
             </div>
         </div>
     </div>
@@ -408,6 +450,26 @@
                 const row = $('#dataTable').bootstrapTable('getSelections')[0];
                 buildUnits(row.groupKey, row.id);
             });
+        });
+    }
+
+    function showDeployModal(url) {
+        $('#deployModal').modal('show');
+        $('#saveDeployBtn').off('click').on('click', function (event) {
+            const formData = {};
+            const $deployForm = $('#deployForm');
+            if (!$deployForm[0].checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                $deployForm.addClass('was-validated');
+            } else {
+                formData['path'] = $('#deployPath').val();
+                formData['uris'] = $('#deployUris').val().split(",").map(item => item.trim());
+                httpClient(url, 'POST', formData, function (data) {
+                    showWarningToast(JSON.stringify(data, null, 2));
+                    $('#deployModal').modal('hide');
+                });
+            }
         });
     }
 

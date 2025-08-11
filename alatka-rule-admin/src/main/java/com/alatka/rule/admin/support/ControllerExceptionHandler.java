@@ -23,11 +23,9 @@ public class ControllerExceptionHandler {
     public ResMessage<Void> handArgBindException(Exception e) {
         logger.error(e.getMessage(), e);
         BindingResult bindingResult = null;
-        if (e instanceof MethodArgumentNotValidException) {
-            MethodArgumentNotValidException ex = (MethodArgumentNotValidException) e;
+        if (e instanceof MethodArgumentNotValidException ex) {
             bindingResult = ex.getBindingResult();
-        } else if (e instanceof BindException) {
-            BindException ex = (BindException) e;
+        } else if (e instanceof BindException ex) {
             bindingResult = ex.getBindingResult();
         }
         String detail = bindingResult.getAllErrors().get(0).getDefaultMessage();

@@ -10,6 +10,7 @@ import com.alatka.rule.admin.model.rule.RuleReq;
 import com.alatka.rule.admin.model.rule.RuleRes;
 import com.alatka.rule.admin.repository.RuleRepository;
 import com.alatka.rule.core.RuleEngine;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.criteria.Predicate;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;

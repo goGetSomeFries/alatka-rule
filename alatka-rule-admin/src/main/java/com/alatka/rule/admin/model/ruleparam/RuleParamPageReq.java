@@ -2,8 +2,7 @@ package com.alatka.rule.admin.model.ruleparam;
 
 import com.alatka.rule.admin.model.PageReqMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 @Schema(description = "规则入参请求")
 public class RuleParamPageReq extends PageReqMessage {

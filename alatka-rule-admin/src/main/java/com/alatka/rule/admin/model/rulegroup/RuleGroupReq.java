@@ -1,9 +1,8 @@
 package com.alatka.rule.admin.model.rulegroup;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "规则组请求")
 public class RuleGroupReq {

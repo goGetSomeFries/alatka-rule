@@ -1,6 +1,6 @@
 package com.alatka.rule.admin.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "ALK_RULE_DATASOURCE_EXT_DEFINITION")

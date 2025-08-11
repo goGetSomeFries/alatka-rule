@@ -1,8 +1,8 @@
 package com.alatka.rule.admin.model.rule;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Schema(description = "规则部署/回退请求")

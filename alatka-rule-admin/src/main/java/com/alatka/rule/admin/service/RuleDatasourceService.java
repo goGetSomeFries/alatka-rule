@@ -8,6 +8,7 @@ import com.alatka.rule.admin.model.ruledatasource.RuleDatasourceReq;
 import com.alatka.rule.admin.model.ruledatasource.RuleDatasourceRes;
 import com.alatka.rule.admin.repository.RuleDatasourceRepository;
 import com.alatka.rule.core.context.RuleDataSourceDefinition;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.Predicate;
 import java.util.*;
 import java.util.stream.Collectors;
 

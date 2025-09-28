@@ -11,6 +11,11 @@
         .list-group-item.light-active {
             background-color: hsl(210, 100%, 90%);
         }
+
+        .clickable-badge {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
     </style>
 </head>
 <body>
@@ -287,14 +292,41 @@
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
-                        <label for="editUnitExpression"
-                               class="form-label d-flex justify-content-between align-items-center">表达式
-                            <button type="button" class="btn btn-sm btn-outline-info" onclick="validateExpression()">
-                                <i class="bi bi-check-circle"></i> 校验
-                            </button>
-                        </label>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label for="editUnitExpression" class="form-label mb-0">表达式</label>
+                            <div class="d-flex gap-3">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="initRuleVariable('DATASOURCE')">
+                                        <i class="bi bi-database"></i> 外部数据源
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="initRuleVariable('PARAM')">
+                                        <i class="bi bi-textarea-resize"></i> 预处理入参
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="initRuleVariable('VAR')">
+                                        <i class="bi bi-input-cursor-text"></i> 变量
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="initRuleVariable('FUNC')">
+                                        <i class="bi bi-code-slash"></i> 函数
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="initRuleVariable('OPE')">
+                                        <i class="bi bi-cpu"></i> 运算符
+                                    </button>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-info"
+                                        onclick="validateExpression()">
+                                    <i class="bi bi-check-circle"></i> 语法检查
+                                </button>
+                            </div>
+                        </div>
                         <textarea class="form-control" rows="5" id="editUnitExpression" name="expression"
                                   required></textarea>
+                    </div>
+                    <div id="ruleVariableList" class="d-flex flex-wrap gap-2 overflow-auto" style="max-height: 30vh;">
                     </div>
                 </form>
             </div>
@@ -416,6 +448,7 @@
             $('#editUnitDatasourceKey').val(selection.data('datasource-key'));
         }
 
+        $('#ruleVariableList').empty();
         $('#editUnitModal').modal('show');
         $('#saveEditUnitBtn').off('click').on('click', function (event) {
             const formData = {};
@@ -518,6 +551,39 @@
                     showErrorToast("表达式校验失败: " + msg);
                 });
         }
+    }
+
+    function initRuleVariable(type) {
+        $('#ruleVariableList').empty();
+        const groupKey = $('#editUnitGroupKey').val();
+        const url = "/rule/variable/list?groupKey=" + groupKey + "&type=" + type;
+
+        httpClient(url, 'GET', null, function (data) {
+            if (!data || data.length === 0) {
+                showWarningToast('未配置规则变量');
+            } else {
+                data.forEach(field => {
+                    const property = `
+                       <span class="badge bg-secondary clickable-badge"
+                         onclick="insertAtCursor('${field.key}')"
+                         title="${field.desc}">${field.key}（${field.name}）</span>
+                   `;
+                    $('#ruleVariableList').append(property);
+                });
+            }
+        });
+    }
+
+    function insertAtCursor(text) {
+        const $textarea = $('#editUnitExpression');
+        const textarea = $textarea[0];
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const currentValue = textarea.value;
+
+        textarea.value = currentValue.substring(0, start) + text + currentValue.substring(end) + " ";
+        textarea.selectionStart = textarea.selectionEnd = start + text.length + 1;
+        textarea.focus();
     }
 </script>
 </body>

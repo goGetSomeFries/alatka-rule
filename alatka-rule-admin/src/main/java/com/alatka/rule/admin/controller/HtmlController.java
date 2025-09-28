@@ -29,6 +29,12 @@ public class HtmlController {
         return "param";
     }
 
+    @Operation(summary = "规则变量")
+    @GetMapping("/rule/variable")
+    public String variable() {
+        return "variable";
+    }
+
     @Operation(summary = "规则")
     @GetMapping("/rule")
     public String rule() {

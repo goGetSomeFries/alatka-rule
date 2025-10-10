@@ -94,15 +94,15 @@ public class DatabaseRuleDefinitionBuilderTest {
     void test05() throws SQLException {
         ResultSet resultSet = Mockito.mock(ResultSet.class);
         doReturn(true, true, false).when(resultSet).next();
-        doReturn("v_amount1", "v_phone_belong").when(resultSet).getString("P_KEY");
-        doReturn("v_amount * 100", "string.substring(v_phone, 7)").when(resultSet).getString("P_EXPRESSION");
-        doReturn("金额1", "手机号归属地").when(resultSet).getString("P_NAME");
-        doReturn(true, false).when(resultSet).getBoolean("P_ENABLED");
+        doReturn("v_amount1", "v_phone_belong").when(resultSet).getString("V_KEY");
+        doReturn("v_amount * 100", "string.substring(v_phone, 7)").when(resultSet).getString("V_DESC");
+        doReturn("金额1", "手机号归属地").when(resultSet).getString("V_NAME");
+        doReturn(true, false).when(resultSet).getBoolean("V_ENABLED");
 
         PreparedStatement statement = Mockito.mock(PreparedStatement.class);
         doReturn(resultSet).when(statement).executeQuery();
         Connection connection = Mockito.mock(Connection.class);
-        doReturn(statement).when(connection).prepareStatement("SELECT * FROM ALK_RULE_PARAM_DEFINITION WHERE G_KEY = ?");
+        doReturn(statement).when(connection).prepareStatement("SELECT * FROM ALK_RULE_VARIABLE_DEFINITION WHERE V_TYPE = 'PARAM' AND G_KEY = ?");
         DataSource dataSource = Mockito.mock(DataSource.class);
         doReturn(connection).when(dataSource).getConnection();
 

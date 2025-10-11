@@ -3,24 +3,30 @@ package com.alatka.rule.admin.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ALK_RULE_PARAM_DEFINITION")
-public class RuleParamDefinition {
+@Table(name = "ALK_RULE_VARIABLE_DEFINITION")
+public class RuleVariableDefinition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "P_ID")
+    @Column(name = "V_ID")
     private Long id;
 
-    @Column(name = "P_KEY")
+    @Column(name = "V_KEY")
     private String key;
 
-    @Column(name = "P_NAME")
+    @Column(name = "V_NAME")
     private String name;
 
-    @Column(name = "P_EXPRESSION")
-    private String expression;
+    @Column(name = "V_DESC")
+    private String desc;
 
-    @Column(name = "P_ENABLED")
+    @Column(name = "V_TYPE")
+    private String type;
+
+    @Column(name = "V_ORDER")
+    private Integer order;
+
+    @Column(name = "V_ENABLED")
     private Boolean enabled;
 
     @Column(name = "G_KEY")
@@ -50,12 +56,28 @@ public class RuleParamDefinition {
         this.name = name;
     }
 
-    public String getExpression() {
-        return expression;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setExpression(String expression) {
-        this.expression = expression;
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 
     public Boolean getEnabled() {

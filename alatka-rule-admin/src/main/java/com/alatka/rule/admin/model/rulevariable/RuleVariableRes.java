@@ -1,9 +1,9 @@
-package com.alatka.rule.admin.model.ruleparam;
+package com.alatka.rule.admin.model.rulevariable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "规则入参响应")
-public class RuleParamRes {
+@Schema(description = "规则变量响应")
+public class RuleVariableRes {
 
     @Schema(description = "主键", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
@@ -14,8 +14,14 @@ public class RuleParamRes {
     @Schema(description = "名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
-    @Schema(description = "表达式", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String expression;
+    @Schema(description = "描述")
+    private String desc;
+
+    @Schema(description = "类型", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String type;
+
+    @Schema(description = "顺序", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Integer order;
 
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     private Boolean enabled;
@@ -47,12 +53,28 @@ public class RuleParamRes {
         this.name = name;
     }
 
-    public String getExpression() {
-        return expression;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setExpression(String expression) {
-        this.expression = expression;
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 
     public Boolean getEnabled() {

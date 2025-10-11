@@ -1,12 +1,12 @@
-package com.alatka.rule.admin.model.ruleparam;
+package com.alatka.rule.admin.model.rulevariable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@Schema(description = "规则入参请求")
-public class RuleParamReq {
+@Schema(description = "规则变量请求")
+public class RuleVariableReq {
 
     @Schema(description = "主键")
     private Long id;
@@ -19,9 +19,14 @@ public class RuleParamReq {
     @NotEmpty(message = "name 不能为空")
     private String name;
 
-    @Schema(description = "表达式", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "expression 不能为空")
-    private String expression;
+    @Schema(description = "描述")
+    private String desc;
+
+    @Schema(description = "类型")
+    private String type;
+
+    @Schema(description = "顺序")
+    private Integer order;
 
     @Schema(description = "是否可用", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "enabled 不能为空")
@@ -55,12 +60,28 @@ public class RuleParamReq {
         this.name = name;
     }
 
-    public String getExpression() {
-        return expression;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setExpression(String expression) {
-        this.expression = expression;
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 
     public Boolean getEnabled() {

@@ -1,12 +1,12 @@
-package com.alatka.rule.admin.model.ruleparam;
+package com.alatka.rule.admin.model.rulevariable;
 
 import com.alatka.rule.admin.model.PageReqMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotEmpty;
 
-@Schema(description = "规则入参请求")
-public class RuleParamPageReq extends PageReqMessage {
+@Schema(description = "规则变量请求")
+public class RuleVariablePageReq extends PageReqMessage {
 
     @Schema(description = "关键字")
     private String key;
@@ -14,8 +14,11 @@ public class RuleParamPageReq extends PageReqMessage {
     @Schema(description = "名称")
     private String name;
 
-    @Schema(description = "表达式")
-    private String expression;
+    @Schema(description = "描述")
+    private String desc;
+
+    @Schema(description = "类型")
+    private String type;
 
     @Schema(description = "是否可用")
     private Boolean enabled;
@@ -40,12 +43,20 @@ public class RuleParamPageReq extends PageReqMessage {
         this.name = name;
     }
 
-    public String getExpression() {
-        return expression;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setExpression(String expression) {
-        this.expression = expression;
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Boolean getEnabled() {

@@ -263,17 +263,13 @@ function buildExtendedProperties(key = '', value = '') {
     const property =
         `
          <div class="extended-property row g-2 mb-2">
-             <div class="col-md-4">
-                 <label>
-                     <input type="text" class="form-control" name="extendedKey" placeholder="键" value="${key}" required>
-                 </label>
+             <div class="col-md-3">
+                  <input type="text" class="form-control" name="extendedKey" placeholder="键" value="${key}" required>
              </div>
              <div class="col-md-6">
-                 <label>
-                     <input type="text" class="form-control" name="extendedValue" placeholder="值" value="${value}">
-                 </label>
+                  <input type="text" class="form-control" name="extendedValue" placeholder="值" value="${value}">
              </div>
-             <div class="col-md-2 text-end">
+             <div class="col-md-3 text-end">
                  <button type="button" class="btn btn-sm btn-danger remove-extended">
                      <i class="bi bi-trash"></i> 删除
                  </button>

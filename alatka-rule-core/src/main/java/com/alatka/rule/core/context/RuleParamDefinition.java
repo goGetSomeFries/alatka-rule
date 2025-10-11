@@ -1,7 +1,7 @@
 package com.alatka.rule.core.context;
 
 /**
- * 规则入参处理类
+ * 规则入参预处理类
  *
  * @author whocares
  */

@@ -23,10 +23,10 @@ public class HtmlController {
         return "datasource";
     }
 
-    @Operation(summary = "规则预处理参数")
-    @GetMapping("/rule/param")
-    public String param() {
-        return "param";
+    @Operation(summary = "规则变量")
+    @GetMapping("/rule/variable")
+    public String variable() {
+        return "variable";
     }
 
     @Operation(summary = "规则")

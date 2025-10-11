@@ -12,7 +12,7 @@
 <div class="container mt-4">
     <div class="card mb-3">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">规则入参查询</h5>
+            <h5 class="mb-0">规则变量查询</h5>
             <button class="btn btn-sm btn-outline-secondary"
                     type="button"
                     data-bs-toggle="collapse"
@@ -31,6 +31,16 @@
                 <div class="col-md-3">
                     <label for="name" class="form-label">名称</label>
                     <input type="text" class="form-control" id="name" name="name" placeholder="输入名称">
+                </div>
+                <div class="col-md-3">
+                    <label for="desc" class="form-label">描述/表达式</label>
+                    <input type="text" class="form-control" id="desc" name="desc" placeholder="输入描述/表达式">
+                </div>
+                <div class="col-md-3">
+                    <label for="type" class="form-label">类型</label>
+                    <select class="form-select alk-select-type" id="type" name="type">
+                        <option value="">全部</option>
+                    </select>
                 </div>
                 <div class="col-md-3">
                     <label for="groupKey" class="form-label">规则组名称</label>
@@ -59,15 +69,15 @@
     </div>
     <div class="col-12 text-end mb-3">
         <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
-                onclick="showEditModal('/rule/param/create', true)">
+                onclick="showEditModal('/rule/variable/create', true)">
             <i class="bi bi-plus-lg"></i> 新增
         </button>
         <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
-                onclick="showEditModal('/rule/param/update', false)">
+                onclick="showEditModal('/rule/variable/update', false)">
             <i class="bi bi-pencil-square"></i> 更新
         </button>
         <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
-                onclick="showDeleteModal('/rule/param/delete')">
+                onclick="showDeleteModal('/rule/variable/delete')">
             <i class="bi bi-trash"></i> 删除
         </button>
     </div>
@@ -75,7 +85,7 @@
     <table id="dataTable"
            data-toggle="table"
            data-method="get"
-           data-url="/rule/param/page"
+           data-url="/rule/variable/page"
            data-sort-name="id"
            data-sort-order="desc"
            data-striped="true"
@@ -90,7 +100,9 @@
             <th data-field="id">ID</th>
             <th data-field="key" data-sortable="true">关键字</th>
             <th data-field="name" data-sortable="true">名称</th>
-            <th data-field="expression">表达式</th>
+            <th data-field="desc">描述</th>
+            <th data-field="type" data-formatter="typeFormatter">类型</th>
+            <th data-field="order" data-sortable="true">顺序</th>
             <th data-field="groupKey" data-formatter="groupKeyFormatter">规则组名称</th>
             <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
         </tr>
@@ -102,7 +114,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">编辑规则入参</h5>
+                <h5 class="modal-title">编辑规则变量</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -117,21 +129,33 @@
                         <input type="text" class="form-control" id="editName" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editExpression" class="form-label">表达式</label>
-                        <textarea class="form-control" rows="5" id="editExpression" name="expression"
-                                  required></textarea>
+                        <label for="editDesc" class="form-label">描述/表达式</label>
+                        <textarea class="form-control" rows="3" id="editDesc" name="desc"></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label for="editGroupKey" class="form-label">规则组名称</label>
-                        <select class="form-select alk-select-groupKey" id="editGroupKey" name="groupKey" required>
-                        </select>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editType" class="form-label">类型</label>
+                            <select class="form-select alk-select-type" id="editType" name="type" required>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editOrder" class="form-label">顺序</label>
+                            <input type="number" class="form-control" id="editOrder" name="order" value="0" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="editEnabled" class="form-label">是否可用</label>
-                        <select class="form-select" id="editEnabled" name="enabled" required>
-                            <option value="true">正常</option>
-                            <option value="false">禁用</option>
-                        </select>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editGroupKey" class="form-label">规则组名称</label>
+                            <select class="form-select alk-select-groupKey" id="editGroupKey" name="groupKey" required>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editEnabled" class="form-label">是否可用</label>
+                            <select class="form-select" id="editEnabled" name="enabled" required>
+                                <option value="true">正常</option>
+                                <option value="false">禁用</option>
+                            </select>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -146,7 +170,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">删除规则入参</h5>
+                <h5 class="modal-title">删除规则变量</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -167,7 +191,25 @@
 <script th:src="@{/js/table.js}"></script>
 <script>
     initRuleGroupSelect();
+    initTypeSelect();
     initTable();
+
+    function initTypeSelect() {
+        httpClient('/rule/variable/type', 'GET', null, function (data) {
+            const map = new Map(Object.entries(data));
+            map.forEach((value, key) => {
+                $('.alk-select-type').append($('<option>', {value: key, text: value}))
+            });
+        });
+    }
+
+    function typeFormatter(arg) {
+        const keyValuePairs = {};
+        $('select#type option').each(function () {
+            keyValuePairs[$(this).val()] = $(this).text();
+        });
+        return keyValuePairs[arg];
+    }
 </script>
 </body>
 </html>

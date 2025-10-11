@@ -169,7 +169,7 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
     @Override
     protected List<Map<String, Object>> doBuildRuleParamDefinitions(RuleGroupDefinition ruleGroupDefinition) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "SELECT * FROM ALK_RULE_PARAM_DEFINITION WHERE G_KEY = ?";
+        String sql = "SELECT * FROM ALK_RULE_VARIABLE_DEFINITION WHERE V_TYPE = 'PARAM' AND G_KEY = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -177,15 +177,15 @@ public class DatabaseRuleDefinitionBuilder extends AbstractRuleDefinitionBuilder
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Map<String, Object> result = new HashMap<>();
-                    result.put("id", resultSet.getString("P_KEY"));
-                    result.put("name", resultSet.getString("P_NAME"));
-                    result.put("enabled", resultSet.getBoolean("P_ENABLED"));
-                    result.put("expression", resultSet.getString("P_EXPRESSION"));
+                    result.put("id", resultSet.getString("V_KEY"));
+                    result.put("name", resultSet.getString("V_NAME"));
+                    result.put("enabled", resultSet.getBoolean("V_ENABLED"));
+                    result.put("expression", resultSet.getString("V_DESC"));
                     list.add(result);
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("查询ALK_RULE_PARAM_DEFINITION失败", e);
+            throw new RuntimeException("查询ALK_RULE_VARIABLE_DEFINITION失败", e);
         }
         return list;
     }

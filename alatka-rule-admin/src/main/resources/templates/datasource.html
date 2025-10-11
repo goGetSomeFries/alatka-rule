@@ -114,7 +114,7 @@
 </div>
 
 <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">编辑规则外部数据源</h5>
@@ -124,34 +124,32 @@
                 <form id="editForm">
                     <input type="hidden" id="editId" name="id">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="editKey" class="form-label">关键字</label>
                             <input type="text" class="form-control" id="editKey" name="key" required>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="editName" class="form-label">名称</label>
                             <input type="text" class="form-control" id="editName" name="name" required>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="editType" class="form-label">类型</label>
                             <select class="form-select alk-select-type" id="editType" name="type" required>
                             </select>
                         </div>
-                        <div class="col-md-6 mb-3">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
                             <label for="editScope" class="form-label">数据范围</label>
                             <select class="form-select alk-select-scope" id="editScope" name="scope" required>
                             </select>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="editGroupKey" class="form-label">规则组名称</label>
                             <select class="form-select alk-select-groupKey" id="editGroupKey" name="groupKey" required>
                             </select>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="editEnabled" class="form-label">是否可用</label>
                             <select class="form-select" id="editEnabled" name="enabled" required>
                                 <option value="true" selected>正常</option>

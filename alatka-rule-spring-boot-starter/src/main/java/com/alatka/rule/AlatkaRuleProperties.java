@@ -11,6 +11,8 @@ public class AlatkaRuleProperties {
 
     private String classpath;
 
+    private String[] groups = new String[0];
+
     public enum Type {
         yaml, xml, database
     }
@@ -37,5 +39,13 @@ public class AlatkaRuleProperties {
 
     public void setClasspath(String classpath) {
         this.classpath = classpath;
+    }
+
+    public String[] getGroups() {
+        return groups;
+    }
+
+    public void setGroups(String[] groups) {
+        this.groups = groups;
     }
 }

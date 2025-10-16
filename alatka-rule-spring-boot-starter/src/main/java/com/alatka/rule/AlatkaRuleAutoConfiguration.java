@@ -31,7 +31,7 @@ public class AlatkaRuleAutoConfiguration {
     public RuleDefinitionBuilder yamlRuleDefinitionBuilder(AlatkaRuleProperties properties) {
         String classpath = properties.getClasspath();
         RuleDefinitionBuilder builder = new YamlRuleDefinitionBuilder(classpath == null ? "" : classpath);
-        builder.build();
+        builder.build(properties.getGroups());
         return builder;
     }
 
@@ -40,15 +40,15 @@ public class AlatkaRuleAutoConfiguration {
     public RuleDefinitionBuilder xmlRuleDefinitionBuilder(AlatkaRuleProperties properties) {
         String classpath = properties.getClasspath();
         RuleDefinitionBuilder builder = new XmlRuleDefinitionBuilder(classpath == null ? "" : classpath);
-        builder.build();
+        builder.build(properties.getGroups());
         return builder;
     }
 
     @Bean
     @ConditionalOnProperty(value = "alatka.rule.type", havingValue = "database")
-    public RuleDefinitionBuilder databaseRuleDefinitionBuilder(DataSource dataSource) {
+    public RuleDefinitionBuilder databaseRuleDefinitionBuilder(AlatkaRuleProperties properties, DataSource dataSource) {
         RuleDefinitionBuilder builder = new DatabaseRuleDefinitionBuilder(dataSource);
-        builder.build();
+        builder.build(properties.getGroups());
         return builder;
     }
 

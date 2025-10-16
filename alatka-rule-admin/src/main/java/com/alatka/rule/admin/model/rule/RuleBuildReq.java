@@ -16,6 +16,9 @@ public class RuleBuildReq {
     @NotEmpty
     private String path;
 
+    @Schema(description = "规则组")
+    private List<String> ruleGroups;
+
     public List<String> getUris() {
         return uris;
     }
@@ -30,5 +33,13 @@ public class RuleBuildReq {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public List<String> getRuleGroups() {
+        return ruleGroups;
+    }
+
+    public void setRuleGroups(List<String> ruleGroups) {
+        this.ruleGroups = ruleGroups;
     }
 }

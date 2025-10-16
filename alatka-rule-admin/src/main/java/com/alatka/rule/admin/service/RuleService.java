@@ -59,15 +59,15 @@ public class RuleService {
 
         CompletableFuture<Void> completableFuture = uriList.stream()
                 .map(uri -> uri.concat(ruleBuildReq.getPath()))
-                .map(url -> this.doBuild(url, resultMap))
+                .map(url -> this.doBuild(url, ruleBuildReq.getRuleGroups(), resultMap))
                 .collect(Collectors.collectingAndThen(Collectors.toList(),
                         list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))));
         completableFuture.join();
         return resultMap;
     }
 
-    private CompletableFuture<Void> doBuild(String url, Map<String, String> resultMap) {
-        return CompletableFuture.supplyAsync(() -> restTemplate.postForObject(url, null, String.class), taskExecutor)
+    private CompletableFuture<Void> doBuild(String url, List<String> ruleGroups, Map<String, String> resultMap) {
+        return CompletableFuture.supplyAsync(() -> restTemplate.postForObject(url, ruleGroups, String.class), taskExecutor)
                 .handleAsync((result, ex) -> "ok".equalsIgnoreCase(result) ? "success" : "fail")
                 .thenAccept(result -> resultMap.put(url, result));
     }

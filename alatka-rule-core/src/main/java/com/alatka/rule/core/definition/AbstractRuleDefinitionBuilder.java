@@ -15,7 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * {@link RuleDefinitionBuilder}抽象类，实现{@link #build()}、{@link #refresh()}、{@link #fallback()}方法；
+ * {@link RuleDefinitionBuilder}抽象类，实现{@link #build(String...)}、{@link #refresh(String...)}、{@link #fallback()}方法；
  * 抽象{@link RuleGroupDefinition}、{@link RuleDataSourceDefinition}、{@link RuleDefinition}、{@link RuleUnitDefinition}构建方法
  *
  * @param <T> 配置源类型
@@ -26,7 +26,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * 全局加锁，保证{@link #build()} {@link #refresh()} {@link #fallback()}串行执行
+     * 全局加锁，保证{@link #build(String...)} {@link #refresh(String...)} {@link #fallback()}串行执行
      */
     private static final Lock lock = new ReentrantLock(true);
 
@@ -36,10 +36,10 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     private Map<String, RuleDataSourceDefinition> mapping;
 
     @Override
-    public void build() {
+    public void build(String... ruleGroups) {
         try {
             lock.lock();
-            this.doBuild();
+            this.doBuild(ruleGroups);
             this.logger.info("********* 规则配置build完成 *********");
         } finally {
             lock.unlock();
@@ -47,10 +47,10 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
     }
 
     @Override
-    public void refresh() {
+    public void refresh(String... ruleGroups) {
         try {
             lock.lock();
-            this.doBuild();
+            this.doBuild(ruleGroups);
             this.logger.info("********* 规则配置refresh完成 *********");
         } finally {
             lock.unlock();
@@ -68,7 +68,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
         }
     }
 
-    private void doBuild() {
+    private void doBuild(String... ruleGroups) {
         RuleGroupDefinitionContext context = RuleGroupDefinitionContext.getInstance(false);
         context.reset();
 
@@ -76,6 +76,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 .peek(this::preProcess)
                 .map(this::buildRuleGroupDefinition)
                 .filter(RuleGroupDefinition::isEnabled)
+                .filter(group -> ruleGroups.length == 0 || Arrays.asList(ruleGroups).contains(group.getName()))
                 .peek(ruleGroupDefinition -> this.logger.info("build {}", ruleGroupDefinition))
                 .peek(ruleGroupDefinition -> this.mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition))
                 .peek(ruleGroupDefinition -> {

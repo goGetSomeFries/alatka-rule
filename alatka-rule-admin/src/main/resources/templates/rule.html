@@ -6,7 +6,8 @@
     <title>alatka-rule-admin</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
     <style>
         .list-group-item.light-active {
             background-color: hsl(210, 100%, 90%);
@@ -51,7 +52,7 @@
                 <div class="col-md-3">
                     <label for="groupKey" class="form-label">规则组名称</label>
                     <select class="form-select alk-select-groupKey" id="groupKey" name="groupKey">
-                        <option value="default_">默认</option>
+                        <option value="default_">默认组</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -74,8 +75,12 @@
         </div>
     </div>
     <div class="col-12 text-end mb-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="fallbackButton"
+                onclick="showBuildModal('/rule/build', 'fallback')">
+            <i class="bi bi-arrow-left"></i> 回退
+        </button>
         <button type="button" class="btn btn-sm btn-outline-primary me-5" id="deployButton"
-                onclick="showDeployModal('/rule/build')">
+                onclick="showBuildModal('/rule/build', 'deploy')">
             <i class="bi bi-rocket"></i> 部署
         </button>
         <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
@@ -222,31 +227,43 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="deployModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="buildModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">部署规则</h5>
+                <h5 class="modal-title">部署规则组</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="deployForm">
+                <form id="buildForm">
                     <div class="row">
                         <div class="col-md-12 mb-3">
-                            <label for="deployPath" class="form-label">路径</label>
-                            <input type="text" class="form-control" id="deployPath" name="path"
-                                   aria-describedby="pathDesc" required>
-                            <div id="pathDesc" class="form-text">
-                                例如：/deploy 或 /rule/build
+                            <label for="buildGroupKey" class="form-label">规则组</label><br>
+                            <select class="form-select alk-select-groupKey" multiple id="buildGroupKey" name="groupKey"
+                                    aria-describedby="buildGroupKeyDesc">
+                                <option value="default_">默认组</option>
+                            </select>
+                            <div id="buildGroupKeyDesc" class="form-text">
+                                可部署多个规则组，不选择则全部部署
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12 mb-3">
-                            <label for="deployUris" class="form-label">uris</label>
-                            <textarea class="form-control" rows="3" id="deployUris" name="uris"
-                                      aria-describedby="deployUrisDesc" required></textarea>
-                            <div id="deployUrisDesc" class="form-text">
+                            <label for="buildPath" class="form-label">路径</label>
+                            <input type="text" class="form-control" id="buildPath" name="path"
+                                   aria-describedby="pathDesc" required>
+                            <div id="pathDesc" class="form-text">
+                                例如：/deploy 或 /fallback 或 /rule/build
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="buildUris" class="form-label">uris</label>
+                            <textarea class="form-control" rows="3" id="buildUris" name="uris"
+                                      aria-describedby="buildUrisDesc" required></textarea>
+                            <div id="buildUrisDesc" class="form-text">
                                 多个用逗号分割，例如：192.x.xx.xx:8000,192.xxx.xxx.xxx:8001
                             </div>
                         </div>
@@ -255,7 +272,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="saveDeployBtn">确认</button>
+                <button type="button" class="btn btn-primary" id="saveBuildBtn">确认</button>
             </div>
         </div>
     </div>
@@ -355,13 +372,21 @@
     </div>
 </div>
 
-<script th:src="@{/webjars/jquery/jquery.js}"></script>
-<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-<script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.js}"></script>
-<script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js}"></script>
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
 <script th:src="@{/js/table.js}"></script>
 <script>
-    initRuleGroupSelect();
+    initRuleGroupSelect(function () {
+        const $buildGroupKey = $('#buildGroupKey');
+        const tomSelect = new TomSelect($buildGroupKey, {
+            plugins: ['remove_button'],
+            placeholder: '请选择...'
+        });
+        $buildGroupKey.data('tomSelect-instance', tomSelect);
+    });
     initTypeSelect();
     initTable();
     initTableRowEvent();
@@ -486,21 +511,37 @@
         });
     }
 
-    function showDeployModal(url) {
-        $('#deployModal').modal('show');
-        $('#saveDeployBtn').off('click').on('click', function (event) {
+    function showBuildModal(url, type) {
+        const $buildGroupKey = $('#buildGroupKey');
+        const tomSelect = $buildGroupKey.data('tomSelect-instance');
+        tomSelect.clear();
+        $('#buildPath').empty();
+        $('#buildUris').empty();
+
+        const $buildModal = $('#buildModal');
+        if (type === 'fallback') {
+            $buildModal.find('.modal-title').text('回退规则组');
+            $buildGroupKey.parent().hide();
+        } else {
+            $buildModal.find('.modal-title').text('部署规则组');
+            $buildGroupKey.parent().show();
+        }
+
+        $buildModal.modal('show');
+        $('#saveBuildBtn').off('click').on('click', function (event) {
             const formData = {};
-            const $deployForm = $('#deployForm');
-            if (!$deployForm[0].checkValidity()) {
+            const $buildForm = $('#buildForm');
+            if (!$buildForm[0].checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
-                $deployForm.addClass('was-validated');
+                $buildForm.addClass('was-validated');
             } else {
-                formData['path'] = $('#deployPath').val();
-                formData['uris'] = $('#deployUris').val().split(",").map(item => item.trim());
+                formData['path'] = $('#buildPath').val();
+                formData['uris'] = $('#buildUris').val().split(",").map(item => item.trim());
+                formData['ruleGroups'] = type === 'fallback' ? null : tomSelect.getValue();
                 httpClient(url, 'POST', formData, function (data) {
                     showWarningToast(JSON.stringify(data, null, 2));
-                    $('#deployModal').modal('hide');
+                    $buildModal.modal('hide');
                 });
             }
         });

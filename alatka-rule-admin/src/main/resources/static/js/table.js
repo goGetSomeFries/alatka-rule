@@ -1,4 +1,12 @@
 function initTable() {
+    $("#resetButton").click(function () {
+        $("#searchForm")[0].reset();
+    })
+
+    $("#searchButton").click(function () {
+        refresh();
+    })
+
     $("#dataTable").bootstrapTable({
         onLoadError: function (status) {
             showErrorToast("接口请求失败, http code: " + status)
@@ -42,14 +50,6 @@ function initTable() {
         }
     })
 }
-
-$("#resetButton").click(function () {
-    $("#searchForm")[0].reset();
-})
-
-$("#searchButton").click(function () {
-    refresh();
-})
 
 function showEditModal(url, created) {
     if (created) {
@@ -279,12 +279,13 @@ function buildExtendedProperties(key = '', value = '') {
     $('#extendedPropertiesContainer').append(property);
 }
 
-function initRuleGroupSelect() {
+function initRuleGroupSelect(callback) {
     httpClient('/rule/group/map', 'GET', null, function (data) {
         const map = new Map(Object.entries(data));
         map.forEach((value, key) => {
             $('.alk-select-groupKey').append($('<option>', {value: key, text: value}))
         });
+        callback && callback();
     });
 }
 

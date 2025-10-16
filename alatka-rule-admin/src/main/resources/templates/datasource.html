@@ -6,7 +6,7 @@
     <title>alatka-rule-admin</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
 </head>
 <body>
 <div class="container mt-4">
@@ -47,7 +47,7 @@
                 <div class="col-md-3">
                     <label for="groupKey" class="form-label">规则组名称</label>
                     <select class="form-select alk-select-groupKey" id="groupKey" name="groupKey">
-                        <option value="default_">默认</option>
+                        <option value="default_">默认组</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -194,10 +194,10 @@
     </div>
 </div>
 
-<script th:src="@{/webjars/jquery/jquery.js}"></script>
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-<script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.js}"></script>
-<script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
+<script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
 <script th:src="@{/js/table.js}"></script>
 <script>
     initRuleGroupSelect();

@@ -322,6 +322,10 @@
                                         <i class="bi bi-textarea-resize"></i> 预处理入参
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="initRuleVariable('TEMPLATE')">
+                                        <i class="bi bi-code-square"></i> 模板
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
                                             onclick="initRuleVariable('VAR')">
                                         <i class="bi bi-input-cursor-text"></i> 变量
                                     </button>
@@ -606,7 +610,7 @@
                 data.forEach(field => {
                     const property = `
                        <span class="badge bg-secondary clickable-badge"
-                         onclick="insertAtCursor('${field.key}')"
+                         onclick="insertAtCursor('${type}', '${field.key}', '${field.desc}')"
                          title="${field.desc}">${field.key}（${field.name}）</span>
                    `;
                     $('#ruleVariableList').append(property);
@@ -615,7 +619,8 @@
         });
     }
 
-    function insertAtCursor(text) {
+    function insertAtCursor(type, fieldKey, fieldDesc) {
+        const text = type === 'TEMPLATE' ? fieldDesc : fieldKey;
         const $textarea = $('#editUnitExpression');
         const textarea = $textarea[0];
         const start = textarea.selectionStart;

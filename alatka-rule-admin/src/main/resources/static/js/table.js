@@ -54,6 +54,7 @@ function initTable() {
 function showEditModal(url, created) {
     if (created) {
         $('#editForm')[0]?.reset();
+        $('#editForm input[type="hidden"]').val('');
     } else {
         const selection = $('#dataTable').bootstrapTable('getSelections');
         if (selection.length !== 1) {

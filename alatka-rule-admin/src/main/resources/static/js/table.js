@@ -9,7 +9,7 @@ function initTable() {
 
     $("#dataTable").bootstrapTable({
         onLoadError: function (status) {
-            showErrorToast("接口请求失败, http code: " + status)
+            showErrorToast(`接口请求失败, http code: ${status}`);
         },
 
         queryParams: function (params) {
@@ -37,7 +37,7 @@ function initTable() {
 
         responseHandler: function (res) {
             if (res.code !== "0000") {
-                showErrorToast("接口响应失败: " + res.msg);
+                showErrorToast(`接口响应失败: ${res.msg}`);
                 return {
                     total: 0,
                     rows: []
@@ -169,20 +169,20 @@ function showDeleteModal(url) {
     $('#deleteModal').modal('show');
     $('#saveDeleteBtn').off('click').on('click', function () {
         const ids = selections.map(row => row.id);
-        submitFunction(url + '?id=' + ids[0], 'DELETE', null, '删除');
+        submitFunction(`${url}?id=${ids[0]}`, 'DELETE', null, '删除');
         $('#deleteModal').modal('hide');
     });
 }
 
 function submitFunction(url, methodType, data, actionName) {
     httpClient(url, methodType, data, function (data) {
-        showSuccessToast(actionName + "成功");
+        showSuccessToast(`${actionName}成功`);
         refresh();
     });
 }
 
 function httpClient(url, methodType, data, success, error = function (msg) {
-    showErrorToast("接口响应失败: " + msg);
+    showErrorToast(`接口响应失败: ${msg}`);
 }) {
     $.ajax({
         url: url,
@@ -197,7 +197,7 @@ function httpClient(url, methodType, data, success, error = function (msg) {
             }
         },
         error: function (xhr) {
-            showErrorToast("接口请求失败: " + xhr.responseJSON?.message || "未知错误");
+            showErrorToast(`接口请求失败: ${xhr.responseJSON?.message || '未知错误'}`);
         }
     });
 }
@@ -303,7 +303,7 @@ function detailFormatter(index, row) {
     const html = [];
     html.push('<dl class="row">');
     map.forEach((value, key) => {
-        html.push('<dt class="col-sm-2 text-end">' + key + ': </dt><dd class="col-sm-10">' + value + '</dd>');
+        html.push(`<dt class="col-sm-2 text-end">${key}: </dt><dd class="col-sm-10">${value}</dd>`);
     })
     html.push('</dl>');
     return html.join('');

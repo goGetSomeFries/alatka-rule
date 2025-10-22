@@ -412,7 +412,7 @@
         $editUnitDatasourceKey.append($('<option>', {value: '', text: '无'}))
         const mapping = getDatasourceMapping(groupKey);
         mapping.forEach((value, key) => {
-            $editUnitDatasourceKey.append($('<option>', {value: key, text: key + ' : ' + value}))
+            $editUnitDatasourceKey.append($('<option>', {value: key, text: `${key} : ${value}`}))
         });
     }
 
@@ -507,7 +507,7 @@
 
         $('#deleteModal').modal('show');
         $('#saveDeleteBtn').off('click').on('click', function () {
-            httpClient(url + '?id=' + selection.data('id'), 'DELETE', null, function () {
+            httpClient(`${url}?id=${selection.data('id')}`, 'DELETE', null, function () {
                 $('#deleteModal').modal('hide');
                 const row = $('#dataTable').bootstrapTable('getSelections')[0];
                 buildUnits(row.groupKey, row.id);
@@ -555,13 +555,13 @@
         const mapping = getDatasourceMapping(groupKey);
 
         $('#ruleUnitList').empty();
-        httpClient('/rule/unit/list?ruleId=' + ruleId, 'GET', null, function (data) {
+        httpClient(`/rule/unit/list?ruleId=${ruleId}`, 'GET', null, function (data) {
             if (!data || data.length === 0) {
                 showErrorToast('未查询到规则单元');
             } else {
                 data.forEach(field => {
                     const status = enabledFormatter(field.enabled);
-                    const datasource = field.datasourceKey ? field.datasourceKey + ' : ' + mapping.get(field.datasourceKey) : '无';
+                    const datasource = field.datasourceKey ? `${field.datasourceKey} : ${mapping.get(field.datasourceKey)}` : '无';
                     const property = `
                       <li class="list-group-item"
                       data-id="${field.id}"
@@ -593,7 +593,7 @@
                 function (data) {
                     showSuccessToast("表达式校验通过");
                 }, function (msg) {
-                    showErrorToast("表达式校验失败: " + msg);
+                    showErrorToast(`表达式校验失败: ${msg}`);
                 });
         }
     }
@@ -601,7 +601,7 @@
     function initRuleVariable(type) {
         $('#ruleVariableList').empty();
         const groupKey = $('#editUnitGroupKey').val();
-        const url = "/rule/variable/list?groupKey=" + groupKey + "&type=" + type;
+        const url = `/rule/variable/list?groupKey=${groupKey}&type=${type}`;
 
         httpClient(url, 'GET', null, function (data) {
             if (!data || data.length === 0) {

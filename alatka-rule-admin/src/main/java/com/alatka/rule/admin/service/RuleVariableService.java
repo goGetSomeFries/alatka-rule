@@ -26,6 +26,7 @@ public class RuleVariableService {
     public Map<String, String> getType() {
         Map<String, String> map = new LinkedHashMap<>();
         map.put("PARAM", "预处理入参");
+        map.put("TEMPLATE", "模板");
         map.put("VAR", "变量");
         map.put("OPE", "运算符");
         map.put("FUNC", "函数");

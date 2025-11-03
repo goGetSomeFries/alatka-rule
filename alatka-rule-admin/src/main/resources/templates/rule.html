@@ -377,6 +377,7 @@
 </div>
 
 <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/interactjs/dist/interact.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
@@ -519,8 +520,8 @@
         const $buildGroupKey = $('#buildGroupKey');
         const tomSelect = $buildGroupKey.data('tomSelect-instance');
         tomSelect.clear();
-        $('#buildPath').empty();
-        $('#buildUris').empty();
+        $('#buildPath').val('');
+        $('#buildUris').val('');
 
         const $buildModal = $('#buildModal');
         if (type === 'fallback') {

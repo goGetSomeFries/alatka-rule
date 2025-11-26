@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
@@ -28,9 +29,9 @@ public class DatabaseExternalDataSourceTest {
     void test02() {
         NamedParameterJdbcTemplate jdbcTemplate = Mockito.mock(NamedParameterJdbcTemplate.class);
         Mockito.when(jdbcTemplate.queryForList(Mockito.anyString(), Mockito.anyMap())).thenReturn(Collections.EMPTY_LIST);
-        Mockito.when(jdbcTemplate.queryForList(Mockito.anyString(), Mockito.anyMap(), Mockito.any(Class.class))).thenReturn(Collections.singletonList("123"));
+        Mockito.when(jdbcTemplate.query(Mockito.anyString(), Mockito.anyMap(), Mockito.any(RowMapper.class))).thenReturn(Collections.singletonList("123"));
         Mockito.when(jdbcTemplate.queryForMap(Mockito.anyString(), Mockito.anyMap())).thenReturn(Collections.EMPTY_MAP);
-        Mockito.when(jdbcTemplate.queryForObject(Mockito.anyString(), Mockito.anyMap(), Mockito.any(Class.class))).thenReturn("123");
+        Mockito.when(jdbcTemplate.queryForObject(Mockito.anyString(), Mockito.anyMap(), Mockito.any(RowMapper.class))).thenReturn("123");
         DatabaseExternalDataSource externalDataSource = new DatabaseExternalDataSource(jdbcTemplate);
 
         Map<String, String> config = new HashMap<>();

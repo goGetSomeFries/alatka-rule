@@ -8,6 +8,7 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/highlightjs/styles/vs.min.css}"/>
     <style>
         .list-group-item.light-active {
             background-color: hsl(210, 100%, 90%);
@@ -378,6 +379,8 @@
 
 <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
 <script th:src="@{/webjars/interactjs/dist/interact.min.js}"></script>
+<script th:src="@{/webjars/highlightjs/highlight.min.js}"></script>
+<script th:src="@{/webjars/highlightjs/languages/javascript.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
@@ -489,7 +492,7 @@
                 $editForm.addClass('was-validated');
             } else {
                 $editForm.serializeArray().forEach(item => {
-                    formData[item.name] = item.value;
+                    formData[item.name] = item.value === '' ? null : item.value;
                 });
                 httpClient(url, created ? 'POST' : 'PUT', formData, function () {
                     $('#editUnitModal').modal('hide');
@@ -545,7 +548,7 @@
                 formData['uris'] = $('#buildUris').val().split(",").map(item => item.trim());
                 formData['ruleGroups'] = type === 'fallback' ? null : tomSelect.getValue();
                 httpClient(url, 'POST', formData, function (data) {
-                    showWarningToast(JSON.stringify(data, null, 2));
+                    showSuccessToast(JSON.stringify(data, null, 2));
                     $buildModal.modal('hide');
                 });
             }
@@ -576,11 +579,12 @@
                               <span class="badge ${field.datasourceKey ? 'text-bg-primary' : 'text-bg-warning'}">${datasource}</span>
                               <span class="badge ${field.enabled ? 'text-bg-success' : 'text-bg-danger'}">${status}</span>
                           </div>
-                          <div class="ms-2 me-auto">${field.expression}</div>
+                          <pre class="ms-1 me-auto"><code class="language-javascript">${field.expression}</code></pre>
                       </li>
                     `;
                     $('#ruleUnitList').append(property);
                 });
+                hljs.highlightAll();
             }
         });
     }

@@ -58,6 +58,7 @@ public class RuleService {
         Map<String, String> resultMap = new HashMap<>(uriList.size());
 
         CompletableFuture<Void> completableFuture = uriList.stream()
+                .map(uri -> uri.startsWith("http://") || uri.startsWith("https://") ? uri : "http://" + uri)
                 .map(uri -> uri.concat(ruleBuildReq.getPath()))
                 .map(url -> this.doBuild(url, ruleBuildReq.getRuleGroups(), resultMap))
                 .collect(Collectors.collectingAndThen(Collectors.toList(),

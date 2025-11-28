@@ -19,17 +19,19 @@
 
 ### 项目结构
 
-| 模块                            | 描述                                                     |
-|---------------------------------|---------------------------------------------------------|
-| alatka-rule-core                | 规则引擎核心模块，包括规则配置解析和规则执行                 |
-| alatka-rule-spring-boot-starter | alatka-rule-core模块包装的SpringBoot Starter，支持自动装配 |
-| alatka-rule-aviator-extended    | AviatorScript扩展模块，支持AviatorScript自定义函数         |
-| alatka-rule-admin               | 后台管理模块                                             |
+| 模块                            | 描述                                                      |
+|---------------------------------|----------------------------------------------------------|
+| alatka-rule-core                | 规则引擎核心模块，包括规则配置解析和规则执行                   |
+| alatka-rule-spring-boot-starter | alatka-rule-core模块包装的SpringBoot Starter，支持自动装配  |
+| alatka-rule-aviator-extended    | AviatorScript扩展模块，支持AviatorScript自定义函数          |
+| alatka-rule-admin               | 后台管理模块                                               |
+| alatka-rule-example             | alatka-rule-admin & alatka-rule-spring-boot-starter 示例  |
 
 ### 版本对应关系
 
 | alatka-rule | alatka-dependencies | alatka        |
 |-------------|---------------------|---------------|
+| 2.15.0      | 1.64.0              | 1.64.0        |
 | 2.14.0      | 1.63.0              | 1.63.0        |
 | 2.13.0      | 1.61.0-1.62.0       | 1.61.0-1.62.0 |
 | 2.12.0      | 1.59.0-1.60.0       | 1.59.0-1.60.0 |

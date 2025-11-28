@@ -116,6 +116,7 @@ function showEditModal(url, created) {
 function showEditModalWithExtendedProperties(url, created) {
     if (created) {
         $('#editForm')[0]?.reset();
+        $('#editForm input[type="hidden"]').val('');
         $('#extendedPropertiesContainer').empty();
     } else {
         const selections = $('#dataTable').bootstrapTable('getSelections');

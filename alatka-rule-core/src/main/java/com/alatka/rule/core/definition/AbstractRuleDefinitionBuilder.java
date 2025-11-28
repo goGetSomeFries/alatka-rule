@@ -76,7 +76,7 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 .peek(this::preProcess)
                 .map(this::buildRuleGroupDefinition)
                 .filter(RuleGroupDefinition::isEnabled)
-                .filter(group -> ruleGroups.length == 0 || Arrays.asList(ruleGroups).contains(group.getName()))
+                .filter(ruleGroupDefinition -> ruleGroups.length == 0 || Arrays.asList(ruleGroups).contains(ruleGroupDefinition.getId()))
                 .peek(ruleGroupDefinition -> this.logger.info("build {}", ruleGroupDefinition))
                 .peek(ruleGroupDefinition -> this.mapping = this.buildRuleDataSourceDefinitionMap(ruleGroupDefinition))
                 .peek(ruleGroupDefinition -> {
@@ -96,8 +96,10 @@ public abstract class AbstractRuleDefinitionBuilder<T> implements RuleDefinition
                 });
         this.postProcess();
 
-        this.mapping.clear();
-        this.mapping = null;
+        if (this.mapping != null) {
+            this.mapping.clear();
+            this.mapping = null;
+        }
 
         RuleGroupDefinitionContext.toggle();
     }

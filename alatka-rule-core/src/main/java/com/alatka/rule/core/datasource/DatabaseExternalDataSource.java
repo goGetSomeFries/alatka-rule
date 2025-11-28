@@ -2,6 +2,7 @@ package com.alatka.rule.core.datasource;
 
 import com.alatka.rule.core.context.RuleDataSourceDefinition;
 import com.alatka.rule.core.util.ClassUtil;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
@@ -39,10 +40,10 @@ public class DatabaseExternalDataSource extends AbstractExternalDataSource {
 
         if (ResultType.valueOf(resultType) == ResultType.list) {
             return resultClass == null ? this.jdbcTemplate.queryForList(sql, paramContext) :
-                    this.jdbcTemplate.queryForList(sql, paramContext, resultClass);
+                    this.jdbcTemplate.query(sql, paramContext, BeanPropertyRowMapper.newInstance(resultClass));
         }
         return resultClass == null ? this.jdbcTemplate.queryForMap(sql, paramContext) :
-                this.jdbcTemplate.queryForObject(sql, paramContext, resultClass);
+                this.jdbcTemplate.queryForObject(sql, paramContext, BeanPropertyRowMapper.newInstance(resultClass));
     }
 
     @Override

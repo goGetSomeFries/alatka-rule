@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: alatka-rule-example
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:${user.dir}/alatka-rule/alatka-rule-example/db/example.db
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.community.dialect.SQLiteDialect
+server:
+  port: 8088
+alatka:
+  rule:
+    type: database
+    enabled: true
+    groups: med

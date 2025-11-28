@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.alatka</groupId>
         <artifactId>alatka</artifactId>
-        <version>1.63.0-jdk17</version>
+        <version>1.64.0-jdk17</version>
     </parent>
 
     <groupId>com.alatka.rule</groupId>
@@ -19,10 +19,11 @@
         <module>alatka-rule-admin</module>
         <module>alatka-rule-spring-boot-starter</module>
         <module>alatka-rule-aviator-extended</module>
+        <module>alatka-rule-example</module>
     </modules>
 
     <properties>
-        <revision>2.14.0-jdk17</revision>
+        <revision>2.15.0-jdk17</revision>
     </properties>
 
 </project>

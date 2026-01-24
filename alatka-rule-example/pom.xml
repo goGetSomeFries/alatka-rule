@@ -9,17 +9,6 @@
     <artifactId>alatka-rule-example</artifactId>
     <packaging>jar</packaging>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.alatka</groupId>
-                <artifactId>alatka-dependencies</artifactId>
-                <version>${revision}</version>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>com.alatka.rule</groupId>

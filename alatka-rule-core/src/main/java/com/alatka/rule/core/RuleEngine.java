@@ -60,16 +60,20 @@ public class RuleEngine {
         RuleGroupDefinitionContext definitionContext = RuleGroupDefinitionContext.getInstance(true);
         AviatorEvaluatorInstance aviatorEvaluatorInstance = definitionContext.getAviatorEvaluatorInstance();
         RuleGroupDefinition ruleGroupDefinition = definitionContext.getRuleGroupDefinition(ruleGroupName);
+        this.logger.debug("*************** 执行规则组：{} ***************", ruleGroupDefinition);
 
         // 入参预处理
         List<RuleParamDefinition> ruleParamDefinitions = definitionContext.getRuleParamDefinitions(ruleGroupName);
         Map<String, Object> paramContext = this.initParamContext(aviatorEvaluatorInstance, param, ruleParamDefinitions);
+        this.logger.debug("******* 规则入参：{}", paramContext);
 
         // global范围外部数据存储
         ConcurrentHashMap<String, Object> globalScopeData = definitionContext.getGlobalScopeData(ruleGroupName);
+        this.logger.debug("******* 规则global范围外部数据：{}", globalScopeData);
 
         // 黑白名单过滤
         if (this.listFilter(aviatorEvaluatorInstance, paramContext, globalScopeData, ruleGroupDefinition.getRuleListDefinition())) {
+            this.logger.debug("******* 黑/白名单命中，执行退出");
             return result;
         }
 
@@ -114,6 +118,7 @@ public class RuleEngine {
                     throw new IllegalArgumentException("error type: " + ruleGroupDefinition.getType());
             }
 
+            this.logger.debug("******* 规则[{}]开始执行", ruleDefinition.getId());
             // 规则判断
             boolean hit = this.doExecute(aviatorEvaluatorInstance, ruleDefinition.getRuleUnitDefinition(), paramContext, globalScopeData);
 
@@ -121,9 +126,10 @@ public class RuleEngine {
                 result.add(ruleDefinition);
                 theOne = ruleDefinition;
             }
+            this.logger.debug("******* 规则{}命中：{}", hit ? "" : "未", ruleDefinition);
         }
 
-        this.logger.debug("execute: {}; params: {}; result: {}", ruleGroupDefinition, paramContext, result);
+        this.logger.debug("*************** 命中结果集：{}", result);
         return result;
     }
 
@@ -155,6 +161,7 @@ public class RuleEngine {
      *
      * @param aviatorEvaluatorInstance aviator实例
      * @param paramContext             规则入参
+     * @param globalScopeData          global范围外部数据存储
      * @param ruleListDefinition       规则黑白名单
      * @return true:过滤/false:不过滤
      */
@@ -173,6 +180,7 @@ public class RuleEngine {
      * @param aviatorEvaluatorInstance aviator实例
      * @param ruleUnitDefinition       规则单元
      * @param paramContext             规则入参
+     * @param globalScopeData          global范围外部数据存储
      * @return 是否命中黑白名单
      */
     private boolean doListFilter(AviatorEvaluatorInstance aviatorEvaluatorInstance, RuleUnitDefinition ruleUnitDefinition,
@@ -198,19 +206,24 @@ public class RuleEngine {
      * @param aviatorEvaluatorInstance aviator实例
      * @param ruleUnitDefinition       规则单元
      * @param paramContext             规则入参
+     * @param globalScopeData          global范围外部数据存储
      * @return 是否命中
      */
     private boolean doExecute(AviatorEvaluatorInstance aviatorEvaluatorInstance, RuleUnitDefinition ruleUnitDefinition,
                               Map<String, Object> paramContext, Map<String, Object> globalScopeData) {
         Map<String, Object> env = this.extendParamContext(ruleUnitDefinition.getDataSourceRef(), paramContext, globalScopeData);
+        this.logger.trace("*** 规则单元入参：{}", env);
+
         boolean hit = this.calculateExpression(aviatorEvaluatorInstance, ruleUnitDefinition.getExpression(), env);
 
         if (!hit) {
             // 未命中规则单元，结束当前规则判断
+            this.logger.trace("*** 规则单元[{}]未命中，表达式：{}", ruleUnitDefinition.getIndex(), ruleUnitDefinition.getExpression());
             return false;
         }
         if (ruleUnitDefinition.getNext() == null) {
             // 命中规则单元，无后续规则单元，则当前规则命中
+            this.logger.trace("*** 规则单元全部命中");
             return true;
         } else {
             // 命中规则单元，有后续规则单元，则继续执行后续规则单元
@@ -223,6 +236,7 @@ public class RuleEngine {
      *
      * @param ruleDataSourceDefinition {@link RuleDataSourceDefinition}
      * @param paramContext             请求上下文
+     * @param globalScopeData          global范围外部数据存储
      * @return 结果上下文
      */
     private Map<String, Object> extendParamContext(RuleDataSourceDefinition ruleDataSourceDefinition,

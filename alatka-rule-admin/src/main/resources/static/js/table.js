@@ -28,6 +28,8 @@ function initTable() {
     });
 
     $("#dataTable").bootstrapTable({
+        undefinedText: '',
+        pageList: [10, 25, 50, 100],
         onLoadError: function (status) {
             showErrorToast(`接口请求失败, http code: ${status}`);
         },
@@ -105,7 +107,7 @@ function showEditModal(url, created) {
             $editForm.addClass('was-validated');
         } else {
             $editForm.serializeArray().forEach(item => {
-                formData[item.name] = item.value;
+                formData[item.name] = item.value === '' ? null : item.value;
             });
             submitFunction(url, created ? 'POST' : 'PUT', formData, created ? '新增' : '更新');
             $('#editModal').modal('hide');
@@ -169,7 +171,7 @@ function showEditModalWithExtendedProperties(url, created) {
             const extended = {};
             keys.forEach((key, index) => {
                 if (key && index < values.length) {
-                    extended[key] = values[index];
+                    extended[key] = values[index] === '' ? null : values[index];
                 }
             });
             formData['extended'] = extended;

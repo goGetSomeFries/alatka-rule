@@ -10,6 +10,7 @@ import com.alatka.rule.core.definition.RuleDefinitionBuilder;
 import com.alatka.rule.core.definition.XmlRuleDefinitionBuilder;
 import com.alatka.rule.core.definition.YamlRuleDefinitionBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -46,6 +47,7 @@ public class AlatkaRuleAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(value = "alatka.rule.type", havingValue = "database")
+    @ConditionalOnMissingBean(DatabaseRuleDefinitionBuilder.class)
     public RuleDefinitionBuilder databaseRuleDefinitionBuilder(AlatkaRuleProperties properties, DataSource dataSource) {
         RuleDefinitionBuilder builder = new DatabaseRuleDefinitionBuilder(dataSource);
         builder.build(properties.getGroups());
@@ -67,6 +69,7 @@ public class AlatkaRuleAutoConfiguration {
 
     @Configuration
     @ConditionalOnClass(NamedParameterJdbcTemplate.class)
+    @ConditionalOnMissingBean(DatabaseExternalDataSource.class)
     public static class DatabaseExternalDataSourceAutoConfiguration {
 
         @Bean

@@ -36,7 +36,7 @@ public class RedisExternalDataSourceTest {
         Mockito.when(listOperations.range(Mockito.any(), Mockito.anyLong(), Mockito.anyLong())).thenReturn(Collections.emptyList());
         Mockito.when(valueOperations.get(Mockito.any())).thenReturn("1234");
         Mockito.when(hashOperations.get(Mockito.any(), Mockito.any())).thenReturn("AAAAAA");
-        Mockito.when(setOperations.isMember(Mockito.any(), Mockito.any())).thenReturn(true);
+        Mockito.when(setOperations.isMember(Mockito.any(), Mockito.any(Object.class))).thenReturn(true);
         RedisExternalDataSource externalDataSource = new RedisExternalDataSource(redisTemplate);
 
         Map<String, String> config = new HashMap<>();

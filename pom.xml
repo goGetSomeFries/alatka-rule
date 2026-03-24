@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.alatka</groupId>
         <artifactId>alatka</artifactId>
-        <version>1.68.0-jdk17</version>
+        <version>1.69.0-jdk17</version>
     </parent>
 
     <groupId>com.alatka.rule</groupId>
@@ -23,7 +23,7 @@
     </modules>
 
     <properties>
-        <revision>2.16.0-jdk17</revision>
+        <revision>2.17.0-jdk17</revision>
     </properties>
 
     <dependencyManagement>

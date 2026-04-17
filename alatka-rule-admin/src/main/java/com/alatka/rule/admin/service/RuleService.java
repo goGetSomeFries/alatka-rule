@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.persistence.criteria.Predicate;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,7 +56,7 @@ public class RuleService {
 
     public Map<String, String> build(RuleBuildReq ruleBuildReq) {
         List<String> uriList = ruleBuildReq.getUris();
-        Map<String, String> resultMap = new HashMap<>(uriList.size());
+        Map<String, String> resultMap = new ConcurrentHashMap<>(uriList.size());
 
         CompletableFuture<Void> completableFuture = uriList.stream()
                 .map(uri -> uri.startsWith("http://") || uri.startsWith("https://") ? uri : "http://" + uri)

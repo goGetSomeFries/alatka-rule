@@ -10,6 +10,7 @@ import com.alatka.rule.admin.service.RuleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,7 +58,7 @@ public class RuleController {
 
     @Operation(summary = "分页查询规则")
     @GetMapping("/page")
-    public PageResMessage<RuleRes> queryPage(@Valid RulePageReq rulePageReq) {
+    public PageResMessage<RuleRes> queryPage(@Valid @ParameterObject RulePageReq rulePageReq) {
         return PageResMessage.success(ruleService.queryPage(rulePageReq));
     }
 

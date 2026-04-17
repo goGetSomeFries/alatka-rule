@@ -9,6 +9,7 @@ import com.alatka.rule.admin.service.RuleDatasourceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +45,7 @@ public class RuleDatasourceController {
 
     @Operation(summary = "分页查询规则外部数据源")
     @GetMapping("/page")
-    public PageResMessage<RuleDatasourceRes> queryPage(@Valid RuleDatasourcePageReq ruleDatasourcePageReq) {
+    public PageResMessage<RuleDatasourceRes> queryPage(@Valid @ParameterObject RuleDatasourcePageReq ruleDatasourcePageReq) {
         return PageResMessage.success(ruleDatasourceService.queryPage(ruleDatasourcePageReq));
     }
 

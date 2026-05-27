@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +45,7 @@ public class RuleGroupController {
 
     @Operation(summary = "分页查询规则组")
     @GetMapping("/page")
-    public PageResMessage<RuleGroupRes> queryPage(@Valid RuleGroupPageReq pageReqMessage) {
+    public PageResMessage<RuleGroupRes> queryPage(@Valid @ParameterObject RuleGroupPageReq pageReqMessage) {
         return PageResMessage.success(ruleGroupService.queryPage(pageReqMessage));
     }
 

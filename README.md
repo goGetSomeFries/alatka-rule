@@ -22,7 +22,7 @@
 | 模块                            | 描述                                                      |
 |---------------------------------|----------------------------------------------------------|
 | alatka-rule-core                | 规则引擎核心模块，包括规则配置解析和规则执行                   |
-| alatka-rule-spring-boot-starter | alatka-rule-core模块包装的SpringBoot Starter，支持自动装配  |
+| alatka-rule-spring-boot-starter | alatka-rule-core模块包装的Spring Boot Starter，支持自动装配 |
 | alatka-rule-aviator-extended    | AviatorScript扩展模块，支持AviatorScript自定义函数          |
 | alatka-rule-admin               | 后台管理模块                                               |
 | alatka-rule-example             | alatka-rule-admin & alatka-rule-spring-boot-starter 示例  |
@@ -31,6 +31,7 @@
 
 | alatka-rule | alatka-dependencies | alatka        |
 |-------------|---------------------|---------------|
+| 2.19.0      | 1.74.0              | 1.74.0        |
 | 2.18.0      | 1.73.0              | 1.73.0        |
 | 2.17.0      | 1.69.0-1.72.0       | 1.69.0-1.72.0 |
 | 2.16.0      | 1.68.0              | 1.68.0        |

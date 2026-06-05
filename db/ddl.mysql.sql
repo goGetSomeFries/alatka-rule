@@ -2,11 +2,15 @@
 
 CREATE TABLE `ALK_RULE_GROUP_DEFINITION`
 (
-    `G_ID`      int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `G_KEY`     varchar(50)  NOT NULL COMMENT '关键字',
-    `G_NAME`    varchar(100) NOT NULL COMMENT '名称',
-    `G_TYPE`    varchar(20)  NOT NULL COMMENT '类型',
-    `G_ENABLED` tinyint(1) NOT NULL COMMENT '是否可用',
+    `G_ID`        int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `G_CREATE_BY` varchar(50)  NOT NULL COMMENT '创建人',
+    `G_CREATE_AT` datetime     NOT NULL COMMENT '创建日期',
+    `G_UPDATE_BY` varchar(50) COMMENT '更新人',
+    `G_UPDATE_AT` datetime COMMENT '更新日期',
+    `G_KEY`       varchar(50)  NOT NULL COMMENT '关键字',
+    `G_NAME`      varchar(100) NOT NULL COMMENT '名称',
+    `G_TYPE`      varchar(20)  NOT NULL COMMENT '类型',
+    `G_ENABLED`   tinyint(1) NOT NULL COMMENT '是否可用',
     PRIMARY KEY (`G_ID`),
     UNIQUE KEY `ALK_RULE_GROUP_DEFINITION_UNIQUE` (`G_KEY`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规则组表';
@@ -16,15 +20,19 @@ CREATE TABLE `ALK_RULE_GROUP_DEFINITION`
 
 CREATE TABLE `ALK_RULE_DEFINITION`
 (
-    `R_ID`       int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `R_TYPE`     varchar(1)    NOT NULL COMMENT '类型 1:规则/2:黑名单/3:白名单',
-    `R_NAME`     varchar(100)  NOT NULL COMMENT '名称',
-    `R_DESC`     varchar(5000) NOT NULL COMMENT '描述',
-    `R_PRIORITY` int           NOT NULL COMMENT '优先级',
-    `R_SCORE`    int           NOT NULL COMMENT '评分',
-    `R_ORDER`    int           NOT NULL COMMENT '顺序',
-    `R_ENABLED`  tinyint(1) NOT NULL COMMENT '是否可用',
-    `G_KEY`      varchar(50)   NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
+    `R_ID`        int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `R_CREATE_BY` varchar(50)   NOT NULL COMMENT '创建人',
+    `R_CREATE_AT` datetime      NOT NULL COMMENT '创建日期',
+    `R_UPDATE_BY` varchar(50) COMMENT '更新人',
+    `R_UPDATE_AT` datetime COMMENT '更新日期',
+    `R_TYPE`      varchar(1)    NOT NULL COMMENT '类型 1:规则/2:黑名单/3:白名单',
+    `R_NAME`      varchar(100)  NOT NULL COMMENT '名称',
+    `R_DESC`      varchar(5000) NOT NULL COMMENT '描述',
+    `R_PRIORITY`  int           NOT NULL COMMENT '优先级',
+    `R_SCORE`     int           NOT NULL COMMENT '评分',
+    `R_ORDER`     int           NOT NULL COMMENT '顺序',
+    `R_ENABLED`   tinyint(1) NOT NULL COMMENT '是否可用',
+    `G_KEY`       varchar(50)   NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
     PRIMARY KEY (`R_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规则表';
 
@@ -46,6 +54,10 @@ CREATE TABLE `ALK_RULE_EXT_DEFINITION`
 CREATE TABLE `ALK_RULE_UNIT_DEFINITION`
 (
     `U_ID`         int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `U_CREATE_BY`  varchar(50)    NOT NULL COMMENT '创建人',
+    `U_CREATE_AT`  datetime       NOT NULL COMMENT '创建日期',
+    `U_UPDATE_BY`  varchar(50) COMMENT '更新人',
+    `U_UPDATE_AT`  datetime COMMENT '更新日期',
     `U_EXPRESSION` varchar(10000) NOT NULL COMMENT '表达式',
     `U_ORDER`      int            NOT NULL COMMENT '顺序',
     `U_ENABLED`    tinyint(1) NOT NULL COMMENT '是否可用',
@@ -60,13 +72,17 @@ CREATE TABLE `ALK_RULE_UNIT_DEFINITION`
 
 CREATE TABLE `ALK_RULE_DATASOURCE_DEFINITION`
 (
-    `D_ID`       int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `D_KEY`      varchar(50)  NOT NULL COMMENT '关键字',
-    `D_NAME`     varchar(100) NOT NULL COMMENT '名称',
-    `D_TYPE`     varchar(20)  NOT NULL COMMENT '类型',
-    `D_SCOPE`    varchar(50)  NOT NULL COMMENT '数据范围',
-    `D_ENABLED`  tinyint(1) NOT NULL COMMENT '是否可用',
-    `G_KEY`      varchar(50)  NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
+    `D_ID`        int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `D_CREATE_BY` varchar(50)  NOT NULL COMMENT '创建人',
+    `D_CREATE_AT` datetime     NOT NULL COMMENT '创建日期',
+    `D_UPDATE_BY` varchar(50) COMMENT '更新人',
+    `D_UPDATE_AT` datetime COMMENT '更新日期',
+    `D_KEY`       varchar(50)  NOT NULL COMMENT '关键字',
+    `D_NAME`      varchar(100) NOT NULL COMMENT '名称',
+    `D_TYPE`      varchar(20)  NOT NULL COMMENT '类型',
+    `D_SCOPE`     varchar(50)  NOT NULL COMMENT '数据范围',
+    `D_ENABLED`   tinyint(1) NOT NULL COMMENT '是否可用',
+    `G_KEY`       varchar(50)  NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
     PRIMARY KEY (`D_ID`),
     UNIQUE KEY `ALK_RULE_DATASOURCE_DEFINITION_UNIQUE` (`G_KEY`, `D_KEY`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规则外部数据源表';
@@ -76,10 +92,10 @@ CREATE TABLE `ALK_RULE_DATASOURCE_DEFINITION`
 CREATE TABLE `ALK_RULE_DATASOURCE_EXT_DEFINITION`
 (
     `S_ID`    int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `S_KEY`   varchar(100) NOT NULL COMMENT '属性key',
+    `S_KEY`   varchar(100)   NOT NULL COMMENT '属性key',
     `S_VALUE` varchar(10000) NOT NULL COMMENT '属性值',
     `D_ID`    int unsigned NOT NULL COMMENT 'ALK_RULE_DATASOURCE_DEFINITION->D_ID',
-    `G_KEY`   varchar(50)  NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
+    `G_KEY`   varchar(50)    NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
     PRIMARY KEY (`S_ID`),
     UNIQUE KEY `ALK_RULE_DATASOURCE_EXT_DEFINITION_UNIQUE` (`D_ID`, `S_KEY`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规则外部数据源扩展属性表';
@@ -88,14 +104,18 @@ CREATE TABLE `ALK_RULE_DATASOURCE_EXT_DEFINITION`
 
 CREATE TABLE `ALK_RULE_VARIABLE_DEFINITION`
 (
-    `V_ID`         int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `V_KEY`        varchar(100) NOT NULL COMMENT '关键字',
-    `V_NAME`       varchar(100)  NOT NULL COMMENT '名称',
-    `V_DESC`       varchar(10000) DEFAULT NULL COMMENT '描述',
-    `V_TYPE`       varchar(10) NOT NULL COMMENT '类型',
-    `V_ORDER`      int         NOT NULL COMMENT '顺序',
-    `V_ENABLED`    tinyint(1) NOT NULL COMMENT '是否可用',
-    `G_KEY`        varchar(50) NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
+    `V_ID`        int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `V_CREATE_BY` varchar(50)  NOT NULL COMMENT '创建人',
+    `V_CREATE_AT` datetime     NOT NULL COMMENT '创建日期',
+    `V_UPDATE_BY` varchar(50) COMMENT '更新人',
+    `V_UPDATE_AT` datetime COMMENT '更新日期',
+    `V_KEY`       varchar(100) NOT NULL COMMENT '关键字',
+    `V_NAME`      varchar(100) NOT NULL COMMENT '名称',
+    `V_DESC`      varchar(10000) DEFAULT NULL COMMENT '描述',
+    `V_TYPE`      varchar(10)  NOT NULL COMMENT '类型',
+    `V_ORDER`     int          NOT NULL COMMENT '顺序',
+    `V_ENABLED`   tinyint(1) NOT NULL COMMENT '是否可用',
+    `G_KEY`       varchar(50)  NOT NULL COMMENT 'ALK_RULE_GROUP_DEFINITION->G_KEY',
     PRIMARY KEY (`V_ID`),
     UNIQUE KEY `ALK_RULE_VARIABLE_DEFINITION_UNIQUE` (`G_KEY`, `V_TYPE`, `V_KEY`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规则变量处理表';

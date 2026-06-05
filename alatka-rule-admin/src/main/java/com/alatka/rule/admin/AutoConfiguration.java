@@ -1,5 +1,6 @@
 package com.alatka.rule.admin;
 
+import com.alatka.rule.admin.support.DefaultAuditorAware;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -7,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -15,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @EnableJpaRepositories
+@EnableJpaAuditing(auditorAwareRef = DefaultAuditorAware.BEAN_NAME)
 @EntityScan
 @ComponentScan
 @Configuration
@@ -68,5 +71,11 @@ public class AutoConfiguration {
         taskExecutor.setThreadNamePrefix(threadNamePrefix);
         taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         return taskExecutor;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = DefaultAuditorAware.BEAN_NAME)
+    public DefaultAuditorAware defaultAuditorAware() {
+        return new DefaultAuditorAware();
     }
 }

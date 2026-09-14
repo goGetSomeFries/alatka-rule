@@ -17,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @EnableJpaRepositories
-@EnableJpaAuditing(auditorAwareRef = DefaultAuditorAware.BEAN_NAME)
 @EntityScan
 @ComponentScan
 @Configuration
@@ -73,9 +72,15 @@ public class AutoConfiguration {
         return taskExecutor;
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = DefaultAuditorAware.BEAN_NAME)
-    public DefaultAuditorAware defaultAuditorAware() {
-        return new DefaultAuditorAware();
+    @Configuration
+    @ConditionalOnMissingBean(name = "jpaAuditingHandler")
+    @EnableJpaAuditing(auditorAwareRef = DefaultAuditorAware.BEAN_NAME)
+    public static class ParamAdminJpaAutoConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = DefaultAuditorAware.BEAN_NAME)
+        public DefaultAuditorAware defaultAuditorAware() {
+            return new DefaultAuditorAware();
+        }
     }
 }

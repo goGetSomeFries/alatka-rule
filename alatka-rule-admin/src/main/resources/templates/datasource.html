@@ -6,11 +6,13 @@
     <title>alatka-rule-admin</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/alatka-rule-infra.css}">
 </head>
 <body>
 <div class="container mt-4">
-    <div class="card mb-3">
+    <div class="card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0">规则外部数据源查询</h5>
             <button class="btn btn-sm btn-outline-secondary"
@@ -35,27 +37,21 @@
                 <div class="col-md-3">
                     <label for="type" class="form-label">类型</label>
                     <select class="form-select alk-select-type" id="type" name="type">
-                        <option value="">全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="scope" class="form-label">数据范围</label>
                     <select class="form-select alk-select-scope" id="scope" name="scope">
-                        <option value="">全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="groupKey" class="form-label">规则组名称</label>
                     <select class="form-select alk-select-groupKey" id="groupKey" name="groupKey">
-                        <option value="default_">默认组</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="enabled" class="form-label">是否可用</label>
-                    <select class="form-select" id="enabled" name="enabled">
-                        <option value="">全部</option>
-                        <option value="true" selected>正常</option>
-                        <option value="false">禁用</option>
+                    <label for="enabled" class="form-label">状态</label>
+                    <select class="form-select alk-select-enabled" id="enabled" name="enabled">
                     </select>
                 </div>
                 <div class="col-12 text-center">
@@ -68,20 +64,6 @@
                 </div>
             </form>
         </div>
-    </div>
-    <div class="col-12 text-end mb-3">
-        <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
-                onclick="showEditModalWithExtendedProperties('/rule/datasource/create', true)">
-            <i class="bi bi-plus-lg"></i> 新增
-        </button>
-        <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
-                onclick="showEditModalWithExtendedProperties('/rule/datasource/update', false)">
-            <i class="bi bi-pencil-square"></i> 更新
-        </button>
-        <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
-                onclick="showDeleteModal('/rule/datasource/delete')">
-            <i class="bi bi-trash"></i> 删除
-        </button>
     </div>
 
     <table id="dataTable"
@@ -97,21 +79,24 @@
            data-pagination-loop="false"
            data-side-pagination="server"
            data-click-to-select="true"
+           data-show-columns="true"
+           data-show-button-text="true"
+           data-thead-classes="text-center"
            data-maintain-selected="true">
         <thead>
         <tr>
             <th data-radio="true"></th>
             <th data-field="id" data-visible="false">ID</th>
             <th data-field="createBy">创建人</th>
-            <th data-field="createAt" data-sortable="true">创建日期</th>
+            <th data-field="createAt" data-align="center" data-sortable="true">创建日期</th>
             <th data-field="updateBy">更新人</th>
-            <th data-field="updateAt" data-sortable="true">更新日期</th>
+            <th data-field="updateAt" data-align="center" data-sortable="true">更新日期</th>
             <th data-field="key" data-sortable="true">关键字</th>
             <th data-field="name" data-sortable="true">名称</th>
-            <th data-field="type">类型</th>
-            <th data-field="scope">数据范围</th>
-            <th data-field="groupKey" data-formatter="groupKeyFormatter">规则组名称</th>
-            <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
+            <th data-field="type" data-align="center" data-formatter="typeFormatter">类型</th>
+            <th data-field="scope" data-align="center" data-formatter="scopeFormatter">数据范围</th>
+            <th data-field="groupKey" data-visible="false" data-align="center" data-formatter="groupKeyFormatter">规则组名称</th>
+            <th data-field="enabled" data-align="center" data-formatter="enabledFormatter">状态</th>
         </tr>
         </thead>
     </table>
@@ -154,10 +139,8 @@
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="editEnabled" class="form-label">是否可用</label>
-                            <select class="form-select" id="editEnabled" name="enabled" required>
-                                <option value="true" selected>正常</option>
-                                <option value="false">禁用</option>
+                            <label for="editEnabled" class="form-label">状态</label>
+                            <select class="form-select alk-select-enabled" id="editEnabled" name="enabled" required>
                             </select>
                         </div>
                     </div>
@@ -203,30 +186,144 @@
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
-<script th:src="@{/js/table.js}"></script>
+<script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
+<script th:src="@{/js/alatka-rule-infra.js}"></script>
+<script th:src="@{/js/alatka-rule-table.js}"></script>
 <script>
-    initRuleGroupSelect();
+    initEnabledSelect();
+    initGroupKeySelect();
     initTypeSelect();
     initScopeSelect();
     initTable();
     initExtendedProperties();
 
     function initScopeSelect() {
-        httpClient('/rule/datasource/scope', 'GET', null, function (data) {
-            data.forEach((value) => {
-                $('.alk-select-scope').append($('<option>', {value: value, text: value}));
+        let $select = $(".alk-select-scope");
+        $select.each(function () {
+            let tomSelect = new TomSelect(this, {
+                plugins: ['remove_button'],
+                placeholder: '选择类型',
+                render: {
+                    option: function (data, escape) {
+                        return `${data.text}`;
+                    },
+                    item: function (data, escape) {
+                        return `${data.text}`;
+                    }
+                }
             });
         });
+        httpClient('/rule/datasource/scope', 'GET', null, function (data) {
+
+            const options = data.map((value) => ({
+                value: value,
+                text: `<div>${scopeFormatter(value)}</div>`
+            }));
+            $select.each(function () {
+                this.tomselect.addOption(options);
+                if (this.id !== 'scope') {
+                    this.tomselect.setValue([options[0].value]);
+                    $(this).data('alk-init-value', options[0].value);
+                }
+            });
+        });
+    }
+
+    function scopeFormatter(arg) {
+        switch (arg) {
+            case 'global':
+                return `<span class="badge bg-primary">${arg}</span>`;
+            case 'request':
+                return `<span class="badge bg-success">${arg}</span>`;
+            case 'rule':
+                return `<span class="badge bg-secondary">${arg}</span>`;
+            default:
+                return `<span class="badge bg-secondary">${arg}</span>`;
+        }
     }
 
     function initTypeSelect() {
+        let $select = $(".alk-select-type");
+        $select.each(function () {
+            let tomSelect = new TomSelect(this, {
+                plugins: ['remove_button'],
+                placeholder: '选择类型',
+                render: {
+                    option: function (data, escape) {
+                        return `${data.text}`;
+                    },
+                    item: function (data, escape) {
+                        return `${data.text}`;
+                    }
+                }
+            });
+        });
         httpClient('/rule/datasource/type', 'GET', null, function (data) {
-            data.forEach((value) => {
-                $('.alk-select-type').append($('<option>', {value: value, text: value}));
+
+            const options = data.map((value) => ({
+                value: value,
+                text: `<div>${typeFormatter(value)}</div>`
+            }));
+            $select.each(function () {
+                this.tomselect.addOption(options);
+                if (this.id !== 'type') {
+                    this.tomselect.setValue([options[0].value]);
+                    $(this).data('alk-init-value', options[0].value);
+                }
             });
         });
     }
 
+    function typeFormatter(arg) {
+        switch (arg) {
+            case 'database':
+                return `<span class="badge bg-info">${arg}</span>`;
+            case 'redis':
+                return `<span class="badge bg-dark">${arg}</span>`;
+            case 'elasticsearch':
+                return `<span class="badge bg-secondary">${arg}</span>`;
+            default:
+                return `<span class="badge bg-secondary">${arg}</span>`;
+        }
+    }
+
+    function buttonsFunction() {
+        return {
+            addBtn: {
+                text: '新增',
+                icon: 'bi-plus-lg',
+                attributes: {
+                    title: '新增',
+                    class: 'btn btn-outline-info'
+                },
+                event: function () {
+                    showEditModalWithExtendedProperties('/rule/datasource/create', true);
+                }
+            },
+            editBtn: {
+                text: '更新',
+                icon: 'bi-pencil-square',
+                attributes: {
+                    title: '更新',
+                    class: 'btn btn-outline-warning'
+                },
+                event: function () {
+                    showEditModalWithExtendedProperties('/rule/datasource/update', false);
+                }
+            },
+            deleteBtn: {
+                text: '删除',
+                icon: 'bi-trash',
+                attributes: {
+                    title: '删除',
+                    class: 'btn btn-danger me-3'
+                },
+                event: function () {
+                    showDeleteModal('/rule/datasource/delete');
+                }
+            }
+        }
+    }
 </script>
 </body>
 </html>

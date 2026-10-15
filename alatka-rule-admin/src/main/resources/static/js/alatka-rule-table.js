@@ -403,6 +403,9 @@ function initGroupKeySelect() {
 }
 
 function groupKeyFormatter(arg) {
+    if (key === 'default_') {
+        return `<span class="badge bg-secondary">默认组</span>`;
+    }
     let mapping = JSON.parse(sessionStorage.getItem('alatka.rule.groupKeyMapping') || {});
     return `<span class="badge bg-primary">${mapping[arg] || arg}</span>`;
 }

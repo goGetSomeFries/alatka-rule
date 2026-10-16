@@ -6,11 +6,13 @@
     <title>alatka-rule-admin</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/tom-select/dist/css/tom-select.bootstrap5.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-table/dist/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/alatka-rule-infra.css}">
 </head>
 <body>
 <div class="container mt-4">
-    <div class="card mb-3">
+    <div class="card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0">规则变量查询</h5>
             <button class="btn btn-sm btn-outline-secondary"
@@ -33,27 +35,23 @@
                     <input type="text" class="form-control" id="name" name="name" placeholder="输入名称">
                 </div>
                 <div class="col-md-3">
-                    <label for="desc" class="form-label">描述/表达式</label>
-                    <input type="text" class="form-control" id="desc" name="desc" placeholder="输入描述/表达式">
+                    <label for="desc" class="form-label">描述 / 表达式</label>
+                    <input type="text" class="form-control" id="desc" name="desc" placeholder="输入描述 / 表达式">
                 </div>
                 <div class="col-md-3">
                     <label for="type" class="form-label">类型</label>
                     <select class="form-select alk-select-type" id="type" name="type">
-                        <option value="">全部</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="groupKey" class="form-label">规则组名称</label>
+                    <label for="groupKey" class="form-label">规则组</label>
                     <select class="form-select alk-select-groupKey" id="groupKey" name="groupKey">
-                        <option value="default_">默认组</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="enabled" class="form-label">是否可用</label>
-                    <select class="form-select" id="enabled" name="enabled">
+                    <label for="enabled" class="form-label">状态</label>
+                    <select class="form-select alk-select-enabled" id="enabled" name="enabled">
                         <option value="">全部</option>
-                        <option value="true" selected>正常</option>
-                        <option value="false">禁用</option>
                     </select>
                 </div>
                 <div class="col-12 text-center">
@@ -67,20 +65,6 @@
             </form>
         </div>
     </div>
-    <div class="col-12 text-end mb-3">
-        <button type="button" class="btn btn-sm btn-outline-info" id="addButton"
-                onclick="showEditModal('/rule/variable/create', true)">
-            <i class="bi bi-plus-lg"></i> 新增
-        </button>
-        <button type="button" class="btn btn-sm btn-outline-warning" id="editButton"
-                onclick="showEditModal('/rule/variable/update', false)">
-            <i class="bi bi-pencil-square"></i> 更新
-        </button>
-        <button type="button" class="btn btn-sm btn-danger" id="deleteButton"
-                onclick="showDeleteModal('/rule/variable/delete')">
-            <i class="bi bi-trash"></i> 删除
-        </button>
-    </div>
 
     <table id="dataTable"
            data-toggle="table"
@@ -93,22 +77,25 @@
            data-pagination-loop="false"
            data-side-pagination="server"
            data-click-to-select="true"
+           data-show-columns="true"
+           data-show-button-text="true"
+           data-thead-classes="text-center"
            data-maintain-selected="true">
         <thead>
         <tr>
             <th data-radio="true"></th>
-            <th data-field="id" data-visible="false">ID</th>
+            <th data-field="id" data-visible="false" data-align="right" data-sortable="true">ID</th>
             <th data-field="createBy">创建人</th>
-            <th data-field="createAt" data-sortable="true">创建日期</th>
+            <th data-field="createAt" data-align="center" data-sortable="true">创建日期</th>
             <th data-field="updateBy">更新人</th>
-            <th data-field="updateAt" data-sortable="true">更新日期</th>
+            <th data-field="updateAt" data-align="center" data-sortable="true">更新日期</th>
             <th data-field="key" data-sortable="true">关键字</th>
             <th data-field="name" data-sortable="true">名称</th>
-            <th data-field="desc">描述</th>
-            <th data-field="type" data-formatter="typeFormatter">类型</th>
-            <th data-field="order" data-sortable="true">顺序</th>
-            <th data-field="groupKey" data-formatter="groupKeyFormatter">规则组名称</th>
-            <th data-field="enabled" data-formatter="enabledFormatter">是否可用</th>
+            <th data-field="desc">描述 / 表达式</th>
+            <th data-field="type" data-align="center" data-formatter="typeFormatter">类型</th>
+            <th data-field="order" data-align="right" data-sortable="true">顺序</th>
+            <th data-field="groupKey" data-visible="false" data-align="center" data-formatter="groupKeyFormatter">规则组</th>
+            <th data-field="enabled" data-align="center" data-formatter="enabledFormatter">状态</th>
         </tr>
         </thead>
     </table>
@@ -133,7 +120,7 @@
                         <input type="text" class="form-control" id="editName" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editDesc" class="form-label">描述/表达式</label>
+                        <label for="editDesc" class="form-label">描述 / 表达式</label>
                         <textarea class="form-control" rows="3" id="editDesc" name="desc"></textarea>
                     </div>
                     <div class="row">
@@ -149,15 +136,13 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="editGroupKey" class="form-label">规则组名称</label>
+                            <label for="editGroupKey" class="form-label">规则组</label>
                             <select class="form-select alk-select-groupKey" id="editGroupKey" name="groupKey" required>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="editEnabled" class="form-label">是否可用</label>
-                            <select class="form-select" id="editEnabled" name="enabled" required>
-                                <option value="true">正常</option>
-                                <option value="false">禁用</option>
+                            <label for="editEnabled" class="form-label">状态</label>
+                            <select class="form-select alk-select-enabled" id="editEnabled" name="enabled" required>
                             </select>
                         </div>
                     </div>
@@ -193,27 +178,106 @@
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/bootstrap-table.min.js}"></script>
 <script th:src="@{/webjars/bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js}"></script>
-<script th:src="@{/js/table.js}"></script>
+<script th:src="@{/webjars/tom-select/dist/js/tom-select.complete.min.js}"></script>
+<script th:src="@{/js/alatka-rule-infra.js}"></script>
+<script th:src="@{/js/alatka-rule-table.js}"></script>
 <script>
-    initRuleGroupSelect();
+    initEnabledSelect();
+    initGroupKeySelect();
     initTypeSelect();
     initTable();
 
     function initTypeSelect() {
+        let $select = $(".alk-select-type");
+        $select.each(function () {
+            let tomSelect = new TomSelect(this, {
+                plugins: ['remove_button'],
+                placeholder: '选择类型',
+                render: {
+                    option: function (data, escape) {
+                        return `${data.text}`;
+                    },
+                    item: function (data, escape) {
+                        return `${data.text}`;
+                    }
+                }
+            });
+        });
         httpClient('/rule/variable/type', 'GET', null, function (data) {
-            const map = new Map(Object.entries(data));
-            map.forEach((value, key) => {
-                $('.alk-select-type').append($('<option>', {value: key, text: value}))
+            sessionStorage.setItem('alatka.rule.variableTypeMapping', JSON.stringify(data));
+
+            const options = Object.entries(data).map(([key, value]) => ({
+                value: key,
+                text: `<div>${typeFormatter_(key, value)}</div>`
+            }));
+            $select.each(function () {
+                this.tomselect.addOption(options);
+                if (this.id !== 'type') {
+                    this.tomselect.setValue([options[0].value]);
+                    $(this).data('alk-init-value', options[0].value);
+                }
             });
         });
     }
 
-    function typeFormatter(arg) {
-        const keyValuePairs = {};
-        $('select#type option').each(function () {
-            keyValuePairs[$(this).val()] = $(this).text();
-        });
-        return keyValuePairs[arg];
+    function typeFormatter(key) {
+        let mapping = JSON.parse(sessionStorage.getItem('alatka.rule.variableTypeMapping') || {});
+        return typeFormatter_(key, mapping[key] || key);
+    }
+
+    function typeFormatter_(key, value) {
+        switch (key) {
+            case 'PARAM':
+                return `<span class="badge bg-primary">${value}</span>`;
+            case 'TEMPLATE':
+                return `<span class="badge bg-info">${value}</span>`;
+            case 'VAR':
+                return `<span class="badge bg-white text-dark border">${value}</span>`;
+            case 'OPE':
+                return `<span class="badge bg-success">${value}</span>`;
+            case 'FUNC':
+                return `<span class="badge bg-secondary">${value}</span>`;
+            default:
+                return `<span class="badge bg-secondary">${value}</span>`;
+        }
+    }
+
+    function buttonsFunction() {
+        return {
+            addBtn: {
+                text: '新增',
+                icon: 'bi-plus-lg',
+                attributes: {
+                    title: '新增',
+                    class: 'btn btn-outline-info'
+                },
+                event: function () {
+                    showEditModal('/rule/variable/create', true);
+                }
+            },
+            editBtn: {
+                text: '更新',
+                icon: 'bi-pencil-square',
+                attributes: {
+                    title: '更新',
+                    class: 'btn btn-outline-warning'
+                },
+                event: function () {
+                    showEditModal('/rule/variable/update', false);
+                }
+            },
+            deleteBtn: {
+                text: '删除',
+                icon: 'bi-trash',
+                attributes: {
+                    title: '删除',
+                    class: 'btn btn-danger me-3'
+                },
+                event: function () {
+                    showDeleteModal('/rule/variable/delete');
+                }
+            }
+        }
     }
 </script>
 </body>

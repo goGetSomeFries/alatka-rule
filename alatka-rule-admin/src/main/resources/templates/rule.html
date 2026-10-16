@@ -597,7 +597,7 @@
             formData['uris'] = $('#buildUris').val().split(",").map(item => item.trim());
             formData['ruleGroups'] = type === 'fallback' ? null : tomSelect.getValue();
             httpClient(url, 'POST', formData, function (data) {
-                showSuccessToast(JSON.stringify(data, null, 2));
+                showInfoToast(JSON.stringify(data, null, 2));
                 $buildModal.modal('hide');
             });
         });

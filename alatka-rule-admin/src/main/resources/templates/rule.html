@@ -687,6 +687,15 @@
         textarea.focus();
     }
 
+    function refresh() {
+        $('#dataTable').bootstrapTable('refreshOptions', {
+            pageNumber: 1,
+            sortOrder: "desc",
+            sortName: "id"
+        });
+        $('#ruleUnitList').empty();
+    }
+
     function buttonsOrderFunction() {
         return ['fallbackBtn', 'deployBtn', 'addBtn', 'editBtn', 'deleteBtn', 'columns'];
     }

@@ -21,4 +21,9 @@ public class Medicine {
     public void setType(String type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "Medicine{" + "key='" + key + '\'' + ", type='" + type + '\'' + '}';
+    }
 }

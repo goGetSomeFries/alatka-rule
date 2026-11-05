@@ -1,6 +1,7 @@
 package com.alatka.rule.admin.service;
 
 
+import ch.qos.logback.classic.Logger;
 import com.alatka.rule.admin.AutoConfiguration;
 import com.alatka.rule.admin.entity.RuleDefinition;
 import com.alatka.rule.admin.entity.RuleExtDefinition;
@@ -9,6 +10,8 @@ import com.alatka.rule.admin.model.rule.RulePageReq;
 import com.alatka.rule.admin.model.rule.RuleReq;
 import com.alatka.rule.admin.model.rule.RuleRes;
 import com.alatka.rule.admin.repository.RuleRepository;
+import com.alatka.rule.admin.support.InMemoryAppender;
+import com.alatka.rule.admin.support.LocalTestingRuleDefinitionBuilder;
 import com.alatka.rule.core.RuleEngine;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
@@ -19,8 +22,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.sql.DataSource;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +41,8 @@ public class RuleService {
     private RuleExtService ruleExtService;
 
     private RuleUnitService ruleUnitService;
+
+    private DataSource dataSource;
 
     private RestTemplate restTemplate;
 
@@ -52,6 +60,23 @@ public class RuleService {
         map.put("2", "黑名单");
         map.put("3", "白名单");
         return map;
+    }
+
+    public String localTest(String ruleGroup, Long ruleId, Object params) {
+        LocalTestingRuleDefinitionBuilder builder = new LocalTestingRuleDefinitionBuilder(dataSource, ruleId);
+        builder.build(ruleGroup);
+
+        Field field = ReflectionUtils.findField(RuleEngine.class, "logger");
+        ReflectionUtils.makeAccessible(field);
+        Logger logger = (Logger) ReflectionUtils.getField(field, ruleEngine);
+        InMemoryAppender appender = new InMemoryAppender();
+        try {
+            appender.registry(logger);
+            ruleEngine.execute(ruleGroup, params);
+            return appender.getLogs();
+        } finally {
+            appender.unRegistry(logger);
+        }
     }
 
     public Map<String, String> build(RuleBuildReq ruleBuildReq) {
@@ -161,6 +186,11 @@ public class RuleService {
     @Autowired
     public void setRuleUnitService(RuleUnitService ruleUnitService) {
         this.ruleUnitService = ruleUnitService;
+    }
+
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Autowired

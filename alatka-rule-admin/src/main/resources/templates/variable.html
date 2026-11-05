@@ -221,7 +221,7 @@
     }
 
     function typeFormatter(key) {
-        let mapping = JSON.parse(sessionStorage.getItem('alatka.rule.variableTypeMapping') || {});
+        let mapping = JSON.parse(sessionStorage.getItem('alatka.rule.variableTypeMapping') || '{}');
         return typeFormatter_(key, mapping[key] || key);
     }
 

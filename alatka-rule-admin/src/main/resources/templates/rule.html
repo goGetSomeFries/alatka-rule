@@ -469,7 +469,7 @@
     }
 
     function typeFormatter(key) {
-        let mapping = JSON.parse(sessionStorage.getItem('alatka.rule.ruleTypeMapping') || {});
+        let mapping = JSON.parse(sessionStorage.getItem('alatka.rule.ruleTypeMapping') || '{}');
         return typeFormatter_(key, mapping[key] || key);
     }
 
@@ -508,7 +508,7 @@
     }
 
     function getDatasourceMapping(groupKey) {
-        const datasourceMapping = sessionStorage.getItem('alatka.rule.datasourceMapping');
+        const datasourceMapping = sessionStorage.getItem('alatka.rule.datasourceMapping') || '{}';
         const mapping = new Map(Object.entries(JSON.parse(datasourceMapping))).get(groupKey);
         return new Map(Object.entries(mapping));
     }

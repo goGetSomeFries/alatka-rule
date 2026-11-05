@@ -19,6 +19,15 @@
             cursor: pointer;
             transition: all 0.2s ease-in-out;
         }
+
+        .no-scrollbar {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -205,6 +214,47 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                 <button type="button" class="btn btn-primary" id="saveEditBtn">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="testModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">测试规则</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="testForm">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="testUnit" class="form-label">规则单元</label>
+                            <pre class="border rounded overflow-auto no-scrollbar"
+                                 style="max-height: 30vh; font-size: 0.75rem;">
+                                <code id="testUnit" class="language-javascript"></code></pre>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="testParams" class="form-label">规则参数</label>
+                            <textarea class="form-control font-monospace" style="font-size: 0.75rem;" rows="15"
+                                      id="testParams" name="params" aria-describedby="testParamsDesc"
+                                      required></textarea>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="testResult" class="form-label">规则执行结果</label>
+                            <pre class="border rounded overflow-auto no-scrollbar"
+                                 style="height: 30vh; font-size: 0.75rem;">
+                                <code id="testResult" class="language-shell"></code></pre>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="formatTestBtn">格式化JSON</button>
+                <button type="button" class="btn btn-outline-info" id="clearTestBtn">清除结果</button>
+                <button type="button" class="btn btn-primary" id="executeTestBtn">执行测试</button>
             </div>
         </div>
     </div>
@@ -419,7 +469,7 @@
     }
 
     function typeFormatter(key) {
-        let mapping = JSON.parse(sessionStorage.getItem('alatka.rule.ruleTypeMapping') || {});
+        let mapping = JSON.parse(sessionStorage.getItem('alatka.rule.ruleTypeMapping') || '{}');
         return typeFormatter_(key, mapping[key] || key);
     }
 
@@ -458,7 +508,7 @@
     }
 
     function getDatasourceMapping(groupKey) {
-        const datasourceMapping = sessionStorage.getItem('alatka.rule.datasourceMapping');
+        const datasourceMapping = sessionStorage.getItem('alatka.rule.datasourceMapping') || '{}';
         const mapping = new Map(Object.entries(JSON.parse(datasourceMapping))).get(groupKey);
         return new Map(Object.entries(mapping));
     }
@@ -603,6 +653,62 @@
         });
     }
 
+    function showTestModal() {
+        const selection = $('#dataTable').bootstrapTable('getSelections');
+        if (selection.length !== 1) {
+            showWarningToast("请选择一条记录");
+            return;
+        }
+
+        const $form = $('#testForm');
+        const formEl = $form[0];
+        const $modal = $('#testModal');
+        $form.removeClass('was-validated');
+
+        const row = selection[0];
+        httpClient(`/rule/unit/list?ruleId=${row.id}`, 'GET', null, function (data) {
+            let expressions = "";
+            data.forEach((field, index) => {
+                expressions += `/************************************************ 单元 ${index + 1} ************************************************/\n\n${field.expression}\n\n`;
+            });
+            const $testUnit = $("#testUnit");
+            $testUnit.text(expressions);
+            const testUnitEl = $testUnit[0];
+            delete testUnitEl.dataset.highlighted;
+            hljs.highlightElement(testUnitEl);
+
+            let params = $("#testParams").val();
+            if (params === null || params === "") {
+                $("#testParams").val(`{}`);
+            }
+            $modal.modal('show');
+        });
+
+        $('#executeTestBtn').off('click').on('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (!formEl.checkValidity()) {
+                $form.addClass('was-validated');
+                return;
+            }
+            const params = JSON.parse($("#testParams").val());
+            httpClient(`/rule/test/${row.groupKey}/${row.id}`, 'PUT', params, function (data) {
+                $("#testResult").prepend(data + "\n");
+            });
+        });
+        $('#clearTestBtn').off('click').on('click', function (event) {
+            $("#testResult").text("");
+        });
+        $('#formatTestBtn').off('click').on('click', function (event) {
+            try {
+                let formatVal = JSON.stringify(JSON.parse($("#testParams").val()), null, 2);
+                $("#testParams").val(formatVal);
+            } catch (e) {
+                showErrorToast(e.message);
+            }
+        });
+    }
+
     function buildUnits(groupKey, ruleId) {
         const mapping = getDatasourceMapping(groupKey);
 
@@ -687,8 +793,17 @@
         textarea.focus();
     }
 
+    function refresh() {
+        $('#dataTable').bootstrapTable('refreshOptions', {
+            pageNumber: 1,
+            sortOrder: "desc",
+            sortName: "id"
+        });
+        $('#ruleUnitList').empty();
+    }
+
     function buttonsOrderFunction() {
-        return ['fallbackBtn', 'deployBtn', 'addBtn', 'editBtn', 'deleteBtn', 'columns'];
+        return ['fallbackBtn', 'deployBtn', 'testBtn', 'addBtn', 'editBtn', 'deleteBtn', 'columns'];
     }
 
     function buttonsFunction() {
@@ -709,10 +824,21 @@
                 icon: 'bi-rocket',
                 attributes: {
                     title: '部署',
-                    class: 'btn btn-outline-primary me-3'
+                    class: 'btn btn-outline-primary'
                 },
                 event: function () {
                     showBuildModal('/rule/build', 'deploy');
+                }
+            },
+            testBtn: {
+                text: '测试',
+                icon: 'bi-bug',
+                attributes: {
+                    title: '测试',
+                    class: 'btn btn-outline-secondary me-3'
+                },
+                event: function () {
+                    showTestModal();
                 }
             },
             addBtn: {

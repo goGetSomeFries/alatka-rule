@@ -37,6 +37,15 @@ public class RuleController {
         return ResMessage.success(ruleService.build(ruleBuildReq));
     }
 
+    @Operation(summary = "规则本地测试")
+    @Parameter(name = "ruleGroup", description = "规则组", required = true)
+    @Parameter(name = "ruleId", description = "规则ID", required = true)
+    @PutMapping("/test/{ruleGroup}/{ruleId}")
+    public ResMessage<String> localTest(@PathVariable String ruleGroup, @PathVariable Long ruleId,
+                                   @Valid @RequestBody Map<String, Object> params) {
+        return ResMessage.success(ruleService.localTest(ruleGroup, ruleId, params));
+    }
+
     @Operation(summary = "创建规则")
     @PostMapping("/create")
     public ResMessage<Long> create(@Valid @RequestBody RuleReq ruleReq) {

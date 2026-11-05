@@ -76,6 +76,6 @@ public class RuleGroupDefinition extends AbstractRuleDefinition {
 
     @Override
     public String toString() {
-        return "RuleGroupDefinition{id='" + getId() + "', " + "name='" + getName() + "'}";
+        return "{id='" + getId() + "', " + "name='" + getName() + "'}";
     }
 }

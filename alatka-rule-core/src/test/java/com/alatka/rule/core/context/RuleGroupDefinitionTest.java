@@ -61,7 +61,7 @@ public class RuleGroupDefinitionTest {
         definition.setId(id);
         definition.setName(name);
 
-        Assertions.assertEquals("RuleGroupDefinition{id='" + id + "', " + "name='" + name + "'}", definition.toString());
+        Assertions.assertEquals("{id='" + id + "', " + "name='" + name + "'}", definition.toString());
     }
 
     @Test

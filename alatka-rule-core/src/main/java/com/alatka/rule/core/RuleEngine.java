@@ -60,20 +60,20 @@ public class RuleEngine {
         RuleGroupDefinitionContext definitionContext = RuleGroupDefinitionContext.getInstance(true);
         AviatorEvaluatorInstance aviatorEvaluatorInstance = definitionContext.getAviatorEvaluatorInstance();
         RuleGroupDefinition ruleGroupDefinition = definitionContext.getRuleGroupDefinition(ruleGroupName);
-        this.logger.debug("*************** 执行规则组：{} ***************", ruleGroupDefinition);
+        this.logger.debug("**************** 执行规则组：{} ****************", ruleGroupDefinition);
 
         // 入参预处理
         List<RuleParamDefinition> ruleParamDefinitions = definitionContext.getRuleParamDefinitions(ruleGroupName);
         Map<String, Object> paramContext = this.initParamContext(aviatorEvaluatorInstance, param, ruleParamDefinitions);
-        this.logger.debug("******* 规则入参：{}", paramContext);
+        this.logger.debug("******** 规则入参：{}", paramContext);
 
         // global范围外部数据存储
         ConcurrentHashMap<String, Object> globalScopeData = definitionContext.getGlobalScopeData(ruleGroupName);
-        this.logger.debug("******* 规则global范围外部数据：{}", globalScopeData);
+        this.logger.debug("******** 规则global范围外部数据：{}", globalScopeData);
 
         // 黑白名单过滤
         if (this.listFilter(aviatorEvaluatorInstance, paramContext, globalScopeData, ruleGroupDefinition.getRuleListDefinition())) {
-            this.logger.debug("******* 黑/白名单命中，执行退出");
+            this.logger.debug("******** 黑/白名单命中，执行退出");
             return result;
         }
 
@@ -118,7 +118,7 @@ public class RuleEngine {
                     throw new IllegalArgumentException("error type: " + ruleGroupDefinition.getType());
             }
 
-            this.logger.debug("******* 规则[{}]开始执行", ruleDefinition.getId());
+            this.logger.debug("******** 规则[{}]开始执行", ruleDefinition.getId());
             // 规则判断
             boolean hit = this.doExecute(aviatorEvaluatorInstance, ruleDefinition.getRuleUnitDefinition(), paramContext, globalScopeData);
 
@@ -126,10 +126,10 @@ public class RuleEngine {
                 result.add(ruleDefinition);
                 theOne = ruleDefinition;
             }
-            this.logger.debug("******* 规则{}命中：{}", hit ? "" : "未", ruleDefinition);
+            this.logger.debug("******** 规则{}命中：{}", hit ? "" : "未", ruleDefinition);
         }
 
-        this.logger.debug("*************** 命中结果集：{}", result);
+        this.logger.debug("**************** 命中结果集：{}", result);
         return result;
     }
 
@@ -212,21 +212,22 @@ public class RuleEngine {
     private boolean doExecute(AviatorEvaluatorInstance aviatorEvaluatorInstance, RuleUnitDefinition ruleUnitDefinition,
                               Map<String, Object> paramContext, Map<String, Object> globalScopeData) {
         Map<String, Object> env = this.extendParamContext(ruleUnitDefinition.getDataSourceRef(), paramContext, globalScopeData);
-        this.logger.trace("*** 规则单元入参：{}", env);
+        this.logger.trace("**** 规则单元[{}]入参：{}", ruleUnitDefinition.getIndex(), env);
 
         boolean hit = this.calculateExpression(aviatorEvaluatorInstance, ruleUnitDefinition.getExpression(), env);
 
         if (!hit) {
             // 未命中规则单元，结束当前规则判断
-            this.logger.trace("*** 规则单元[{}]未命中，表达式：{}", ruleUnitDefinition.getIndex(), ruleUnitDefinition.getExpression());
+            this.logger.trace("**** 规则单元[{}]未命中，表达式：{}", ruleUnitDefinition.getIndex(), ruleUnitDefinition.getExpression());
             return false;
         }
         if (ruleUnitDefinition.getNext() == null) {
             // 命中规则单元，无后续规则单元，则当前规则命中
-            this.logger.trace("*** 规则单元全部命中");
+            this.logger.trace("**** 规则单元全部命中");
             return true;
         } else {
             // 命中规则单元，有后续规则单元，则继续执行后续规则单元
+            this.logger.trace("**** 规则单元[{}]命中", ruleUnitDefinition.getIndex());
             return this.doExecute(aviatorEvaluatorInstance, ruleUnitDefinition.getNext(), env, globalScopeData);
         }
     }
